@@ -11,7 +11,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "DB_I_CRM";
 
-    private static final String TABLE_CONTRAGENT = "table_contragent";
+    public static final String TABLE_CONTRAGENT = "table_contragent";
 
     public static final String UID = "uid";//uid контрагента
     public static final String CODE = "code";//код
@@ -33,7 +33,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 + CODE_PO_OKPO + " integer, "
                 + UR_FACE + " integer, "
                 + NAME_CONTRAGENT + " text);");
-
     }
 
     @Override
