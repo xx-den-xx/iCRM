@@ -21,11 +21,10 @@ public class DBController {
     private ContentValues mContentValues;
     private SQLiteDatabase mDb;
 
-    private DBController(Context context) {
+    public DBController(Context context) {
         this.context = context;
         dbHelper = new DBHelper(context);
         mContentValues = new ContentValues();
-
     }
 
     public void insertContragentDB (List<Contragent> contragentList) {
@@ -36,13 +35,14 @@ public class DBController {
             if (cursor.moveToFirst()) {
                 int idColIndex = cursor.getColumnIndex(DBHelper.UID);
                 do {
-                    isHaveUID = cursor.getString(idColIndex).equals(contragent.getUid());
+                    if (!isHaveUID) isHaveUID = cursor.getString(idColIndex).equals(contragent.getUid());
                 } while (cursor.moveToNext());
                 if (!isHaveUID) {
                     mContentValues.put(DBHelper.UID, contragent.getUid());
                     mContentValues.put(DBHelper.NAME_CONTRAGENT, contragent.getNameContragent());
                     if (mDb != null) mDb.insert(DBHelper.TABLE_CONTRAGENT, null, mContentValues);
                 }
+                isHaveUID = false;
             } else {
                 mContentValues.put(DBHelper.UID, contragent.getUid());
                 mContentValues.put(DBHelper.NAME_CONTRAGENT, contragent.getNameContragent());
