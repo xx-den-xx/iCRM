@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -14,20 +16,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 
 import ru.bda.icrm.R;
-import ru.bda.icrm.auth.ApiController;
-import ru.bda.icrm.json.ResponseParser;
+import ru.bda.icrm.fragment.ContragentFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private ProgressBar mProgressBar;
-    private RecyclerView mAgentRV;
+    private ContragentFragment contragentFragment;
+    private FrameLayout fragmentContent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +34,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("Клиенты");
 
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        fragmentContent = (FrameLayout) findViewById(R.id.fragment_content);
+        contragentFragment = new ContragentFragment();
+        addFragment(contragentFragment);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -55,8 +57,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
 
-        new ContragentRequestTask().execute();
+    private void addFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(fragmentContent.getId(), fragment).commit();
     }
 
     @Override
@@ -116,27 +121,5 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private class ContragentRequestTask extends AsyncTask<Void, Void, Boolean> {
 
-        String request = "";
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            boolean answerUrl = ApiController.getInstance().addContragent().equals("error") ? false : true;
-
-            return answerUrl;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-            mProgressBar.setVisibility(View.GONE);
-        }
-    }
 }

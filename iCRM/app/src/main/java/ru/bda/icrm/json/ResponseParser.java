@@ -72,7 +72,7 @@ public class ResponseParser {
                 Contragent contragent = new Contragent();
                 JSONObject obj = dataJSONArray.getJSONObject(i);
                 contragent.setUid(obj.getString("uid"));
-                contragent.setNameContragent("title");
+                contragent.setNameContragent(obj.getString("title"));
                 sContragentList.add(contragent);
             }
             request = json.toString();

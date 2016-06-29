@@ -13,6 +13,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_CONTRAGENT = "table_contragent";
 
+    public static final String ID = "id";
     public static final String UID = "uid";//uid контрагента
     public static final String CODE = "code";//код
     public static final String INN = "inn";//инн
@@ -27,7 +28,8 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_CONTRAGENT
-                + "(" + UID + " varchar primary key autoincrement, "
+                + "(" + ID + " integer primary key autoincrement, "
+                + UID + " varchar, "
                 + CODE + " text, "
                 + INN + " integer, "
                 + CODE_PO_OKPO + " integer, "
