@@ -16,7 +16,8 @@ import ru.bda.icrm.json.ResponseParser;
  * Created by User on 28.06.2016.
  */
 public class ApiController {
-    private final String mBaseUrl = Constants.API_LINK;
+
+    private final String mBaseUrl = Constants.TEST_API_LINK;
     private static volatile ApiController instance;
     private Context context;
 
@@ -37,8 +38,8 @@ public class ApiController {
         this.context = context;
     }
 
-    public String addContragent(){
-        String urlString = mBaseUrl + "?action=getContragentList";
+    public String addContragent(String token){
+        String urlString = mBaseUrl + "?token=" + token + "&action=getContragentList";
         try{
             JSONObject jsonObj = new JSONObject();
             jsonObj.put("action", "getContragentList");
@@ -48,12 +49,27 @@ public class ApiController {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept","application/json");
             connection.connect();
-            Log.d("myLog", "good job");
+            Log.d("myLog", urlString);
             return ResponseParser.getInstance().parseContragent(connection.getInputStream());
         }catch(Exception e){
             return "error";
         }
+    }
 
-
+    public String auth(String hexLogin, String hexPassword) {
+        String urlString = mBaseUrl + "?action=auth&login=" + hexLogin + "&pass=" + hexPassword;
+        try{
+            JSONObject jsonObj = new JSONObject();
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept","application/json");
+            connection.connect();
+            Log.d("myLog", urlString);
+            return ResponseParser.getInstance().parseToken(connection.getInputStream());
+        } catch (Exception e) {
+            return "error";
+        }
     }
 }

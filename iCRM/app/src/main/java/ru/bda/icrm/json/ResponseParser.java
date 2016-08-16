@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.bda.icrm.auth.AnswerServer;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.model.Contragent;
 
@@ -61,7 +62,6 @@ public class ResponseParser {
     public String parseContragent(InputStream stream){
         String response = convertStreamToString(stream);
         JSONObject json;
-        Log.d("myLog", response);
         String request = "";
 
         try {
@@ -83,6 +83,27 @@ public class ResponseParser {
             e.printStackTrace();
         }
         return request;
+    }
 
+    public String parseToken(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        String request = "";
+
+        try {
+            json = new JSONObject(response);
+            String state = json.get("state").toString();
+            if (AnswerServer.getInstance().isAnswerServer(state)) {
+                String token = json.get("token").toString();
+                request = token;
+            } else {
+                request = "error";
+            }
+            Log.d("myLog", state);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        return request;
     }
 }

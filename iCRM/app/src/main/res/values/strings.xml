@@ -5,4 +5,11 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <!-- Строки для activity_login-->
+    <string name="login_btn_ok">Войти</string>
+    <string name="login_hint">Введите логин</string>
+    <string name="password_hint">Введите пароль</string>
+    <string name="empty_field">Поля логин и пароль не должны быть пустыми!!!</string>
+
 </resources>
