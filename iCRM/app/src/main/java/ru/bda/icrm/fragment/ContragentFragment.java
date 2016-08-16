@@ -22,6 +22,7 @@ import ru.bda.icrm.R;
 import ru.bda.icrm.adapter.ContragentRecyclerAdapter;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.database.DBController;
+import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.json.ResponseParser;
 import ru.bda.icrm.model.Contragent;
 
@@ -86,7 +87,9 @@ public class ContragentFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            boolean answerUrl = ApiController.getInstance().addContragent().equals("error") ? false : true;
+            boolean answerUrl = ApiController.getInstance()
+                    .addContragent(AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getActivity()))
+                    .equals("error") ? false : true;
             mListContragent = ResponseParser.sContragentList;
             return answerUrl;
         }
