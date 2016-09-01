@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import ru.bda.icrm.R;
+import ru.bda.icrm.enums.NavMode;
 import ru.bda.icrm.fragment.ContragentFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -26,15 +27,19 @@ public class MainActivity extends AppCompatActivity
 
     private ContragentFragment contragentFragment;
     private FrameLayout fragmentContent;
-
+    private DrawerLayout drawer;
+    private NavMode mNavMode;
+    private Toolbar toolbar;
+    private MenuItem mMenuAdd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle("Клиенты");
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mNavMode = NavMode.CLIENTS;
+        setFragment(mNavMode);
+        setMenuToolbar();
 
         fragmentContent = (FrameLayout) findViewById(R.id.fragment_content);
         contragentFragment = new ContragentFragment();
@@ -49,7 +54,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -57,6 +62,28 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void setFragment(NavMode mode) {
+        if (mode == NavMode.CLIENTS) {
+            toolbar.setTitle(R.string.nav_clients);
+        } else if (mode == NavMode.MAP) {
+            toolbar.setTitle(R.string.nav_map);
+        } else if (mode == NavMode.SCORES) {
+            toolbar.setTitle(R.string.nav_scores);
+        } else if (mode == NavMode.EVENTS) {
+            toolbar.setTitle(R.string.nav_events);
+        } else if (mode == NavMode.PRICE) {
+            toolbar.setTitle(R.string.nav_price);
+        } else if (mode == NavMode.TASKS) {
+            toolbar.setTitle(R.string.nav_tasks);
+        } else if (mode == NavMode.MAILS) {
+            toolbar.setTitle(R.string.nav_mails);
+        }
+    }
+
+    private void setMenuToolbar() {
+        toolbar.inflateMenu(R.menu.menu_contragent);
     }
 
     private void addFragment(Fragment fragment) {
@@ -102,21 +129,29 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_clients) {
+            mNavMode = NavMode.CLIENTS;
+        } else if (id == R.id.nav_scores) {
+            mNavMode = NavMode.SCORES;
+        } else if (id == R.id.nav_map) {
+            mNavMode = NavMode.MAP;
+        } else if (id == R.id.nav_events) {
+            mNavMode = NavMode.EVENTS;
+        } else if (id == R.id.nav_price) {
+            mNavMode = NavMode.PRICE;
+        } else if (id == R.id.nav_tasks) {
+            mNavMode = NavMode.TASKS;
+        } else if (id == R.id.nav_mails) {
+            mNavMode = NavMode.MAILS;
+        } else if (id == R.id.nav_swap) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_exit) {
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        setFragment(mNavMode);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
