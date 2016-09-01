@@ -12,6 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "DB_I_CRM";
 
     public static final String TABLE_CONTRAGENT = "table_contragent";
+    public static final String TABLE_TELEPHONES = "table telephones";
 
     public static final String ID = "id";
     public static final String UID = "uid";//uid контрагента
@@ -35,6 +36,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 + CODE_PO_OKPO + " integer, "
                 + UR_FACE + " integer, "
                 + NAME_CONTRAGENT + " text);");
+        /**db.execSQL("create table " + TABLE_TELEPHONES
+                + "(" + ID + " integer primary key autoincrement, "
+                + UID + " varchar, "
+                + CODE + " text, ");*/
     }
 
     @Override

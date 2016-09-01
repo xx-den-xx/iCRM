@@ -26,7 +26,7 @@ public class AnswerServer {
     }
 
     public Boolean isAnswerServer(String state) {
-        boolean isRequest = false;
+        boolean isRequest;
         switch (state) {
             case REQUEST_SUCCESS:
                 isRequest = true;

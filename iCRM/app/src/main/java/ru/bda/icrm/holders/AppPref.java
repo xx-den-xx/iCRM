@@ -29,8 +29,6 @@ public class AppPref {
         return instance;
     }
 
-
-
     public void setHexAuth(String hexLogin, String hexPassword, Context context) {
         sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();

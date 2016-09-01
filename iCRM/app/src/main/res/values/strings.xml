@@ -1,10 +1,22 @@
 <resources>
-    <string name="app_name">iCRM</string>
+    <string name="app_name">Балтик кабель</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <!--Строки для бокового меню-->
+    <string name="nav_clients">Клиенты</string>
+    <string name="nav_map">Карта</string>
+    <string name="nav_scores">Счета</string>
+    <string name="nav_events">События</string>
+    <string name="nav_price">Прайс</string>
+    <string name="nav_tasks">Задачи</string>
+    <string name="nav_mails">Письма</string>
+    <string name="nav_swap">Обмен</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="nav_exit">Выход</string>
 
     <!-- Строки для activity_login-->
     <string name="login_btn_ok">Войти</string>
@@ -12,4 +24,6 @@
     <string name="password_hint">Введите пароль</string>
     <string name="empty_field">Поля логин и пароль не должны быть пустыми!!!</string>
 
+    <!-- Строки для меню -->
+    <string name="action_add">Добавить</string>
 </resources>
