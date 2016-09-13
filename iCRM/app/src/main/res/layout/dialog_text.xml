@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:paddingRight="6dp"
+    android:paddingLeft="6dp">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="46dp"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="------"
+            android:textSize="18dp"
+            android:id="@+id/txt_title"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="#ffffffff"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="11dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="70dp"
+        android:background="#ffffffff">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Вы действительно хотите удалить заказ № 1274?"
+            android:lineSpacingExtra="4dp"
+            android:id="@+id/text"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_margin="11dp"
+            android:textSize="17sp"
+            android:textColor="#ff000000"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0.5dp"
+        android:id="@+id/divider1"
+        android:background="#ffb4b4b4"/>
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0.5dp"
+        android:id="@+id/divider2"
+        android:background="#ffefefef"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:background="#ffd9dbdc">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="New Button"
+            android:id="@+id/btn_left"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_btn_selector"
+            android:textColor="#ff535353"
+            android:textSize="16sp"/>
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/divider3"
+            android:background="#ffbcbcbc"
+            android:layout_marginTop="9dp"
+            android:layout_marginBottom="9dp"/>
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/divider4"
+            android:background="#ffeeeeee"
+            android:layout_marginTop="9dp"
+            android:layout_marginBottom="9dp"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="New Button"
+            android:id="@+id/btn_right"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_btn_selector"
+            android:textColor="#ff535353"
+            android:textSize="16sp"/>
+    </LinearLayout>
+</LinearLayout>

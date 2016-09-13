@@ -2,5 +2,16 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#4099ff</color>
+    <color name="divider_black">#000000</color>
+    
+    <!--Цвета для окна клиента-->
+    <color name="client_title">#b3b3b3</color>
+    <color name="client_content">#606060</color>
+    <color name="client_background">#d1d0d0</color>
+    <color name="client_background_white">#ffffff</color>
+    <color name="client_text_active">#3bb1ec</color>
+    <color name="client_text_inactive">#ffffff</color>
+
+    <color name="btn_color_select">#ffcdcdcd</color>
 </resources>
