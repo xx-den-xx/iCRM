@@ -59,7 +59,7 @@ public class ResponseParser {
         return sb.toString();
     }
 
-    public String parseContragent(InputStream stream){
+    public String parseContragentList(InputStream stream){
         String response = convertStreamToString(stream);
         JSONObject json;
         String request = "";
@@ -106,4 +106,82 @@ public class ResponseParser {
         }
         return request;
     }
+
+    public Contragent parseContragent(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        Contragent contragent = new Contragent();
+        Log.d("myLog", response);
+        try {
+            json = new JSONObject(response);
+            JSONObject jsonData = json.getJSONObject("data");
+            String state = json.get("state").toString();
+            if (AnswerServer.getInstance().isAnswerServer(state)) {
+                contragent.setId(jsonData.getString("id"));
+                contragent.setUid(jsonData.getString("uid"));
+                contragent.setInn(jsonData.getString("inn"));
+                contragent.setNameContragent(jsonData.getString("title"));
+                contragent.setCodePoOkpo(jsonData.getString("PoOKPO"));
+                contragent.setUrFace(jsonData.getString("jur"));
+                contragent.setRelations(jsonData.getString("relations"));
+                contragent.setContactInfo(jsonData.getString("contact_info"));
+                contragent.setEmail(jsonData.getString("email"));
+                contragent.setJurAddress(jsonData.getString("jur_address"));
+                contragent.setSite(jsonData.getString("site"));
+
+                List<String> phones = new ArrayList<String>();
+                JSONArray jPhones = jsonData.getJSONArray("phones");
+                if (jPhones != null) {
+                    for (int i = 0; i < jPhones.length(); i++) {
+                        phones.add(jPhones.get(i).toString());
+                    }
+                } else {
+                    phones = null;
+                }
+                contragent.setPhones(phones);
+
+                List<String> contacts = new ArrayList<String>();
+                JSONArray jContacts = jsonData.getJSONArray("phones");
+                if (jContacts != null) {
+                    for (int i = 0; i < jContacts.length(); i++) {
+                        contacts.add(jPhones.get(i).toString());
+                    }
+                } else {
+                    contacts = null;
+                }
+                contragent.setContacts(contacts);
+
+            } else {
+                contragent = null;
+            }
+            Log.d("myLog", state);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            contragent = null;
+        }
+        return contragent;
+    }
+
+    public Contragent parseSaveContragent(InputStream stream, Contragent contragent) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        Log.d("myLog", response);
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            if (AnswerServer.getInstance().isAnswerServer(state)) {
+                contragent.setId(json.getString("contragent"));
+            } else {
+                contragent = null;
+            }
+            Log.d("myLog", state);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            contragent = null;
+        }
+        return contragent;
+    }
+
 }

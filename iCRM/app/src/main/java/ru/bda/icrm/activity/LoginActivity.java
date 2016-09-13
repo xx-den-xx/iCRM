@@ -21,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
 
 import ru.bda.icrm.R;
 import ru.bda.icrm.auth.ApiController;
+import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.holders.AppPref;
 
 /**
@@ -47,7 +48,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         mContext = this;
         initContent();
-        new LogoLayout().execute();
+        if (getIntent().getStringExtra(Constants.INTENT_EXIT) == null) {
+            new LogoLayout().execute();
+        } else {
+            mLoginLayout.setVisibility(View.VISIBLE);
+            mIvLogo.setVisibility(View.GONE);
+        }
     }
 
     private void initContent() {

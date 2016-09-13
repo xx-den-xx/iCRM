@@ -1,16 +1,28 @@
 package ru.bda.icrm.model;
 
+import java.util.List;
+
 /**
  * Created by User on 27.06.2016.
  */
 public class Contragent {
 
-    public String mUid;//uid контрагента
-    public String mCode;//код
-    public String mInn;//инн
-    public String mCodePoOkpo;//КодПоОКПО
-    public String mUrFace;//юр/физ лицо (1/0)
-    public String mNameContragent;//наименование контрагента
+    private String mId = "";//id контрагента
+    private String mUid = "";//uid контрагента
+    private String mCode = "";//код
+    private String mInn = "";//инн
+    private String mCodePoOkpo = "";//КодПоОКПО
+    private String mUrFace = "";//юр/физ лицо (1/0)
+    private String mNameContragent = "";//наименование контрагента
+    private String mRelations = "";//вид отношений
+    private String mContactInfo = "";//контактная информация
+    private String mEmail = "";//почта
+    private String mJurAddress = "";//юридический адрес
+    private String mSite = "";//сайт
+    private List<String> mPhones = null;//список телефонов
+    private List<String> mContacts = null;//список контактных лиц
+
+
 
     public Contragent(String mUid, String mCode, String mInn, String mCodePoOkpo, String mUrFace, String mNameContragent) {
         this.mUid = mUid;
@@ -30,6 +42,14 @@ public class Contragent {
 
     public void setUid(String mUid) {
         this.mUid = mUid;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String mId) {
+        this.mId = mId;
     }
 
     public String getCode() {
@@ -70,5 +90,81 @@ public class Contragent {
 
     public void setNameContragent(String mNameContragent) {
         this.mNameContragent = mNameContragent;
+    }
+
+    public String getRelations() {
+        return mRelations;
+    }
+
+    public void setRelations(String mRelations) {
+        this.mRelations = mRelations;
+    }
+
+    public String getContactInfo() {
+        return mContactInfo;
+    }
+
+    public void setContactInfo(String mContactInfo) {
+        this.mContactInfo = mContactInfo;
+    }
+
+    public String getEmail() {
+        return mEmail;
+    }
+
+    public void setEmail(String mEmail) {
+        this.mEmail = mEmail;
+    }
+
+    public String getJurAddress() {
+        return mJurAddress;
+    }
+
+    public void setJurAddress(String mJurAddress) {
+        this.mJurAddress = mJurAddress;
+    }
+
+    public String getSite() {
+        return mSite;
+    }
+
+    public void setSite(String mSite) {
+        this.mSite = mSite;
+    }
+
+    public List<String> getPhones() {
+        return mPhones;
+    }
+
+    public void setPhones(List<String> mPhones) {
+        this.mPhones = mPhones;
+    }
+
+    public List<String> getContacts() {
+        return mContacts;
+    }
+
+    public void setContacts(List<String> mContacts) {
+        this.mContacts = mContacts;
+    }
+
+    @Override
+    public String toString() {
+        return "Contragent{" +
+                "mId='" + mId + '\'' +
+                ", mUid='" + mUid + '\'' +
+                ", mCode='" + mCode + '\'' +
+                ", mInn='" + mInn + '\'' +
+                ", mCodePoOkpo='" + mCodePoOkpo + '\'' +
+                ", mUrFace='" + mUrFace + '\'' +
+                ", mNameContragent='" + mNameContragent + '\'' +
+                ", mRelations='" + mRelations + '\'' +
+                ", mContactInfo='" + mContactInfo + '\'' +
+                ", mEmail='" + mEmail + '\'' +
+                ", mJurAddress='" + mJurAddress + '\'' +
+                ", mSite='" + mSite + '\'' +
+                ", mPhones=" + mPhones +
+                ", mContacts=" + mContacts +
+                '}';
     }
 }

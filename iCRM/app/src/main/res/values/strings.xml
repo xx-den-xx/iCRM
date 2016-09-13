@@ -26,4 +26,47 @@
 
     <!-- Строки для меню -->
     <string name="action_add">Добавить</string>
+
+    <!-- Строки для карточки клиента-->
+    <string name="client_jur_face">Юр. лицо</string>
+    <string name="client_fiz_face">Физ. лицо</string>
+    <string name="client_name">Наименование</string>
+    <string name="client_relation">Тип отношений</string>
+    <string name="client_contact_face">Контактные лица</string>
+    <string name="client_add_contact_face">Добавить контактное лицо</string>
+    <string name="client_contact_info">Контактная информация</string>
+    <string name="client_phone">Телефон</string>
+    <string name="client_mail">Почта</string>
+    <string name="client_site">Сайт компании</string>
+    <string name="client_jur_address">Юр. адрес</string>
+
+    <!--Строки для добавления нового клиента-->
+    <string name="add_client_name">Наименование*</string>
+    <string name="add_client_type_organization">Тип организации:</string>
+    <string name="add_client_type_relation">Тип отношений:</string>
+    <string name="add_client_code">Введите код</string>
+    <string name="add_client_inn">Введите инн</string>
+    <string name="add_client_code_pookpo">Введите код ПоОКПО</string>
+    <string name="add_client_jur_address">Введите юр. адрес</string>
+    <string name="add_client_email">Введите email</string>
+    <string name="add_client_site">Введите сайт</string>
+    <string-array name="array_type_organization">
+        <item>Физ. лицо</item>
+        <item>Юр. лицо</item>
+    </string-array>
+    <string-array name="array_type_relation">
+        <item>Покупатель</item>
+        <item>Поставщик</item>
+    </string-array>
+
+    <!--Строки для диалогов-->
+    <string name="user_logout_title">Логаут</string>
+    <string name="user_logout_are_you_sure">Вы действительно хотите выйти из данного профиля?</string>
+    <string name="ok">OK</string>
+    <string name="no">Нет</string>
+    <string name="user_empty_error">Ошибка</string>
+    <string name="error_empty_name_contragent">Наименование не должно быть пустым!!!</string>
+    <string name="dialog_save_message">Хотите сохранить данные контрагента?</string>
+    <string name="dialog_save_title">Сохранить</string>
+
 </resources>
