@@ -69,4 +69,14 @@
     <string name="dialog_save_message">Хотите сохранить данные контрагента?</string>
     <string name="dialog_save_title">Сохранить</string>
 
+    <!--Строки для диалога добавления контактного лица-->
+    <string name="add_contacts_title">Добавить контактное лицо</string>
+    <string name="add_contact_name">Фамилия, имя и отчество</string>
+    <string name="add_contact_role">Роль контактного лица</string>
+    <string name="add_contact_comments">Комментарий</string>
+    <string name="add_contact_info">Контактная информация</string>
+    <string name="add_contact_work_phone">Рабочий телефон</string>
+    <string name="add_contact_mobile_phone">Моб. телефон</string>
+    <string name="add_contact_email">Рабочий email</string>
+
 </resources>

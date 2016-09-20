@@ -27,6 +27,17 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String EMAIL = "email";//почта
     public static final String JUR_ADDRESS = "jur_address";//юридический адрес
     public static final String SITE = "site";//сайт
+    public static final String CONTACTS_CONTRAGENT_ID = "contragent_id";
+    public static final String CONTACTS_NAME = "contacts_name";
+    public static final String CONTACTS_ROLE = "contacts_role";
+    public static final String CONTACTS_COMMENTS = "contacts_comments";
+    public static final String CONTACTS_WORK_PHONE = "contacts_work_phone";
+    public static final String CONTACTS_MOBILE_PHONE = "contacts_mobile_phone";
+    public static final String CONTACTS_EMAIL = "contacts_email";
+    public static final String PHONE_TYPE = "phone_type";
+    public static final String PHONE_CONTRAGENT_ID = "phone_contragent_id";
+    public static final String PHONE_NUMBER = "phone_number";
+
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, 1);
@@ -35,7 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_CONTRAGENT
-                + "(" + ID + " integer primary key autoincrement, "
+                + "(" + ID + " integer primary key, "
                 + UID + " varchar, "
                 + CODE + " text, "
                 + INN + " text, "
@@ -47,10 +58,20 @@ public class DBHelper extends SQLiteOpenHelper {
                 + EMAIL + " text, "
                 + JUR_ADDRESS + " text, "
                 + SITE + " text);");
-        /**db.execSQL("create table " + TABLE_TELEPHONES
-                + "(" + ID + " integer primary key autoincrement, "
-                + UID + " varchar, "
-                + CODE + " text, ");*/
+        db.execSQL("create table " + TABLE_CONTACTS
+                + "(" + ID + " integer primary key, "
+                + CONTACTS_CONTRAGENT_ID + " text, "
+                + CONTACTS_NAME + " varchar, "
+                + CONTACTS_ROLE + " text, "
+                + CONTACTS_COMMENTS + " text, "
+                + CONTACTS_WORK_PHONE + " text, "
+                + CONTACTS_MOBILE_PHONE + " text, "
+                + CONTACTS_EMAIL + " text);");
+        db.execSQL("create table " + TABLE_TELEPHONES
+                + "(" + ID + " integer primary key, "
+                + PHONE_CONTRAGENT_ID + " text, "
+                + PHONE_TYPE + " text, "
+                + PHONE_NUMBER + " text);");
     }
 
     @Override

@@ -15,8 +15,11 @@ import android.widget.TextView;
 
 import ru.bda.icrm.R;
 import ru.bda.icrm.auth.ApiController;
+import ru.bda.icrm.dialog.AddClientDialog;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.holders.AppPref;
+import ru.bda.icrm.listener.AddClientClickListener;
+import ru.bda.icrm.model.Clients;
 import ru.bda.icrm.model.Contragent;
 
 /**
@@ -66,6 +69,26 @@ public class ContragentActivity extends AppCompatActivity {
         mEtClientName = (EditText) findViewById(R.id.et_client_name);
         mTvClientRelation = (TextView) findViewById(R.id.et_client_relation);
         mLlAddContactFace = (LinearLayout) findViewById(R.id.ll_add_contact_face);
+        mLlAddContactFace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddClientDialog dialog = new AddClientDialog();
+                dialog.init(new AddClientClickListener() {
+                    @Override
+                    public void onLeftBtnClick() {
+
+                    }
+
+                    @Override
+                    public void onRightBtnClick(Clients clients) {
+                        if (clients != null) {
+
+                        }
+                    }
+                });
+                dialog.show(ContragentActivity.this);
+            }
+        });
     }
 
     private class ContragentTask extends AsyncTask<Void, Void, Boolean> {
