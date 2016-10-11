@@ -27,6 +27,7 @@ import java.util.List;
 
 import ru.bda.icrm.R;
 import ru.bda.icrm.auth.ApiController;
+import ru.bda.icrm.dialog.AddEventDialog;
 import ru.bda.icrm.dialog.MyDialog;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.enums.NavMode;
@@ -38,7 +39,11 @@ import ru.bda.icrm.fragment.PriceFragment;
 import ru.bda.icrm.fragment.ScoresFregment;
 import ru.bda.icrm.fragment.TasksFragment;
 import ru.bda.icrm.holders.AppPref;
+import ru.bda.icrm.listener.AddClientClickListener;
+import ru.bda.icrm.listener.AddEventClickListener;
 import ru.bda.icrm.listener.OnContragentClickListener;
+import ru.bda.icrm.model.Clients;
+import ru.bda.icrm.model.Event;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnContragentClickListener {
@@ -109,7 +114,7 @@ public class MainActivity extends AppCompatActivity
         } else if (mode == NavMode.EVENTS) {
             toolbar.setTitle(R.string.nav_events);
             fragment = new EventsFragment();
-            mMenuAdd.setVisible(false);
+            mMenuAdd.setVisible(true);
         } else if (mode == NavMode.PRICE) {
             toolbar.setTitle(R.string.nav_price);
             fragment = new PriceFragment();
@@ -136,6 +141,20 @@ public class MainActivity extends AppCompatActivity
                     if (mNavMode == NavMode.CLIENTS) {
                         Intent intent = new Intent(MainActivity.this, AddContragentActivity.class);
                         startActivity(intent);
+                    } else if (mNavMode == NavMode.EVENTS) {
+                        AddEventDialog dialog = new AddEventDialog();
+                        dialog.init(new AddEventClickListener() {
+                            @Override
+                            public void onLeftBtnClick() {
+
+                            }
+
+                            @Override
+                            public void onRightBtnClick(Event event) {
+
+                            }
+                        });
+                        dialog.show(MainActivity.this);
                     }
                 }
                 return false;
