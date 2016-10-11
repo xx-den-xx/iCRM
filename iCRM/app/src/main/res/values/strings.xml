@@ -79,4 +79,25 @@
     <string name="add_contact_mobile_phone">Моб. телефон</string>
     <string name="add_contact_email">Рабочий email</string>
 
+    <!--Строки для событий-->
+    <string name="events_now">Сегодня</string>
+    <string name="events_more">Ещё</string>
+    <string-array name="events_week">
+        <item>Понедельник</item>
+        <item>Вторник</item>
+        <item>Среда</item>
+        <item>Четверг</item>
+        <item>Пятница</item>
+        <item>Суббота</item>
+        <item>Воскресенье</item>
+    </string-array>
+
+    <!--Строки для добавления нового события-->
+    <string name="add_event_title">Добавить новое событие</string>
+    <string name="add_event_time_begin">Время начала</string>
+    <string name="add_event_time_end">Время конца</string>
+    <string name="add_event_message">Напишите описание</string>
+    <string name="add_event_time">Время</string>
+    <string name="add_event_date">Дата</string>
+
 </resources>

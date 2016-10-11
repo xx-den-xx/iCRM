@@ -14,4 +14,6 @@
     <color name="client_text_inactive">#ffffff</color>
 
     <color name="btn_color_select">#ffcdcdcd</color>
+
+    <color name="text_title_event">#36b311</color>
 </resources>
