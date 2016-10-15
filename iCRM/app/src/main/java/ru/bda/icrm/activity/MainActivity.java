@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnContragentClickListener {
 
     private ContragentFragment contragentFragment;
+    private EventsFragment eventsFragment;
+
     private FrameLayout fragmentContent;
     private DrawerLayout drawer;
     private NavMode mNavMode;
@@ -113,7 +115,8 @@ public class MainActivity extends AppCompatActivity
             mMenuAdd.setVisible(false);
         } else if (mode == NavMode.EVENTS) {
             toolbar.setTitle(R.string.nav_events);
-            fragment = new EventsFragment();
+            eventsFragment = new EventsFragment();
+            fragment = eventsFragment;
             mMenuAdd.setVisible(true);
         } else if (mode == NavMode.PRICE) {
             toolbar.setTitle(R.string.nav_price);
@@ -146,12 +149,10 @@ public class MainActivity extends AppCompatActivity
                         dialog.init(new AddEventClickListener() {
                             @Override
                             public void onLeftBtnClick() {
-
                             }
-
                             @Override
                             public void onRightBtnClick(Event event) {
-
+                                eventsFragment.setEvent(event);
                             }
                         });
                         dialog.show(MainActivity.this);

@@ -68,6 +68,7 @@
     <string name="error_empty_name_contragent">Наименование не должно быть пустым!!!</string>
     <string name="dialog_save_message">Хотите сохранить данные контрагента?</string>
     <string name="dialog_save_title">Сохранить</string>
+    <string name="dialog_error_title">Ошибка</string>
 
     <!--Строки для диалога добавления контактного лица-->
     <string name="add_contacts_title">Добавить контактное лицо</string>
@@ -99,5 +100,12 @@
     <string name="add_event_message">Напишите описание</string>
     <string name="add_event_time">Время</string>
     <string name="add_event_date">Дата</string>
+    <string name="add_event_touch">Нажмите чтобы ввести</string>
+    <string name="add_event_error_time">Время начала события должно быть меньше времени окончания события!!!</string>
+    <string name="add_event_error_message">Описание события не должно быть пустым!!!</string>
+
+    <string name="title_activity_maps">Карта</string>
+
+    <string name="my_map_key">fK8lHG61fPX5R7zDPQDYuAWMRDjQTY0~R9xo0NTgIR~Iw4zOqA~7EKPcyipUcI9F5WXpffoN380XWqr7oVYLsgfSRQuYw4QLWrGpG36rrQM=</string>
 
 </resources>

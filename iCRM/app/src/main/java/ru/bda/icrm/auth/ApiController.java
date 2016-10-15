@@ -14,6 +14,7 @@ import java.util.List;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.json.ResponseParser;
 import ru.bda.icrm.model.Contragent;
+import ru.bda.icrm.model.Price;
 
 /**
  * Created by User on 28.06.2016.
@@ -132,6 +133,35 @@ public class ApiController {
             connection.getInputStream();
             Log.d("myLog", "запрос выполнен успешно");
             return ResponseParser.getInstance().parseSaveContragent(connection.getInputStream(), contragent);
+        }catch(Exception e){
+            Log.d("myLog", "запрос не выполнен");
+            return null;
+        }
+    }
+
+    public List<Price> getNomenclature(String token, int start, int count) {
+        String urlString = mBaseUrl + "?action=getNomenclature";
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("start", start);
+            root.put("count", count);
+
+            Log.d("myLog", root.toString());
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parsePrice(connection.getInputStream());
         }catch(Exception e){
             Log.d("myLog", "запрос не выполнен");
             return null;

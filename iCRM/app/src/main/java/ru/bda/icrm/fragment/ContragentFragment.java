@@ -6,13 +6,18 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -40,6 +45,17 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
     private LinearLayoutManager mLayoutManager;
     private DBController mDBController;
     private OnContragentClickListener contrListener;
+    private ImageView mIvSearch;
+    private EditText mEtSearch;
+    private ImageView mIvCancel;
+    private String search;
+    private final Handler handler = new Handler();
+    private Runnable runnable = new Runnable() {
+
+        public void run() {
+            refreshList();
+        }
+    };
 
     private List<Contragent> mListContragent = new ArrayList<>();
 
@@ -62,6 +78,48 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
         mAgentRV.setAdapter(mAgentAdapter);
         mAgentRV.setHasFixedSize(true);
 
+        mIvSearch = (ImageView) view.findViewById(R.id.iv_search);
+        mEtSearch = (EditText) view.findViewById(R.id.et_search);
+        mIvCancel = (ImageView) view.findViewById(R.id.iv_cancel);
+
+        mIvSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mEtSearch.getVisibility() == View.GONE && mIvCancel.getVisibility() == View.GONE) {
+                    mEtSearch.setVisibility(View.VISIBLE);
+                    mIvCancel.setVisibility(View.VISIBLE);
+                } else {
+                    mEtSearch.setVisibility(View.GONE);
+                    mIvCancel.setVisibility(View.GONE);
+                }
+            }
+        });
+        mIvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setSearch("");
+                mEtSearch.setText("");
+                mEtSearch.setVisibility(View.GONE);
+                mIvCancel.setVisibility(View.GONE);
+            }
+        });
+        mEtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                setSearch(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         mDBController = new DBController(getActivity());
         if (AppControl.getInstance().isOnline(getActivity())) {
             new ContragentRequestTask().execute();
@@ -72,7 +130,33 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
         return view;
     }
 
+    private void setSearch(String text) {
+        search = text;
+        handler.removeCallbacks(runnable);
+        handler.post(runnable);
+    }
 
+    private void refreshList() {
+        List<Contragent> contragentList = mListContragent;
+        List<Contragent> items = new ArrayList<>();
+        for (Contragent contragent : contragentList) {
+            if (search != null && search.length() > 0) {
+                String agent = "";
+                try {
+                    agent = contragent.getNameContragent();
+                }catch(NullPointerException e){}
+                if (agent != null && agent.length() > 0) {
+                    if (agent.toLowerCase().contains(search)) {
+                        items.add(contragent);
+                    }
+                }
+            } else {
+                items.add(contragent);
+            }
+            mAgentAdapter.setAgentList(items);
+            mAgentAdapter.notifyDataSetChanged();
+        }
+    }
 
     @Override
     public void onContragentClick(String uid) {

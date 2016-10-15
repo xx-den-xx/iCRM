@@ -3,4 +3,10 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ru.yandex.yandexmapkit.MapView
+        android:id="@+id/map"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:apiKey="fK8lHG61fPX5R7zDPQDYuAWMRDjQTY0~R9xo0NTgIR~Iw4zOqA~7EKPcyipUcI9F5WXpffoN380XWqr7oVYLsgfSRQuYw4QLWrGpG36rrQM="/>
+
 </LinearLayout>

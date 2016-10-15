@@ -4,11 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.bda.icrm.model.Contragent;
+import ru.bda.icrm.model.Event;
 
 /**
  * Created by User on 28.06.2016.
@@ -134,5 +136,34 @@ public class DBController {
         ContentValues cv = new ContentValues();
         cv.put(DBHelper.UID, contragent.getUid());
         mDb.update(DBHelper.TABLE_CONTRAGENT, cv, DBHelper.ID + "=?", new String[] {contragent.getId()});
+    }
+
+    public void addEventToDB(Event event) {
+        mDb = dbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(DBHelper.EVENT_USER, event.getUser());
+        cv.put(DBHelper.EVENT_TIME_BEGIN, event.getTimeBegin());
+        cv.put(DBHelper.EVENT_TIME_END, event.getTimeEnd());
+        cv.put(DBHelper.EVENT_MESSAGE, event.getMessage());
+        mDb.insert(DBHelper.TABLE_EVENTS, null, cv);
+    }
+
+    public List<Event> getEvent() {
+        List<Event> events = new ArrayList<>();
+        mDb = dbHelper.getWritableDatabase();
+        Cursor cursor = mDb.query(DBHelper.TABLE_EVENTS, null, null, null, null, null, DBHelper.EVENT_TIME_BEGIN + " ASC");
+        if (cursor.moveToFirst()) {
+            do {
+                Event event = new Event();
+                event.setUser(cursor.getString(cursor.getColumnIndex(DBHelper.EVENT_USER)));
+                event.setTimeBegin(cursor.getLong(cursor.getColumnIndex(DBHelper.EVENT_TIME_BEGIN)));
+                event.setTimeEnd(cursor.getLong(cursor.getColumnIndex(DBHelper.EVENT_TIME_END)));
+                event.setDate(cursor.getString(cursor.getColumnIndex(DBHelper.EVENT_DATE)));
+                event.setMessage(cursor.getString(cursor.getColumnIndex(DBHelper.EVENT_MESSAGE)));
+                Log.d("myLog", event.toString());
+                events.add(event);
+            } while (cursor.moveToNext());
+        }
+        return events;
     }
 }

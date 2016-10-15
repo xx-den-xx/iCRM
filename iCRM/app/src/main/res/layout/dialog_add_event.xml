@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerVertical="true"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:paddingRight="6dp"
     android:paddingLeft="6dp"
     android:paddingTop="10dp"
@@ -57,7 +59,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -76,13 +78,16 @@
                             android:textSize="20dp"
                             android:textColor="@color/cardview_dark_background"/>
 
-                        <TimePicker
-                            android:id="@+id/tp_time_begin"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:numbersTextColor="@color/cardview_dark_background">
+                        <TextView
+                            android:id="@+id/tv_time_begin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:textColor="@color/colorAccent"
+                            android:text="@string/add_event_touch"/>
 
-                        </TimePicker>
                     </LinearLayout>
 
                     <LinearLayout
@@ -102,14 +107,16 @@
                             android:textSize="20dp"
                             android:textColor="@color/cardview_dark_background"/>
 
-                        <DatePicker
-                            android:id="@+id/dp_date_begin"
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/tv_date_begin"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:calendarTextColor="@color/cardview_dark_background">
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:textColor="@color/colorAccent"
+                            android:text="@string/add_event_touch"/>
 
-                        </DatePicker>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -127,7 +134,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -146,13 +153,15 @@
                             android:textSize="20dp"
                             android:textColor="@color/cardview_dark_background"/>
 
-                        <TimePicker
-                            android:id="@+id/tp_time_end"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:numbersTextColor="@color/cardview_dark_background">
-
-                        </TimePicker>
+                        <TextView
+                            android:id="@+id/tv_time_end"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:textColor="@color/colorAccent"
+                            android:text="@string/add_event_touch"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -172,14 +181,15 @@
                             android:textSize="20dp"
                             android:textColor="@color/cardview_dark_background"/>
 
-                        <DatePicker
-                            android:id="@+id/dp_date_end"
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/tv_date_end"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:calendarTextColor="@color/cardview_dark_background">
-
-                        </DatePicker>
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:textColor="@color/colorAccent"
+                            android:text="@string/add_event_touch"/>
                     </LinearLayout>
 
                 </LinearLayout>

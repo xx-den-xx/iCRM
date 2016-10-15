@@ -16,4 +16,6 @@
     <color name="btn_color_select">#ffcdcdcd</color>
 
     <color name="text_title_event">#36b311</color>
+    <color name="color_event_date_now_background">#fcdf7f</color>
+    <color name="color_event_date_background">#ffd857</color>
 </resources>
