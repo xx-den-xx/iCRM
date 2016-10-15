@@ -14,6 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_CONTRAGENT = "table_contragent";
     public static final String TABLE_TELEPHONES = "table_telephones";
     public static final String TABLE_CONTACTS = "table_contacts";
+    public static final String TABLE_EVENTS = "table_events";
 
     public static final String ID = "_id";
     public static final String UID = "uid";//uid контрагента
@@ -27,6 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String EMAIL = "email";//почта
     public static final String JUR_ADDRESS = "jur_address";//юридический адрес
     public static final String SITE = "site";//сайт
+
     public static final String CONTACTS_CONTRAGENT_ID = "contragent_id";
     public static final String CONTACTS_NAME = "contacts_name";
     public static final String CONTACTS_ROLE = "contacts_role";
@@ -34,9 +36,17 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String CONTACTS_WORK_PHONE = "contacts_work_phone";
     public static final String CONTACTS_MOBILE_PHONE = "contacts_mobile_phone";
     public static final String CONTACTS_EMAIL = "contacts_email";
+
     public static final String PHONE_TYPE = "phone_type";
     public static final String PHONE_CONTRAGENT_ID = "phone_contragent_id";
     public static final String PHONE_NUMBER = "phone_number";
+
+    //поля для таблицы TABLE_EVENTS
+    public static final String EVENT_USER = "user";
+    public static final String EVENT_TIME_BEGIN = "time_begin";
+    public static final String EVENT_TIME_END = "time_end";
+    public static final String EVENT_DATE = "date";
+    public static final String EVENT_MESSAGE = "message";
 
 
     public DBHelper(Context context) {
@@ -58,6 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + EMAIL + " text, "
                 + JUR_ADDRESS + " text, "
                 + SITE + " text);");
+
         db.execSQL("create table " + TABLE_CONTACTS
                 + "(" + ID + " integer primary key, "
                 + CONTACTS_CONTRAGENT_ID + " text, "
@@ -67,11 +78,20 @@ public class DBHelper extends SQLiteOpenHelper {
                 + CONTACTS_WORK_PHONE + " text, "
                 + CONTACTS_MOBILE_PHONE + " text, "
                 + CONTACTS_EMAIL + " text);");
+
         db.execSQL("create table " + TABLE_TELEPHONES
                 + "(" + ID + " integer primary key, "
                 + PHONE_CONTRAGENT_ID + " text, "
                 + PHONE_TYPE + " text, "
                 + PHONE_NUMBER + " text);");
+
+        db.execSQL("create table " + TABLE_EVENTS
+                + "(" + ID + " integer primary key, "
+                + EVENT_USER + " text, "
+                + EVENT_TIME_BEGIN + " real, "
+                + EVENT_TIME_END + " real, "
+                + EVENT_DATE + " text, "
+                + EVENT_MESSAGE + " text);");
     }
 
     @Override

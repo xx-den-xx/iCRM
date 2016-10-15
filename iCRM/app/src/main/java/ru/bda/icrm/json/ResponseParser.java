@@ -16,6 +16,7 @@ import java.util.List;
 import ru.bda.icrm.auth.AnswerServer;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.model.Contragent;
+import ru.bda.icrm.model.Price;
 
 /**
  * Created by User on 28.06.2016.
@@ -182,6 +183,40 @@ public class ResponseParser {
             contragent = null;
         }
         return contragent;
+    }
+
+    public List<Price> parsePrice(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+
+        Log.d("myLog", response);
+        List<Price> list = new ArrayList<>();
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            if (AnswerServer.getInstance().isAnswerServer(state)) {
+                JSONArray nomenclature = json.getJSONArray("nomenclature");
+                for (int i = 0; i < nomenclature.length(); i++) {
+                    JSONObject item = nomenclature.getJSONObject(i);
+                    Price price = new Price();
+                    price.setId(item.getInt("id"));
+                    price.setCode(item.getString("code"));
+                    price.setParent(item.getString("parent"));
+                    price.setTitle(item.getString("title").replace("&quot;", "\""));
+                    price.setPrice(item.getString("price"));
+                    list.add(price);
+                }
+                return list;
+            } else {
+                Log.d("myLog", state);
+                return null;
+            }
+
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

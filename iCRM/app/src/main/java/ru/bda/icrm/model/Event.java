@@ -8,8 +8,9 @@ import java.util.Date;
 
 public class Event {
     private String user;
-    private Date timeBegin;
-    private Date timeEnd;
+    private long timeBegin;
+    private long timeEnd;
+    private String date;
     private String message;
 
     public Event() {}
@@ -22,19 +23,19 @@ public class Event {
         this.user = user;
     }
 
-    public Date getTimeBegin() {
+    public long getTimeBegin() {
         return timeBegin;
     }
 
-    public void setTimeBegin(Date timeBegin) {
+    public void setTimeBegin(long timeBegin) {
         this.timeBegin = timeBegin;
     }
 
-    public Date getTimeEnd() {
+    public long getTimeEnd() {
         return timeEnd;
     }
 
-    public void setTimeEnd(Date timeEnd) {
+    public void setTimeEnd(long timeEnd) {
         this.timeEnd = timeEnd;
     }
 
@@ -46,12 +47,21 @@ public class Event {
         this.message = message;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
                 "user='" + user + '\'' +
                 ", timeBegin=" + timeBegin +
                 ", timeEnd=" + timeEnd +
+                ", date='" + date + '\'' +
                 ", message='" + message + '\'' +
                 '}';
     }
