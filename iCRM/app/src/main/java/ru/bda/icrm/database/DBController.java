@@ -144,8 +144,10 @@ public class DBController {
         cv.put(DBHelper.EVENT_USER, event.getUser());
         cv.put(DBHelper.EVENT_TIME_BEGIN, event.getTimeBegin());
         cv.put(DBHelper.EVENT_TIME_END, event.getTimeEnd());
+        cv.put(DBHelper.EVENT_DATE, event.getDate());
         cv.put(DBHelper.EVENT_MESSAGE, event.getMessage());
         mDb.insert(DBHelper.TABLE_EVENTS, null, cv);
+        mDb.close();
     }
 
     public List<Event> getEvent() {

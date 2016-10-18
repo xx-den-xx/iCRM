@@ -35,4 +35,11 @@ public class AppControl {
             return true;
         }
     }
+
+    public String getDateString(int year, int monthOfYear, int dayOfMonth) {
+        String date = (String.valueOf(dayOfMonth).length() < 2 ? "0" + dayOfMonth : "" + dayOfMonth) +
+                "/" + (String.valueOf(monthOfYear).length() < 2 ? "0" + monthOfYear : "" + monthOfYear) +
+                "/" + (String.valueOf(year).length() < 2 ? "0" + year : "" + year);
+        return date;
+    }
 }
