@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import ru.bda.icrm.R;
+import ru.bda.icrm.holders.AppControl;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.listener.AddEventClickListener;
 import ru.bda.icrm.model.Event;
@@ -125,8 +126,8 @@ public class AddEventDialog extends DialogFragment  implements View.OnClickListe
                 Event event = new Event();
                 if (listener != null) {
                     message = mEtMessage.getText().toString();
-                    long timeBegin = timeMilliseconds(hourBegin, minuteBegin, dayBegin, monthBegin, yearBegin);
-                    long timeEnd = timeMilliseconds(hourEnd, minuteEnd, dayEnd, monthEnd, yearEnd);
+                    long timeBegin = timeMilliseconds(hourBegin, minuteBegin, dayBegin, monthBegin + 1, yearBegin);
+                    long timeEnd = timeMilliseconds(hourEnd, minuteEnd, dayEnd, monthEnd + 1, yearEnd);
                     Log.d("myLog", "time begin = " + timeBegin + "; time end = " + timeEnd);
                     if (timeEnd > timeBegin && !message.equals("")) {
                         event.setUser(AppPref.getInstance().getStringPref(AppPref.PREF_HEX_LOGIN, getActivity()));
@@ -179,9 +180,13 @@ public class AddEventDialog extends DialogFragment  implements View.OnClickListe
         String timeString = (String.valueOf(hour).length() < 2 ? "0" + hour : "" + hour) +
                 ":" + (String.valueOf(minute).length() < 2 ? "0" + minute : "" + minute);
 
+        int convertMonth = month + 1;
+
         String dateString = (String.valueOf(day).length() < 2 ? "0" + day : "" + day) +
-                "/" + (String.valueOf(month).length() < 2 ? "0" + month : "" + month) +
+                "/" + (String.valueOf(convertMonth).length() < 2 ? "0" + (convertMonth) : "" + (convertMonth)) +
                 "/" + (String.valueOf(year).length() < 2 ? "0" + year : "" + year);
+
+        dateEvent =  dateString;
 
         mTvTimeBegin = (TextView) rootView.findViewById(R.id.tv_time_begin);
         mTvTimeBegin.setOnClickListener(this);
@@ -256,9 +261,7 @@ public class AddEventDialog extends DialogFragment  implements View.OnClickListe
     DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            String dateString = (String.valueOf(dayOfMonth).length() < 2 ? "0" + dayOfMonth : "" + dayOfMonth) +
-                    "/" + (String.valueOf(monthOfYear).length() < 2 ? "0" + monthOfYear : "" + monthOfYear) +
-                    "/" + (String.valueOf(year).length() < 2 ? "0" + year : "" + year);
+            String dateString = AppControl.getInstance().getDateString(year, monthOfYear + 1, dayOfMonth);
 
             if (mIdView == R.id.tv_date_begin) {
                 yearBegin = year;

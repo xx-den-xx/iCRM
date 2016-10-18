@@ -45,6 +45,7 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
     private Event mEvent;
     private List<Event> mEventList = new ArrayList<>();
     private DBController mDbController;
+    private boolean isAddToDb = false;
 
     @Nullable
     @Override
@@ -82,7 +83,8 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
 
     public void setEvent(Event event) {
         mEvent = event;
-        if (event != null) {
+        isAddToDb = true;
+        if (mEvent != null) {
             new EventSendTask().execute();
         }
     }
@@ -102,9 +104,12 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
 
         @Override
         protected Void doInBackground(Void... params) {
-            synchronized (DBController.class){
-                mDbController.addEventToDB(mEvent);
+            if (isAddToDb) {
+                synchronized (DBController.class) {
+                    mDbController.addEventToDB(mEvent);
+                }
             }
+            mEventList = new ArrayList<>();
             mEventList.addAll(mDbController.getEvent());
             return null;
         }
@@ -113,6 +118,8 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             mProgressBar.setVisibility(View.GONE);
+            mAdapter.setEventList(mEventList);
+            mAdapter.notifyDataSetChanged();
         }
     }
 }

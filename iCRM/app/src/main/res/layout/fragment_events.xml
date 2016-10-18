@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/layout_control"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
@@ -75,6 +76,7 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_event"
+        android:layout_below="@+id/layout_control"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
