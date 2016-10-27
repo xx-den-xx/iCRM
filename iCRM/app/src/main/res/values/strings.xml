@@ -106,6 +106,18 @@
 
     <string name="title_activity_maps">Карта</string>
 
-    <string name="my_map_key">fK8lHG61fPX5R7zDPQDYuAWMRDjQTY0~R9xo0NTgIR~Iw4zOqA~7EKPcyipUcI9F5WXpffoN380XWqr7oVYLsgfSRQuYw4QLWrGpG36rrQM=</string>
+    <!--Строки для счета-->
+    <string name="score_client">Клиент</string>
+    <string name="score_contact">Контактное лицо</string>
+    <string name="score_contract">Договор</string>
+    <string name="score_responsible">Ответственный</string>
+    <string name="score_initial_conditions">Начальные условия</string>
+    <string name="score_order_works">Порядок выполнения работ</string>
+    <string name="score_notation">Примечание</string>
+
+    <!--Строки для добавления нового счета-->
+    <string name="add_score_event">Добавить новый счет</string>
+    <string name="add_score_client">Добавить клиента</string>
+    <string name="add_score_product">Добавить товар</string>
 
 </resources>

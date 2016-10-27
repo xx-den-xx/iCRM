@@ -6,11 +6,11 @@ package ru.bda.icrm.model;
 
 public class Price {
 
-    private int id;
-    private String code;
-    private String parent;
-    private String title;
-    private String price;
+    private int id = 0;
+    private String code = "";
+    private String parent = "";
+    private String title = "";
+    private String price = "0";
 
     public Price() {}
 
