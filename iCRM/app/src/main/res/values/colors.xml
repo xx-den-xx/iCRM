@@ -17,5 +17,9 @@
 
     <color name="text_title_event">#36b311</color>
     <color name="color_event_date_now_background">#fcdf7f</color>
-    <color name="color_event_date_background">#ffd857</color>
+    <color name="color_event_date_background">#facc35</color>
+
+    <color name="color_red">#ff1313</color>
+    <color name="color_green">#45b11e</color>
+    <color name="color_orange">#e1a51b</color>
 </resources>

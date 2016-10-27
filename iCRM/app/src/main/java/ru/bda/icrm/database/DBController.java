@@ -153,7 +153,7 @@ public class DBController {
     public List<Event> getEvent() {
         List<Event> events = new ArrayList<>();
         mDb = dbHelper.getWritableDatabase();
-        Cursor cursor = mDb.query(DBHelper.TABLE_EVENTS, null, null, null, null, null, DBHelper.EVENT_TIME_BEGIN + " ASC");
+        Cursor cursor = mDb.query(DBHelper.TABLE_EVENTS, null, null, null, null, null, DBHelper.EVENT_TIME_BEGIN + " DESC");
         if (cursor.moveToFirst()) {
             do {
                 Event event = new Event();

@@ -22,18 +22,14 @@
             android:id="@+id/nav_price"
             android:icon="@drawable/ic_shopping_cart_black_24dp"
             android:title="@string/nav_price" />
-        <item
+        <!--<item
             android:id="@+id/nav_tasks"
             android:icon="@drawable/ic_import_contacts_black_24dp"
-            android:title="@string/nav_tasks"/>
+            android:title="@string/nav_tasks"/>-->
         <item
             android:id="@+id/nav_mails"
             android:icon="@drawable/ic_mail_outline_black_24dp"
             android:title="@string/nav_mails"/>
-        <item
-            android:id="@+id/nav_swap"
-            android:icon="@drawable/ic_autorenew_black_24dp"
-            android:title="@string/nav_swap"/>
     </group>
     <item android:title="">
         <menu>

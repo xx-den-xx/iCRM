@@ -2,14 +2,11 @@ package ru.bda.icrm.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,12 +19,9 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.bda.icrm.R;
-import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.dialog.AddEventDialog;
+import ru.bda.icrm.dialog.AddScoreDialog;
 import ru.bda.icrm.dialog.MyDialog;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.enums.NavMode;
@@ -36,14 +30,14 @@ import ru.bda.icrm.fragment.EventsFragment;
 import ru.bda.icrm.fragment.MailFragment;
 import ru.bda.icrm.fragment.MapFragment;
 import ru.bda.icrm.fragment.PriceFragment;
-import ru.bda.icrm.fragment.ScoresFregment;
+import ru.bda.icrm.fragment.ScoresFragment;
 import ru.bda.icrm.fragment.TasksFragment;
 import ru.bda.icrm.holders.AppPref;
-import ru.bda.icrm.listener.AddClientClickListener;
 import ru.bda.icrm.listener.AddEventClickListener;
+import ru.bda.icrm.listener.AddScoreClickListener;
 import ru.bda.icrm.listener.OnContragentClickListener;
-import ru.bda.icrm.model.Clients;
 import ru.bda.icrm.model.Event;
+import ru.bda.icrm.model.Score;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnContragentClickListener {
@@ -111,8 +105,8 @@ public class MainActivity extends AppCompatActivity
             mMenuAdd.setVisible(false);
         } else if (mode == NavMode.SCORES) {
             toolbar.setTitle(R.string.nav_scores);
-            fragment = new ScoresFregment();
-            mMenuAdd.setVisible(false);
+            fragment = new ScoresFragment();
+            mMenuAdd.setVisible(true);
         } else if (mode == NavMode.EVENTS) {
             toolbar.setTitle(R.string.nav_events);
             eventsFragment = new EventsFragment();
@@ -122,10 +116,10 @@ public class MainActivity extends AppCompatActivity
             toolbar.setTitle(R.string.nav_price);
             fragment = new PriceFragment();
             mMenuAdd.setVisible(false);
-        } else if (mode == NavMode.TASKS) {
+        /**} else if (mode == NavMode.TASKS) {
             toolbar.setTitle(R.string.nav_tasks);
             fragment = new TasksFragment();
-            mMenuAdd.setVisible(false);
+            mMenuAdd.setVisible(false);*/
         } else if (mode == NavMode.MAILS) {
             toolbar.setTitle(R.string.nav_mails);
             fragment = new MailFragment();
@@ -153,6 +147,18 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void onRightBtnClick(Event event) {
                                 eventsFragment.setEvent(event);
+                            }
+                        });
+                        dialog.show(MainActivity.this);
+                    } else if (mNavMode == NavMode.SCORES) {
+                        AddScoreDialog dialog = new AddScoreDialog();
+                        dialog.init(new AddScoreClickListener() {
+                            @Override
+                            public void onLeftBtnClick() {
+                            }
+
+                            @Override
+                            public void onRightBtnClick(Score score) {
                             }
                         });
                         dialog.show(MainActivity.this);
@@ -217,13 +223,11 @@ public class MainActivity extends AppCompatActivity
             mNavMode = NavMode.EVENTS;
         } else if (id == R.id.nav_price) {
             mNavMode = NavMode.PRICE;
-        } else if (id == R.id.nav_tasks) {
-            mNavMode = NavMode.TASKS;
+        /**} else if (id == R.id.nav_tasks) {
+            mNavMode = NavMode.TASKS;*/
         } else if (id == R.id.nav_mails) {
             mNavMode = NavMode.MAILS;
-        } else if (id == R.id.nav_swap) {
-
-        } else if (id == R.id.nav_settings) {
+        }  else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_exit) {
 

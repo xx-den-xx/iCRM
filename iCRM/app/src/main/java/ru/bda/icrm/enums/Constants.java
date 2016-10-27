@@ -9,4 +9,5 @@ public class Constants {
 
     public static final String INTENT_UID_CONTRAGENT = "intent_uid_contragent";
     public static final String INTENT_EXIT = "intent_exit";
+    public static final String INTENT_SCORE = "intent_score";
 }

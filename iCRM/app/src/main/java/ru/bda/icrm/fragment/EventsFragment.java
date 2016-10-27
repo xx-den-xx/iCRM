@@ -74,7 +74,7 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
 
     private void initRecyclerContent(View view) {
         mRVEvent = (RecyclerView) view.findViewById(R.id.recycler_view_event);
-        mAdapter = new RecyclerEventAdapter(mEventList, Calendar.getInstance());
+        mAdapter = new RecyclerEventAdapter(getActivity(), mEventList, Calendar.getInstance());
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRVEvent.setLayoutManager(mLayoutManager);
         mRVEvent.setAdapter(mAdapter);
