@@ -4,12 +4,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import ru.bda.icrm.R;
+import ru.bda.icrm.listener.AddPriceClickListener;
 import ru.bda.icrm.model.Price;
+import ru.bda.icrm.model.PriceSum;
 
 /**
  * Created by User on 12.10.2016.
@@ -17,9 +20,10 @@ import ru.bda.icrm.model.Price;
 
 public class RecyclerPriceAdapter extends RecyclerView.Adapter<RecyclerPriceAdapter.ViewHolder> {
 
-    private List<Price> mPriceList;
+    private List<PriceSum> mPriceList;
+    private AddPriceClickListener priceListener;
 
-    public RecyclerPriceAdapter(List<Price> list) {
+    public RecyclerPriceAdapter(List<PriceSum> list) {
         this.mPriceList = list;
     }
 
@@ -32,11 +36,17 @@ public class RecyclerPriceAdapter extends RecyclerView.Adapter<RecyclerPriceAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Price price = mPriceList.get(position);
+        final PriceSum price = mPriceList.get(position);
         String title = price.getTitle();
-        String coast = price.getPrice();
+        double coast = price.getPrice();
         holder.title.setText(title);
-        holder.price.setText(coast);
+        holder.price.setText(coast + " RUB");
+        holder.priceLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                priceListener.addPriceListener(price);
+            }
+        });
     }
 
     @Override
@@ -44,15 +54,21 @@ public class RecyclerPriceAdapter extends RecyclerView.Adapter<RecyclerPriceAdap
         return mPriceList.size();
     }
 
-    public void setPriceList(List<Price> list) {
+    public void setPriceList(List<PriceSum> list) {
         this.mPriceList = list;
     }
 
+    public void addPriceClickListener(AddPriceClickListener priceListener) {
+        this.priceListener = priceListener;
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder{
+        public LinearLayout priceLayout;
         public TextView title;
         public TextView price;
         public ViewHolder(View itemView) {
             super(itemView);
+            priceLayout = (LinearLayout) itemView.findViewById(R.id.price_layout);
             title = (TextView) itemView.findViewById(R.id.title);
             price = (TextView) itemView.findViewById(R.id.price);
         }

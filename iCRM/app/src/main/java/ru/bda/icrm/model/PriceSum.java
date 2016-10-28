@@ -6,25 +6,25 @@ package ru.bda.icrm.model;
 
 public class PriceSum extends Price {
 
-    private int sum = 1;
-    private int totlalCoast = 1;
+    private double sum = 1;
+    private double totlalCoast = 1;
 
     public PriceSum() {
     }
 
-    public int getSum() {
+    public double getSum() {
         return sum;
     }
 
-    public void setSum(int sum) {
+    public void setSum(double sum) {
         this.sum = sum;
     }
 
-    public int getTotlalCoast() {
+    public double getTotalCoast() {
         return totlalCoast;
     }
 
-    public void setTotlalCoast(int totlalCoast) {
+    public void setTotlalCoast(double totlalCoast) {
         this.totlalCoast = totlalCoast;
     }
 

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import ru.bda.icrm.R;
+import ru.bda.icrm.listener.AddContragentClickListener;
 import ru.bda.icrm.listener.OnContragentClickListener;
 import ru.bda.icrm.model.Contragent;
 
@@ -21,6 +22,7 @@ public class ContragentRecyclerAdapter extends RecyclerView.Adapter<ContragentRe
 
     private List<Contragent> agentList;
     private OnContragentClickListener listener;
+    private AddContragentClickListener addListener;
 
     public ContragentRecyclerAdapter(List<Contragent> list) {
         this.agentList = list;
@@ -40,7 +42,12 @@ public class ContragentRecyclerAdapter extends RecyclerView.Adapter<ContragentRe
         holder.llItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onContragentClick(contragent.getId());
+                if (listener != null) {
+                    listener.onContragentClick(contragent.getId());
+                }
+                if (addListener != null) {
+                    addListener.addContragentListener(contragent);
+                }
             }
         });
     }
@@ -57,6 +64,10 @@ public class ContragentRecyclerAdapter extends RecyclerView.Adapter<ContragentRe
 
     public void setOnContragentClickListener (OnContragentClickListener listener) {
         this.listener = listener;
+    }
+
+    public void addContragentClickListener(AddContragentClickListener addListener) {
+        this.addListener = addListener;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

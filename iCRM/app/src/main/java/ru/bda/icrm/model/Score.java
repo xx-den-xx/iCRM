@@ -26,7 +26,7 @@ public class Score implements Serializable {
     private String linkSound = "";//линка звука
     private int priority = 1;//приоритет
     private int status = 1;//статус
-    private List<Price> productList = new ArrayList<>();//товар в счете
+    private List<PriceSum> productList = new ArrayList<>();//товар в счете
     private boolean isInWork = true;//в работе или на согласовании
 
     public Score() {}
@@ -170,11 +170,11 @@ public class Score implements Serializable {
         this.status = status;
     }
 
-    public List<Price> getProductList() {
+    public List<PriceSum> getProductList() {
         return productList;
     }
 
-    public void setProductList(List<Price> productList) {
+    public void setProductList(List<PriceSum> productList) {
         this.productList = productList;
     }
 
