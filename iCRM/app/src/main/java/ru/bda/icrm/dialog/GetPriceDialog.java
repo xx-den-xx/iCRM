@@ -1,28 +1,28 @@
-package ru.bda.icrm.fragment;
+package ru.bda.icrm.dialog;
 
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
+import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,15 +31,16 @@ import ru.bda.icrm.adapter.RecyclerPriceAdapter;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.enums.SearchMode;
 import ru.bda.icrm.holders.AppPref;
+import ru.bda.icrm.listener.AddPriceClickListener;
 import ru.bda.icrm.listener.EndlessScrollListener;
-import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Price;
 import ru.bda.icrm.model.PriceSum;
 
 /**
- * Created by User on 31.08.2016.
+ * Created by User on 27.10.2016.
  */
-public class PriceFragment extends Fragment {
+
+public class GetPriceDialog extends DialogFragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerPriceAdapter mAdapter;
@@ -47,25 +48,51 @@ public class PriceFragment extends Fragment {
     private ImageView mIvSearch;
     private EditText mEtSearch;
     private ImageView mIvCancel;
-    private ProgressBar mProgressBar;
+    private Button mOkBtn;
     private List<PriceSum> mPriceList = new ArrayList<>();
     private int startProgressInt = 0;
     private int countProgressInt = 50;
     private SearchMode searchMode = SearchMode.LOAD;
 
+    private AddPriceClickListener priceListener;
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = new Dialog(getActivity(), R.style.MyDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        RelativeLayout root = new RelativeLayout(getActivity());
+        root.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT ,
+                RelativeLayout.LayoutParams.WRAP_CONTENT));
+        dialog.setContentView(root);
+        dialog.getWindow().setLayout( ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        return dialog;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_price, null);
-        //getSHA1();
-        initContent(view);
-        new NomenclatureTask().execute();
-        return view;
+        View rootView = inflater.inflate(R.layout.dialog_get_price, container, false);
+        initContent(rootView);
+        return rootView;
     }
 
     private void initContent(View view) {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mAdapter = new RecyclerPriceAdapter(mPriceList);
+        mAdapter.addPriceClickListener(new AddPriceClickListener() {
+            @Override
+            public void addPriceListener(PriceSum price) {
+                if (priceListener != null) {
+                    price.setTotlalCoast(price.getPrice());
+                    priceListener.addPriceListener(price);
+                }
+                dismiss();
+            }
+        });
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
@@ -78,7 +105,6 @@ public class PriceFragment extends Fragment {
                 }
             }
         });
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
         mIvSearch = (ImageView) view.findViewById(R.id.iv_search);
         mEtSearch = (EditText) view.findViewById(R.id.et_search);
@@ -124,6 +150,16 @@ public class PriceFragment extends Fragment {
 
             }
         });
+
+        mOkBtn = (Button) view.findViewById(R.id.btn_ok);
+        mOkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+
+        new NomenclatureTask().execute();
     }
 
     private void setSearch(String text) {
@@ -136,36 +172,22 @@ public class PriceFragment extends Fragment {
         }
     }
 
-    private void getSHA1() {
-        PackageInfo info;
-        try {
 
-            info = getActivity().getPackageManager().getPackageInfo(
-                    "ru.bda.icrm", PackageManager.GET_SIGNATURES);
-
-            for (Signature signature : info.signatures) {
-                MessageDigest md;
-                md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String something = new String(Base64.encode(md.digest(), 0));
-                Log.e("myLog", something);
-            }
-
-        } catch (PackageManager.NameNotFoundException e1) {
-            Log.e("name not found", e1.toString());
-        } catch (NoSuchAlgorithmException e) {
-            Log.e("no such an algorithm", e.toString());
-        } catch (Exception e) {
-            Log.e("exception", e.toString());
-        }
+    public void show(FragmentActivity activity) {
+        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+        show(fragmentManager, null);
     }
 
-    private class NomenclatureTask extends AsyncTask<Void, Void, Void>{
+    public GetPriceDialog init(AddPriceClickListener priceListener) {
+        this.priceListener = priceListener;
+        return this;
+    }
+
+    private class NomenclatureTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -185,7 +207,6 @@ public class PriceFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            mProgressBar.setVisibility(View.GONE);
             if (mPriceList != null) {
                 startProgressInt += countProgressInt;
                 mAdapter.setPriceList(mPriceList);
@@ -200,7 +221,6 @@ public class PriceFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -216,7 +236,6 @@ public class PriceFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            mProgressBar.setVisibility(View.GONE);
             if (mPriceList != null) {
                 startProgressInt = 0;
                 mAdapter.setPriceList(mPriceList);

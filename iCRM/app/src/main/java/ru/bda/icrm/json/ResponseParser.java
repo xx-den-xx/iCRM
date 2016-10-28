@@ -17,6 +17,7 @@ import ru.bda.icrm.auth.AnswerServer;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Price;
+import ru.bda.icrm.model.PriceSum;
 
 /**
  * Created by User on 28.06.2016.
@@ -25,7 +26,6 @@ public class ResponseParser {
     private static volatile ResponseParser instance;
 
     private ResponseParser(){}
-    public static List<Contragent> sContragentList;
 
     public static ResponseParser getInstance(){
         if(instance == null){
@@ -60,30 +60,27 @@ public class ResponseParser {
         return sb.toString();
     }
 
-    public String parseContragentList(InputStream stream){
+    public List<Contragent> parseContragentList(InputStream stream){
         String response = convertStreamToString(stream);
         JSONObject json;
-        String request = "";
 
         try {
             json = new JSONObject(response);
             JSONArray dataJSONArray = json.getJSONArray("data");
-            sContragentList = new ArrayList<>();
+            List<Contragent> contragentList = new ArrayList<>();
             for(int i = 0; i < dataJSONArray.length(); i++) {
                 Contragent contragent = new Contragent();
                 JSONObject obj = dataJSONArray.getJSONObject(i);
                 contragent.setUid(obj.getString("uid"));
                 contragent.setNameContragent(obj.getString("title"));
-                sContragentList.add(contragent);
+                contragentList.add(contragent);
             }
-            request = json.toString();
-            Log.d("myLog", request);
-            return request;
+            return contragentList;
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return request;
+        return null;
     }
 
     public String parseToken(InputStream stream) {
@@ -112,7 +109,6 @@ public class ResponseParser {
         String response = convertStreamToString(stream);
         JSONObject json;
         Contragent contragent = new Contragent();
-        Log.d("myLog", response);
         try {
             json = new JSONObject(response);
             JSONObject jsonData = json.getJSONObject("data");
@@ -167,7 +163,6 @@ public class ResponseParser {
     public Contragent parseSaveContragent(InputStream stream, Contragent contragent) {
         String response = convertStreamToString(stream);
         JSONObject json;
-        Log.d("myLog", response);
         try {
             json = new JSONObject(response);
             String state = json.getString("state");
@@ -177,7 +172,6 @@ public class ResponseParser {
                 contragent = null;
             }
             Log.d("myLog", state);
-
         } catch(JSONException e) {
             e.printStackTrace();
             contragent = null;
@@ -188,8 +182,6 @@ public class ResponseParser {
     public List<Price> parsePrice(InputStream stream) {
         String response = convertStreamToString(stream);
         JSONObject json;
-
-        Log.d("myLog", response);
         List<Price> list = new ArrayList<>();
         try {
             json = new JSONObject(response);
@@ -203,7 +195,43 @@ public class ResponseParser {
                     price.setCode(item.getString("code"));
                     price.setParent(item.getString("parent"));
                     price.setTitle(item.getString("title").replace("&quot;", "\""));
-                    price.setPrice(item.getString("price"));
+                    String priceString = item.getString("price").replace(",", ".");
+                    String convertPrice = priceString.replace(" ", "");
+                    price.setPrice(Double.parseDouble(convertPrice));
+                    list.add(price);
+                }
+                return list;
+            } else {
+                Log.d("myLog", state);
+                return null;
+            }
+
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<PriceSum> parsePriceSum(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        List<PriceSum> list = new ArrayList<>();
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            if (AnswerServer.getInstance().isAnswerServer(state)) {
+                JSONArray nomenclature = json.getJSONArray("nomenclature");
+                for (int i = 0; i < nomenclature.length(); i++) {
+                    JSONObject item = nomenclature.getJSONObject(i);
+                    PriceSum price = new PriceSum();
+                    price.setId(item.getInt("id"));
+                    price.setCode(item.getString("code"));
+                    price.setParent(item.getString("parent"));
+                    price.setTitle(item.getString("title").replace("&quot;", "\""));
+                    String priceString = item.getString("price").replace(",", ".");
+                    String convertPrice = priceString.replace(" ", "");
+                    price.setPrice(Double.parseDouble(convertPrice));
                     list.add(price);
                 }
                 return list;

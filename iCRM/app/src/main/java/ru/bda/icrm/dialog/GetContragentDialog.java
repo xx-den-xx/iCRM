@@ -1,14 +1,13 @@
-package ru.bda.icrm.fragment;
+package ru.bda.icrm.dialog;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -17,10 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,49 +29,74 @@ import java.util.List;
 import ru.bda.icrm.R;
 import ru.bda.icrm.adapter.ContragentRecyclerAdapter;
 import ru.bda.icrm.auth.ApiController;
-import ru.bda.icrm.database.DBController;
 import ru.bda.icrm.enums.SearchMode;
-import ru.bda.icrm.holders.AppControl;
 import ru.bda.icrm.holders.AppPref;
-import ru.bda.icrm.json.ResponseParser;
+import ru.bda.icrm.listener.AddContragentClickListener;
 import ru.bda.icrm.listener.EndlessScrollListener;
-import ru.bda.icrm.listener.OnContragentClickListener;
 import ru.bda.icrm.model.Contragent;
 
 /**
- * Created by User on 29.06.2016.
+ * Created by User on 27.10.2016.
  */
-public class ContragentFragment extends Fragment implements OnContragentClickListener{
 
-    private ProgressBar mProgressBar;
+public class GetContragentDialog extends DialogFragment {
+
+    private Button mRightBtn;
     private RecyclerView mAgentRV;
     private ContragentRecyclerAdapter mAgentAdapter;
     private LinearLayoutManager mLayoutManager;
-    private DBController mDBController;
-    private OnContragentClickListener contrListener;
     private ImageView mIvSearch;
     private EditText mEtSearch;
     private ImageView mIvCancel;
     private int startProgressInt = 0;
     private int countProgressInt = 50;
     private SearchMode searchMode = SearchMode.LOAD;
-
     private List<Contragent> mListContragent = new ArrayList<>();
+    private AddContragentClickListener addListener;
 
+    @NonNull
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = new Dialog(getActivity(), R.style.MyDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        RelativeLayout root = new RelativeLayout(getActivity());
+        root.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT ,
+                RelativeLayout.LayoutParams.WRAP_CONTENT));
+        dialog.setContentView(root);
+        dialog.getWindow().setLayout( ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        return dialog;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_contragent, null);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        View rootView = inflater.inflate(R.layout.dialog_get_contragent, container, false);
+        initContent(rootView);
+        new ContragentRequestTask().execute();
+        return rootView;
+    }
+
+    private void initContent(View view) {
+        mRightBtn = (Button) view.findViewById(R.id.btn_right);
+        mRightBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
 
         mAgentRV = (RecyclerView) view.findViewById(R.id.agent_recycler_view);
         mAgentAdapter = new ContragentRecyclerAdapter(mListContragent);
-        mAgentAdapter.setOnContragentClickListener(this);
+        mAgentAdapter.addContragentClickListener(new AddContragentClickListener() {
+            @Override
+            public void addContragentListener(Contragent contragent) {
+                addListener.addContragentListener(contragent);
+                dismiss();
+            }
+        });
         mLayoutManager = new LinearLayoutManager(getActivity());
         mAgentRV.setLayoutManager(mLayoutManager);
         mAgentRV.setAdapter(mAgentAdapter);
@@ -126,15 +152,6 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
 
             }
         });
-
-        mDBController = new DBController(getActivity());
-        if (AppControl.getInstance().isOnline(getActivity())) {
-            new ContragentRequestTask().execute();
-        } else {
-            Toast.makeText(getActivity(), "Нет подключения к интернету", Toast.LENGTH_LONG).show();
-            //new AgentFromBDTask().execute();
-        }
-        return view;
     }
 
     private void setSearch(String text) {
@@ -147,13 +164,14 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
         }
     }
 
-    @Override
-    public void onContragentClick(String uid) {
-        contrListener.onContragentClick(uid);
+    public void show(FragmentActivity activity) {
+        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+        show(fragmentManager, null);
     }
 
-    public void setOnContragentClickListener(OnContragentClickListener listener) {
-        this.contrListener = listener;
+    public GetContragentDialog init(AddContragentClickListener addListener) {
+        this.addListener = addListener;
+        return this;
     }
 
     private class ContragentRequestTask extends AsyncTask<Void, Void, Void> {
@@ -161,14 +179,13 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             List<Contragent> list = ApiController.getInstance()
                     .getContragentList(AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getActivity()),
-                        startProgressInt, countProgressInt);
+                            startProgressInt, countProgressInt);
             if (list != null) {
                 if (startProgressInt == 0) {
                     mListContragent = list;
@@ -183,7 +200,6 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
         @Override
         protected void onPostExecute(Void aBoolean) {
             super.onPostExecute(aBoolean);
-            mProgressBar.setVisibility(View.GONE);
             if (mListContragent != null) {
                 startProgressInt += countProgressInt;
                 mAgentAdapter.setAgentList(mListContragent);
@@ -197,7 +213,6 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -215,7 +230,6 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
         @Override
         protected void onPostExecute(Void aBoolean) {
             super.onPostExecute(aBoolean);
-            mProgressBar.setVisibility(View.GONE);
             if (mListContragent != null) {
                 startProgressInt = 0;
                 mAgentAdapter.setAgentList(mListContragent);

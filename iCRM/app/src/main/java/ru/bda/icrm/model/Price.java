@@ -10,7 +10,7 @@ public class Price {
     private String code = "";
     private String parent = "";
     private String title = "";
-    private String price = "0";
+    private double price = 0;
 
     public Price() {}
 
@@ -46,11 +46,11 @@ public class Price {
         this.title = title;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
