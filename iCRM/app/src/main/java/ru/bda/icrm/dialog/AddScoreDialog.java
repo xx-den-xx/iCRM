@@ -58,6 +58,7 @@ public class AddScoreDialog extends DialogFragment {
     private LinearLayoutManager mLayoutMangaer;
     private AddScoreAdapter mAdapter;
     private Contragent mContragent;
+    private double mTotalScore;
 
     @NonNull
     @Override
@@ -99,16 +100,13 @@ public class AddScoreDialog extends DialogFragment {
         mRightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listener != null) {
-                    mScore.setClient("");
-                    mScore.setStatus(1);
-                    mScore.setPriority(1);
-                    mScore.setDateAccount(Calendar.getInstance().getTimeInMillis());
-                    mScore.setProductList(new ArrayList<PriceSum>());
-                    listener.onRightBtnClick(null);
+                if (listener != null && mContragent != null && mPriceList.size() > 0) {
+                    listener.onRightBtnClick(getScore());
+                    mPriceList = null;
+                    dismiss();
+                } else {
+
                 }
-                mPriceList = null;
-                dismiss();
             }
         });
 
@@ -142,7 +140,6 @@ public class AddScoreDialog extends DialogFragment {
                                 for (int i = 0; i < mPriceList.size(); i++) {
                                     PriceSum sum = mPriceList.get(i);
                                     if (!sum.getTitle().equals(price.getTitle())) {
-                                        Log.d("myLog", "line " + 1 + "have:" + sum.getTitle() + " = add:" + price.getTitle());
                                         isHavePrice = false;
                                     } else {
                                         isHavePrice = true;
@@ -159,7 +156,7 @@ public class AddScoreDialog extends DialogFragment {
                                 totalCoast = new BigDecimal(totalCoast + sum.getTotalCoast())
                                         .setScale(2, RoundingMode.HALF_UP).doubleValue();
                             }
-                            mTvCoast.setText(totalCoast + " RUB");
+                            mTvCoast.setText(totalCoast + "");
                         }
                     }
                 });
@@ -189,12 +186,22 @@ public class AddScoreDialog extends DialogFragment {
                     totalCoast = new BigDecimal(totalCoast + priceSum.getTotalCoast())
                             .setScale(2, RoundingMode.HALF_UP).doubleValue();
                 }
-                mTvCoast.setText(totalCoast + " RUB");
+                mTvCoast.setText(""+totalCoast);
             }
         });
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(mLayoutMangaer);
         mRecyclerView.setHasFixedSize(true);
+    }
+
+    private Score getScore() {
+        mScore.setClient(mContragent);
+        mScore.setDateAccount(Calendar.getInstance().getTimeInMillis());
+        mScore.setProductList(mPriceList);
+        mScore.setSumScore(Double.parseDouble(mTvCoast.getText().toString()));
+        Log.d("myLog", "Client ID = " + mContragent.getId() + "\n" + " date = " + mScore.getDateAccount()
+                + "\n" + mScore.getProductList().toString());
+        return mScore;
     }
 
     public void show(FragmentActivity activity) {

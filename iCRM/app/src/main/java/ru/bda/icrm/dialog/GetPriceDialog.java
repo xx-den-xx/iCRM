@@ -33,7 +33,6 @@ import ru.bda.icrm.enums.SearchMode;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.listener.AddPriceClickListener;
 import ru.bda.icrm.listener.EndlessScrollListener;
-import ru.bda.icrm.model.Price;
 import ru.bda.icrm.model.PriceSum;
 
 /**

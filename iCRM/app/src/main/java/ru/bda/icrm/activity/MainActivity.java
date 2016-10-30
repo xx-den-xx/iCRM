@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
 
     private ContragentFragment contragentFragment;
     private EventsFragment eventsFragment;
+    private ScoresFragment scoresFragment;
 
     private FrameLayout fragmentContent;
     private DrawerLayout drawer;
@@ -105,7 +106,8 @@ public class MainActivity extends AppCompatActivity
             mMenuAdd.setVisible(false);
         } else if (mode == NavMode.SCORES) {
             toolbar.setTitle(R.string.nav_scores);
-            fragment = new ScoresFragment();
+            scoresFragment = new ScoresFragment();
+            fragment = scoresFragment;
             mMenuAdd.setVisible(true);
         } else if (mode == NavMode.EVENTS) {
             toolbar.setTitle(R.string.nav_events);
@@ -159,6 +161,7 @@ public class MainActivity extends AppCompatActivity
 
                             @Override
                             public void onRightBtnClick(Score score) {
+                                scoresFragment.setScore(score);
                             }
                         });
                         dialog.show(MainActivity.this);

@@ -18,9 +18,12 @@ public class Contragent {
     private String mContactInfo = "";//контактная информация
     private String mEmail = "";//почта
     private String mJurAddress = "";//юридический адрес
+    private String mFizAddress = "";//физический адрес
     private String mSite = "";//сайт
     private List<String> mPhones = null;//список телефонов
     private List<String> mContacts = null;//список контактных лиц
+    private double lat;//latitude
+    private double lon;//longitude
 
 
 
@@ -146,6 +149,30 @@ public class Contragent {
 
     public void setContacts(List<String> mContacts) {
         this.mContacts = mContacts;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
+    }
+
+    public String getmFizAddress() {
+        return mFizAddress;
+    }
+
+    public void setmFizAddress(String mFizAddress) {
+        this.mFizAddress = mFizAddress;
     }
 
     @Override

@@ -1,17 +1,25 @@
 package ru.bda.icrm.activity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import ru.bda.icrm.R;
 import ru.bda.icrm.auth.ApiController;
@@ -38,6 +46,12 @@ public class ContragentActivity extends AppCompatActivity {
     private EditText mEtClientName;
     private TextView mTvClientRelation;
     private LinearLayout mLlAddContactFace;
+    private MenuItem mMapItem;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +62,9 @@ public class ContragentActivity extends AppCompatActivity {
         setToolbar();
         setContent();
         new ContragentTask().execute();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void setToolbar() {
@@ -57,6 +74,19 @@ public class ContragentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        mToolbar.inflateMenu(R.menu.activity_contragent);
+        mMapItem = (MenuItem) mToolbar.getMenu().findItem(R.id.action_maps);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (mMapItem.getItemId() == R.id.action_maps) {
+                    Intent intent = new Intent(ContragentActivity.this, MapActivity.class);
+                    intent.putExtra(Constants.INTENT_UID_CONTRAGENT, mContragent.getId());
+                    startActivity(intent);
+                }
+                return false;
             }
         });
     }
@@ -91,6 +121,42 @@ public class ContragentActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Contragent Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
+
     private class ContragentTask extends AsyncTask<Void, Void, Boolean> {
 
         @Override
@@ -116,7 +182,7 @@ public class ContragentActivity extends AppCompatActivity {
                 mToolbar.setTitle(mContragent.getNameContragent());
                 mProgressBar.setVisibility(View.GONE);
                 mLlMainContent.setVisibility(View.VISIBLE);
-                if (mContragent.getUrFace().equals("1")){
+                if (mContragent.getUrFace().equals("1")) {
                     mTvJurFace.setTextColor(getResources().getColor(R.color.client_text_active));
                     mTvFizFace.setTextColor(getResources().getColor(R.color.client_text_inactive));
                 } else {

@@ -12,9 +12,9 @@ import java.util.List;
 public class Score implements Serializable {
 
     private String numberAccount = "";//номер счета
-    private String client = "";//клиент
+    private Contragent client = new Contragent();//клиент
     private long dateAccount = 0;//дата счета
-    private int sumScore = 0;//сумма счета
+    private double sumScore = 0;//сумма счета
     private String contactFace = "";//контактное лицо
     private String contract = "";//договор
     private String responsible = "";//ответственное лицо
@@ -50,7 +50,7 @@ public class Score implements Serializable {
      *
      * @return возвращает клиента
      */
-    public String getClient() {
+    public Contragent getClient() {
         return client;
     }
 
@@ -58,7 +58,7 @@ public class Score implements Serializable {
      *
      * @param client присваивает клиента
      */
-    public void setClient(String client) {
+    public void setClient(Contragent client) {
         this.client = client;
     }
 
@@ -74,11 +74,11 @@ public class Score implements Serializable {
         this.dateAccount = dateAccount;
     }
 
-    public int getSumScore() {
+    public double getSumScore() {
         return sumScore;
     }
 
-    public void setSumScore(int sumScore) {
+    public void setSumScore(double sumScore) {
         this.sumScore = sumScore;
     }
 
