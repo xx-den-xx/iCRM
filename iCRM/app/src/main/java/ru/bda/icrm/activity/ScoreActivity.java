@@ -25,27 +25,28 @@ import ru.bda.icrm.model.Score;
 
 public class ScoreActivity extends AppCompatActivity {
 
-    private Score score;
+    private Score score = new Score();
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private ScoreTabAdapter mScoreAdapter;
     private ProgressBar mProgressBar;
     private FloatingActionButton mFab;
+    private String mNumberAccount;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score);
         if (getIntent() != null) {
-            score = (Score) getIntent().getSerializableExtra(Constants.INTENT_SCORE);
+            mNumberAccount = getIntent().getStringExtra(Constants.INTENT_SCORE);
         }
         initContent();
     }
 
     private void initContent() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle(score.getNumberAccount());
+        mToolbar.setTitle(mNumberAccount);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

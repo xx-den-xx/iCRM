@@ -1,23 +1,25 @@
 package ru.bda.icrm.model;
 
+import java.io.Serializable;
+
 /**
  * Created by User on 27.10.2016.
  */
 
-public class PriceSum extends Price {
+public class PriceSum extends Price implements Serializable{
 
-    private double sum = 1;
+    private double number = 1;
     private double totlalCoast = 1;
 
     public PriceSum() {
     }
 
     public double getSum() {
-        return sum;
+        return number;
     }
 
     public void setSum(double sum) {
-        this.sum = sum;
+        this.number = sum;
     }
 
     public double getTotalCoast() {
@@ -31,7 +33,7 @@ public class PriceSum extends Price {
     @Override
     public String toString() {
         return "PriceSum{" +
-                "sum=" + sum +
+                "sum=" + number +
                 ", totlalCoast=" + totlalCoast +
                 '}';
     }

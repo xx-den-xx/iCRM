@@ -38,7 +38,7 @@ public class RecyclerScoreAdapter extends RecyclerView.Adapter<RecyclerScoreAdap
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Score score = mListScore.get(position);
         String numberAccount = score.getNumberAccount();
-        String nameClient = score.getClient();
+        String nameClient = score.getClient().getNameContragent();
         String summ = score.getSumScore() + " RUB";
         String date = getDate(score.getDateAccount(), "dd.MM.yyyy");
         holder.tvCompanyTitle.setText(nameClient + ", " + numberAccount);

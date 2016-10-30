@@ -125,6 +125,8 @@ public class ResponseParser {
                 contragent.setEmail(jsonData.getString("email"));
                 contragent.setJurAddress(jsonData.getString("jur_address"));
                 contragent.setSite(jsonData.getString("site"));
+                contragent.setLon(Double.valueOf(jsonData.getString("lng")));
+                contragent.setLat(Double.valueOf(jsonData.getString("lat")));
 
                 List<String> phones = new ArrayList<String>();
                 JSONArray jPhones = jsonData.getJSONArray("phones");

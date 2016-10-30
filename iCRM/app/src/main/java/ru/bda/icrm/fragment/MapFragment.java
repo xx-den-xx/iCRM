@@ -10,13 +10,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import ru.bda.icrm.R;
+import ru.bda.icrm.listener.OnMapClickListener;
+import ru.bda.icrm.map.OverlayGeoCode;
 import ru.yandex.yandexmapkit.MapController;
 import ru.yandex.yandexmapkit.MapView;
+import ru.yandex.yandexmapkit.map.MapEvent;
+import ru.yandex.yandexmapkit.map.OnMapListener;
 import ru.yandex.yandexmapkit.overlay.location.MyLocationOverlay;
 import ru.yandex.yandexmapkit.utils.GeoPoint;
 
@@ -26,9 +31,7 @@ import ru.yandex.yandexmapkit.utils.GeoPoint;
 public class MapFragment extends Fragment {
 
     private MapView mMapView;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
-    private MyLocationOverlay cLocationOverlay;
+    private OverlayGeoCode overlay;
 
     @Nullable
     @Override
@@ -36,44 +39,21 @@ public class MapFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_map, null);
         initContent(view);
 
+        mMapView.showBuiltInScreenButtons(true);
+
         MapController mMapController = mMapView.getMapController();
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
 
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            //return ;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        mMapController.setPositionAnimationTo(new GeoPoint(60.113337, 55.151317));
+        mMapController.setPositionAnimationTo(new GeoPoint());
         mMapController.setZoomCurrent(15);
+
+        overlay = new OverlayGeoCode(mMapController);
+        overlay.setOnMapClickListener(new OnMapClickListener() {
+            @Override
+            public void onMapClick(double lat, double lon) {
+
+            }
+        });
+        mMapController.getOverlayManager().addOverlay(overlay);
         return view;
     }
 
