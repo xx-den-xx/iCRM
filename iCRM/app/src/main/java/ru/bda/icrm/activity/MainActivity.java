@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import ru.bda.icrm.R;
 import ru.bda.icrm.dialog.AddEventDialog;
 import ru.bda.icrm.dialog.AddScoreDialog;
+import ru.bda.icrm.dialog.GetContragentDialog;
 import ru.bda.icrm.dialog.MyDialog;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.enums.NavMode;
@@ -33,9 +35,11 @@ import ru.bda.icrm.fragment.PriceFragment;
 import ru.bda.icrm.fragment.ScoresFragment;
 import ru.bda.icrm.fragment.TasksFragment;
 import ru.bda.icrm.holders.AppPref;
+import ru.bda.icrm.listener.AddContragentClickListener;
 import ru.bda.icrm.listener.AddEventClickListener;
 import ru.bda.icrm.listener.AddScoreClickListener;
 import ru.bda.icrm.listener.OnContragentClickListener;
+import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Event;
 import ru.bda.icrm.model.Score;
 
@@ -153,18 +157,14 @@ public class MainActivity extends AppCompatActivity
                         });
                         dialog.show(MainActivity.this);
                     } else if (mNavMode == NavMode.SCORES) {
-                        AddScoreDialog dialog = new AddScoreDialog();
-                        dialog.init(new AddScoreClickListener() {
+                        GetContragentDialog contragentDialog  = new GetContragentDialog();
+                        contragentDialog.init(new AddContragentClickListener() {
                             @Override
-                            public void onLeftBtnClick() {
-                            }
-
-                            @Override
-                            public void onRightBtnClick(Score score) {
-                                scoresFragment.setScore(score);
+                            public void addContragentListener(final Contragent contragent) {
+                                scoresFragment.setContragentId(contragent.getId());
                             }
                         });
-                        dialog.show(MainActivity.this);
+                        contragentDialog.show(MainActivity.this);
                     }
                 }
                 return false;

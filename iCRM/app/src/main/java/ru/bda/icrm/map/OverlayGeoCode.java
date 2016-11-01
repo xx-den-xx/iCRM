@@ -1,9 +1,12 @@
 package ru.bda.icrm.map;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import ru.bda.icrm.dialog.MyDialog;
 import ru.bda.icrm.listener.OnMapClickListener;
 import ru.yandex.yandexmapkit.MapController;
 import ru.yandex.yandexmapkit.map.GeoCode;
@@ -18,10 +21,12 @@ import ru.yandex.yandexmapkit.utils.ScreenPoint;
 public class OverlayGeoCode extends Overlay implements GeoCodeListener {
 
     private OnMapClickListener mapListener;
+    private AppCompatActivity ctx;
 
 
-    public OverlayGeoCode(MapController mapController) {
+    public OverlayGeoCode(MapController mapController, AppCompatActivity ctx) {
         super(mapController);
+        this.ctx = ctx;
     }
 
     @Override
@@ -46,23 +51,19 @@ public class OverlayGeoCode extends Overlay implements GeoCodeListener {
             getMapController().getMapView().post(new Runnable() {
                 @Override
                 public void run() {
-                        final AlertDialog.Builder dialog = new AlertDialog.Builder( getMapController().getContext());
-                    dialog.setTitle(geoCode.getDisplayName());
-                    dialog.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
+                    MyDialog dialog = new MyDialog();
+                    dialog.init("Сохранить координаты", geoCode.getDisplayName(), "Отмена", "Сохранить", new MyDialog.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mapListener.onMapClick(geoCode.getGeoPoint().getLat(), geoCode.getGeoPoint().getLon());
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.show();
+                        public void onLeftBtnClick() {
 
+                        }
+
+                        @Override
+                        public void onRightBtnClick() {
+                            mapListener.onMapClick(geoCode.getGeoPoint().getLat(), geoCode.getGeoPoint().getLon());
+                        }
+                    });
+                    dialog.show(ctx);
                 }
             });
         }

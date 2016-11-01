@@ -63,7 +63,7 @@ public class ResponseParser {
     public List<Contragent> parseContragentList(InputStream stream){
         String response = convertStreamToString(stream);
         JSONObject json;
-
+        Log.d("myLog", response);
         try {
             json = new JSONObject(response);
             JSONArray dataJSONArray = json.getJSONArray("data");
@@ -71,8 +71,10 @@ public class ResponseParser {
             for(int i = 0; i < dataJSONArray.length(); i++) {
                 Contragent contragent = new Contragent();
                 JSONObject obj = dataJSONArray.getJSONObject(i);
-                contragent.setUid(obj.getString("uid"));
+                contragent.setId(obj.getString("id"));
                 contragent.setNameContragent(obj.getString("title"));
+                contragent.setLat(Double.parseDouble(obj.getString("lat")));
+                contragent.setLon(Double.parseDouble(obj.getString("lng")));
                 contragentList.add(contragent);
             }
             return contragentList;
@@ -109,6 +111,7 @@ public class ResponseParser {
         String response = convertStreamToString(stream);
         JSONObject json;
         Contragent contragent = new Contragent();
+        Log.d("myLog", response);
         try {
             json = new JSONObject(response);
             JSONObject jsonData = json.getJSONObject("data");
@@ -237,6 +240,29 @@ public class ResponseParser {
                     list.add(price);
                 }
                 return list;
+            } else {
+                Log.d("myLog", state);
+                return null;
+            }
+
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String parseNumberScore(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        String numberScore = "";
+        Log.d("myLog", "numberScore = " + response);
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            numberScore = json.getString("invoiceId");
+            if (AnswerServer.getInstance().isAnswerServer(state)) {
+                return numberScore;
             } else {
                 Log.d("myLog", state);
                 return null;

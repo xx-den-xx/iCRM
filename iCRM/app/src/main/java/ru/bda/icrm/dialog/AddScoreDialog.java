@@ -29,6 +29,8 @@ import java.util.List;
 
 import ru.bda.icrm.R;
 import ru.bda.icrm.adapter.AddScoreAdapter;
+import ru.bda.icrm.auth.ApiController;
+import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.listener.AddContragentClickListener;
 import ru.bda.icrm.listener.AddPriceClickListener;
 import ru.bda.icrm.listener.AddScoreClickListener;
@@ -51,14 +53,17 @@ public class AddScoreDialog extends DialogFragment {
     private Button mRightBtn;
     private TextView mTvCoast;
     private TextView mTvClient;
+    private TextView mTvTitle;
     private Score mScore = new Score();
     private List<PriceSum> mPriceList = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutMangaer;
     private AddScoreAdapter mAdapter;
+    private String mIdContragent;
     private Contragent mContragent;
     private double mTotalScore;
+    private String numberScore;
 
     @NonNull
     @Override
@@ -81,6 +86,7 @@ public class AddScoreDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.dialog_add_score, container, false);
         initContent(rootView);
+        new ContragentTask().execute();
         return rootView;
     }
 
@@ -111,6 +117,7 @@ public class AddScoreDialog extends DialogFragment {
         });
 
         mBtnClient = (Button) view.findViewById(R.id.btn_client);
+        mBtnClient.setVisibility(View.GONE);
         mBtnClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,6 +173,8 @@ public class AddScoreDialog extends DialogFragment {
 
         mTvCoast = (TextView) view.findViewById(R.id.tv_coast);
         mTvClient = (TextView) view.findViewById(R.id.tv_client);
+        mTvTitle = (TextView) view.findViewById(R.id.tv_title);
+        mTvTitle.setText("№" + numberScore);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_products);
         mLayoutMangaer = new LinearLayoutManager(getActivity());
@@ -198,6 +207,7 @@ public class AddScoreDialog extends DialogFragment {
         mScore.setClient(mContragent);
         mScore.setDateAccount(Calendar.getInstance().getTimeInMillis());
         mScore.setProductList(mPriceList);
+        mScore.setNumberAccount(numberScore);
         mScore.setSumScore(Double.parseDouble(mTvCoast.getText().toString()));
         Log.d("myLog", "Client ID = " + mContragent.getId() + "\n" + " date = " + mScore.getDateAccount()
                 + "\n" + mScore.getProductList().toString());
@@ -209,7 +219,9 @@ public class AddScoreDialog extends DialogFragment {
         show(fragmentManager, null);
     }
 
-    public AddScoreDialog init (AddScoreClickListener listener) {
+    public AddScoreDialog init (String idContragent, String numberScore, AddScoreClickListener listener) {
+        this.numberScore = numberScore;
+        this.mIdContragent = idContragent;
         this.listener = listener;
         return this;
     }
@@ -225,5 +237,33 @@ public class AddScoreDialog extends DialogFragment {
     public void dismiss() {
         super.dismiss();
         mPriceList = null;
+    }
+
+    private class ContragentTask extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            mContragent = ApiController.getInstance().getContragent(
+                    AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getActivity()), mIdContragent);
+            boolean answer = mContragent != null ? true : false;
+            return answer;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if (aBoolean) {
+                Log.d("myLog", mContragent.toString());
+                mTvClient.setText(mContragent.getNameContragent());
+                mTvTitle.setText("№" + numberScore);
+            } else {
+                Log.d("myLog", "ошибка получения контрагента");
+            }
+        }
     }
 }

@@ -43,6 +43,7 @@ public class ScoreTabAdapter extends FragmentPagerAdapter {
                 return mFragmentTabScore;
             case 1:
                 mFragmentScreen = new TabScreenFragment();
+                mFragmentScreen.setUrl(score);
                 return mFragmentScreen;
             case 2:
                 mFragmentNotation = new TabNotationFragment();

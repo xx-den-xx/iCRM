@@ -16,6 +16,7 @@ import ru.bda.icrm.json.ResponseParser;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Price;
 import ru.bda.icrm.model.PriceSum;
+import ru.bda.icrm.model.Score;
 
 /**
  * Created by User on 28.06.2016.
@@ -88,6 +89,34 @@ public class ApiController {
         }
     }
 
+    public List<Contragent> getContragentList (String token){
+        String urlString = mBaseUrl + "?action=getContragentList";
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            //root.put("start", start);
+            //root.put("count", count);
+
+            Log.d("myLog", root.toString());
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseContragentList(connection.getInputStream());
+        }catch(Exception e){
+            return null;
+        }
+    }
+
     public List<Contragent> searchContragent (String token, String string){
         String urlString = mBaseUrl + "?action=getContragentList";
         Log.d("myLog", urlString);
@@ -118,6 +147,7 @@ public class ApiController {
 
     public Contragent getContragent (String token, String uid) {
         String urlString = mBaseUrl + "?action=getContragent&token=" + token + "&contragent=" + uid;
+        Log.d("myLog", mBaseUrl);
         try{
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -142,7 +172,6 @@ public class ApiController {
 
             root.put("token", token);
             root.put("contragent", id);
-            //jsonObj.put("uid", uid);
             jsonObj.put("code", contragent.getCode());
             jsonObj.put("inn", contragent.getInn());
             jsonObj.put("title", contragent.getNameContragent());
@@ -156,6 +185,10 @@ public class ApiController {
             jsonObj.put("phones", phonesArray);
             root.put("data", jsonObj);
             root.put("contacts", contactsArray);
+            if (contragent.getLat() != 0 && contragent.getLon() != 0) {
+                root.put("lng", contragent.getLon());
+                root.put("lat", contragent.getLat());
+            }
 
             Log.d("myLog", root.toString());
             URL url = new URL(urlString);
@@ -286,6 +319,35 @@ public class ApiController {
             connection.getInputStream();
             Log.d("myLog", "запрос выполнен успешно");
             return ResponseParser.getInstance().parsePriceSum(connection.getInputStream());
+        }catch(Exception e){
+            Log.d("myLog", "запрос не выполнен");
+            return null;
+        }
+    }
+
+    public String saveScore (String token, String idContragent) {
+        String urlString = mBaseUrl + "?action=makeInvoice";
+        Log.d("myLog", "token = " + token + "; id contragent = " + idContragent);
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("contragent", idContragent);
+
+            Log.d("myLog", root.toString());
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseNumberScore(connection.getInputStream());
         }catch(Exception e){
             Log.d("myLog", "запрос не выполнен");
             return null;

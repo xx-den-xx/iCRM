@@ -7,12 +7,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,10 +23,16 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import ru.bda.icrm.R;
+import ru.bda.icrm.activity.MainActivity;
 import ru.bda.icrm.activity.ScoreActivity;
 import ru.bda.icrm.adapter.RecyclerScoreAdapter;
+import ru.bda.icrm.auth.ApiController;
+import ru.bda.icrm.dialog.AddScoreDialog;
 import ru.bda.icrm.enums.Constants;
+import ru.bda.icrm.holders.AppPref;
+import ru.bda.icrm.listener.AddScoreClickListener;
 import ru.bda.icrm.listener.OnClickScoreListener;
+import ru.bda.icrm.listener.OnFilterScoreClickListener;
 import ru.bda.icrm.model.Score;
 
 /**
@@ -37,21 +46,56 @@ public class ScoresFragment extends Fragment {
     private List<Score> mScoreList = new ArrayList<>();
 
     private LinearLayout mLayoutFilter;
-    private TextView mTvFilter;
+    //private TextView mTvFilter;
+    private Spinner mFilterSpinner;
     private ProgressBar mProgressBar;
     private Score mScore = new Score();
+    private String idContragent;
+    private int mFilter = 0;
+    private String[] mFilterArray;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_scores, null);
+        mFilterArray = getResources().getStringArray(R.array.score_filter_array);
         initContent(view);
         return view;
     }
 
     private void initContent(View view) {
         mLayoutFilter = (LinearLayout) view.findViewById(R.id.layout_filter);
-        mTvFilter = (TextView) view.findViewById(R.id.tv_filter);
+        mFilterSpinner = (Spinner) view.findViewById(R.id.filter_spinner);
+        ArrayAdapter<?> adapter =
+                ArrayAdapter.createFromResource(getActivity(), R.array.score_filter_array, android.R.layout.simple_spinner_dropdown_item);
+        mFilterSpinner.setAdapter(adapter);
+        mFilterSpinner.setSelection(mFilter);
+        mFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mFilter = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        /**mTvFilter = (TextView) view.findViewById(R.id.tv_filter);
+        mTvFilter.setText(mFilterArray[mFilter]);
+        mLayoutFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FilterScoreDialog dialog = new FilterScoreDialog();
+                dialog.init(mFilter, new OnFilterScoreClickListener() {
+                    @Override
+                    public void onFilterClickListener(int position) {
+                        mTvFilter.setText(mFilterArray[position]);
+                    }
+                });
+                dialog.show(getActivity());
+            }
+        });*/
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -73,10 +117,46 @@ public class ScoresFragment extends Fragment {
         new SendScoreTask().execute();
     }
 
+    public void setContragentId(String id) {
+        idContragent = id;
+        Log.d("myLog", idContragent);
+        new AddScoreTask().execute();
+    }
+
     private void startScoreActivity(Score score){
         Intent intent = new Intent(getActivity(), ScoreActivity.class);
         intent.putExtra(Constants.INTENT_SCORE, score.getNumberAccount());
         startActivity(intent);
+    }
+
+    private class AddScoreTask extends AsyncTask<Void, Void, Void>{
+
+        private String score;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            score = ApiController.getInstance().saveScore(
+                    AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getActivity()), idContragent);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            AddScoreDialog dialog = new AddScoreDialog();
+            dialog.init(idContragent, score, new AddScoreClickListener() {
+                @Override
+                public void onLeftBtnClick() {
+                }
+                @Override
+                public void onRightBtnClick(Score score) {
+                    mScore = score;
+                    new SendScoreTask().execute();
+
+                }
+            });
+            dialog.show(getActivity());
+        }
     }
 
     private class SendScoreTask extends AsyncTask<Void, Void, Void> {
@@ -103,6 +183,9 @@ public class ScoresFragment extends Fragment {
             mProgressBar.setVisibility(View.GONE);
             if (mScore != null) {
                 mScoreList.add(mScore);
+                for (int i =0; i < mScoreList.size(); i++) {
+
+                }
                 mAdapter.setListScore(mScoreList);
                 mAdapter.notifyDataSetChanged();
             }

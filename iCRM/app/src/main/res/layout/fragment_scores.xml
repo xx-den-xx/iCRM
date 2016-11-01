@@ -20,13 +20,20 @@
             android:layout_marginLeft="10dp"
             android:src="@drawable/ic_filter_list_black_24dp"/>
 
-        <TextView
+        <!--<TextView
             android:id="@+id/tv_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="Все"
-            android:textSize="20sp"/>
+            android:textSize="20sp"/>-->
+        <Spinner
+            android:id="@+id/filter_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
+        </Spinner>
 
     </LinearLayout>
 
@@ -45,7 +52,7 @@
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:visibility="gone"
         android:layout_gravity="center"
         android:gravity="center"/>

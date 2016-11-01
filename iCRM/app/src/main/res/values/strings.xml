@@ -114,10 +114,15 @@
     <string name="score_initial_conditions">Начальные условия</string>
     <string name="score_order_works">Порядок выполнения работ</string>
     <string name="score_notation">Примечание</string>
+    <string-array name="score_filter_array">
+        <item>Все</item>
+        <item>На согласовании</item>
+        <item>Действует</item>
+    </string-array>
+
 
     <!--Строки для добавления нового счета-->
     <string name="add_score_event">Добавить новый счет</string>
     <string name="add_score_client">Добавить клиента</string>
     <string name="add_score_product">Добавить товар</string>
-
 </resources>
