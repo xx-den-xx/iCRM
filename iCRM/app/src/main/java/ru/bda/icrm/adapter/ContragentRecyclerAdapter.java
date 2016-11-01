@@ -1,9 +1,11 @@
 package ru.bda.icrm.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -44,12 +46,18 @@ public class ContragentRecyclerAdapter extends RecyclerView.Adapter<ContragentRe
             public void onClick(View v) {
                 if (listener != null) {
                     listener.onContragentClick(contragent.getId());
+
                 }
                 if (addListener != null) {
                     addListener.addContragentListener(contragent);
                 }
             }
         });
+        if (contragent.getLon() != 0 && contragent.getLat() != 0) {
+            holder.ivMap.setVisibility(View.VISIBLE);
+        } else {
+            holder.ivMap.setVisibility(View.GONE);
+        }
     }
 
 
@@ -74,11 +82,13 @@ public class ContragentRecyclerAdapter extends RecyclerView.Adapter<ContragentRe
 
         public TextView nameTv;
         public LinearLayout llItem;
+        public ImageView ivMap;
 
         public ViewHolder(View itemView) {
             super(itemView);
             nameTv = (TextView) itemView.findViewById(R.id.agent_name_text);
             llItem = (LinearLayout) itemView.findViewById(R.id.ll_item);
+            ivMap = (ImageView) itemView.findViewById(R.id.iv_map);
         }
     }
 }

@@ -24,6 +24,7 @@ public class Score implements Serializable {
     private String linkVideo = "";//линка видео
     private String linkPhoto = "";//линка фото
     private String linkSound = "";//линка звука
+    private String linkUrl = "";//линк на страницу счёта
     private int priority = 1;//приоритет
     private int status = 1;//статус
     private List<PriceSum> productList = new ArrayList<>();//товар в счете
@@ -184,6 +185,14 @@ public class Score implements Serializable {
 
     public void setInWork(boolean inWork) {
         isInWork = inWork;
+    }
+
+    public String getLinkUrl() {
+        return linkUrl;
+    }
+
+    public void setLinkUrl(String linkUrl) {
+        this.linkUrl = linkUrl;
     }
 
     @Override

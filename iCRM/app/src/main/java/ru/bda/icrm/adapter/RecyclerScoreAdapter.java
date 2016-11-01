@@ -41,7 +41,7 @@ public class RecyclerScoreAdapter extends RecyclerView.Adapter<RecyclerScoreAdap
         String nameClient = score.getClient().getNameContragent();
         String summ = score.getSumScore() + " RUB";
         String date = getDate(score.getDateAccount(), "dd.MM.yyyy");
-        holder.tvCompanyTitle.setText(nameClient + ", " + numberAccount);
+        holder.tvCompanyTitle.setText(nameClient + ", №" + numberAccount);
         holder.tvDate.setText(date);
         holder.tvCoast.setText(summ);
         holder.itemView.setOnClickListener(new View.OnClickListener() {

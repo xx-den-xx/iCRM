@@ -46,7 +46,7 @@ public class ScoreActivity extends AppCompatActivity {
 
     private void initContent() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle(mNumberAccount);
+        mToolbar.setTitle("№ " + mNumberAccount);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -157,7 +157,7 @@ public class ContragentActivity extends AppCompatActivity {
         client.disconnect();
     }
 
-    private class ContragentTask extends AsyncTask<Void, Void, Boolean> {
+    private class ContragentTask extends AsyncTask<String, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -167,7 +167,7 @@ public class ContragentActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(String... params) {
             mContragent = ApiController.getInstance().getContragent(
                     AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, mContext), mUid);
             boolean answer = mContragent != null ? true : false;

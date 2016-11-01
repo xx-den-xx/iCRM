@@ -67,7 +67,6 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contragent, null);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-
         mAgentRV = (RecyclerView) view.findViewById(R.id.agent_recycler_view);
         mAgentAdapter = new ContragentRecyclerAdapter(mListContragent);
         mAgentAdapter.setOnContragentClickListener(this);
