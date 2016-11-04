@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import ru.bda.icrm.R;
 import ru.bda.icrm.listener.AddClientClickListener;
-import ru.bda.icrm.model.Clients;
+import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Phone;
 
 /**
@@ -38,7 +38,7 @@ public class AddClientDialog extends DialogFragment{
     private EditText mEtEmail;
     private Button mBtnLeft;
     private Button mBtnRight;
-    private Clients mContacts;
+    private Contact mContacts;
     private Phone mWorkPhone;
     private Phone mMobPhone;
     private AddClientClickListener clickListener;
@@ -92,18 +92,18 @@ public class AddClientDialog extends DialogFragment{
             @Override
             public void onClick(View v) {
                 if (clickListener != null && !mEtName.getText().toString().equals("")) {
-                    mContacts = new Clients();
+                    mContacts = new Contact();
                     mContacts.setName(mEtName.getText().toString());
                     mContacts.setRole(mEtRole.getText().toString());
                     mContacts.setComments(mEtComments.getText().toString());
                     mWorkPhone = new Phone();
                     mWorkPhone.setType(0);
                     mWorkPhone.setmNumber(mEtWorkPhone.getText().toString());
-                    mContacts.setWorkPhone(mWorkPhone);
+                    mContacts.setWorkPhone(mWorkPhone.getNumber());
                     mMobPhone = new Phone();
                     mMobPhone.setType(1);
                     mMobPhone.setmNumber(mEtMobPhone.getText().toString());
-                    mContacts.setMobilePhone(mMobPhone);
+                    mContacts.setMobilePhone(mMobPhone.getNumber());
                     mContacts.setWorkEmail(mEtEmail.getText().toString());
                     clickListener.onRightBtnClick(mContacts);
                 } else if (mEtName.getText().toString().equals("")) {

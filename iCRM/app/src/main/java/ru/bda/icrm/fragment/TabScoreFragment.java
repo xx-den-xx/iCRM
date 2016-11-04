@@ -5,13 +5,19 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ru.bda.icrm.R;
+import ru.bda.icrm.dialog.PriorityDialog;
+import ru.bda.icrm.enums.Constants;
+import ru.bda.icrm.listener.OnPriorityClickListener;
 import ru.bda.icrm.model.Score;
 
 /**
@@ -19,15 +25,19 @@ import ru.bda.icrm.model.Score;
  */
 
 @SuppressLint("ValidFragment")
-public class TabScoreFragment extends Fragment {
+public class TabScoreFragment extends Fragment implements View.OnClickListener{
 
     private Score mScore;
     private TextView mTvClient;
-    private TextView mTvContact;
-    private ImageView mIvInfoClient;
-    private ImageView mIvInfoContact;
+    private EditText mTvContact;
+    private EditText mTvContract;
+    private TextView mTvResponsible;
     private ImageView mIvPriority;
     private ImageView mIvStatus;
+    private LinearLayout mLayoutPriority;
+    private LinearLayout mLayoutStatus;
+    private int statusInt = 1;
+    private int priorityInt = 1;
 
     public TabScoreFragment (Score mScore) {
         this.mScore = mScore;
@@ -43,19 +53,30 @@ public class TabScoreFragment extends Fragment {
 
     private void initContent(View view) {
         mTvClient = (TextView) view.findViewById(R.id.tv_client);
-        mTvContact = (TextView) view.findViewById(R.id.tv_contact);
-        mIvInfoClient = (ImageView) view.findViewById(R.id.iv_info_client);
-        mIvInfoContact = (ImageView) view.findViewById(R.id.iv_info_contact);
+        mTvContact = (EditText) view.findViewById(R.id.tv_contact);
+        mTvContract = (EditText) view.findViewById(R.id.tv_contract);
+        mTvResponsible = (TextView) view.findViewById(R.id.tv_responsible);
         mIvPriority = (ImageView) view.findViewById(R.id.iv_priority);
         mIvStatus = (ImageView) view.findViewById(R.id.iv_status);
+        mLayoutPriority = (LinearLayout) view.findViewById(R.id.layout_priority);
+        mLayoutPriority.setOnClickListener(this);
+        mLayoutStatus = (LinearLayout) view.findViewById(R.id.layout_status);
+        mLayoutStatus.setOnClickListener(this);
         setColor();
+        setDataContent();
+    }
+
+    private void setDataContent() {
+        mTvClient.setText(mScore.getClient().getNameContragent());
+        mTvContact.setText(mScore.getContactFace());
+        mTvContract.setText(mScore.getContract());
+        mTvResponsible.setText(mScore.getResponsible());
+
     }
 
     private void setColor() {
-        mIvPriority.setColorFilter(getResources().getColor(getColor(mScore.getPriority())), PorterDuff.Mode.SRC_ATOP);
-        mIvStatus.setColorFilter(getResources().getColor(getColor(mScore.getStatus())), PorterDuff.Mode.SRC_ATOP);
-        mIvInfoClient.setColorFilter(getResources().getColor(R.color.color_green), PorterDuff.Mode.SRC_ATOP);
-        mIvInfoContact.setColorFilter(getResources().getColor(R.color.color_green), PorterDuff.Mode.SRC_ATOP);
+        mIvPriority.setColorFilter(getResources().getColor(getColor(priorityInt)), PorterDuff.Mode.SRC_ATOP);
+        mIvStatus.setColorFilter(getResources().getColor(getColor(statusInt)), PorterDuff.Mode.SRC_ATOP);
     }
 
     private int getColor(int status) {
@@ -72,4 +93,50 @@ public class TabScoreFragment extends Fragment {
         return color;
     }
 
+    public void setScore(Score score) {
+        this.mScore = score;
+        statusInt = score.getStatus() + 1;
+        priorityInt = score.getPriority();
+        //setDataContent();
+    }
+
+    public Score getScore() {
+        mScore.setContract(mTvContract.getText().toString());
+        mScore.setContactFace(mTvContact.getText().toString());
+        return mScore;
+    }
+
+    @Override
+    public void onClick(final View v) {
+        PriorityDialog dialog = new PriorityDialog();
+        String title = "";
+        String[] statusArray = {};
+        int status = 1;
+        if (v.getId() == R.id.layout_priority) {
+            title = Constants.PRIORITY_TITLE;
+            statusArray = getActivity().getResources().getStringArray(R.array.score_priority);
+            status = priorityInt;
+        } else if (v.getId() == R.id.layout_status) {
+            title = Constants.STATUS_TITLE;
+            statusArray = getActivity().getResources().getStringArray(R.array.score_status);
+            status = statusInt;
+        }
+
+        dialog.init(title, statusArray, status, new OnPriorityClickListener() {
+            @Override
+            public void onPriorityClick(int priority) {
+                if (v.getId() == R.id.layout_priority) {
+                    priorityInt = priority;
+                    mScore.setPriority(priority);
+                }
+                else if (v.getId() == R.id.layout_status) {
+                    Log.d("myLog", "status = " + priority);
+                    statusInt = priority + 1;
+                    mScore.setStatus(priority);
+                }
+                setColor();
+            }
+        });
+        dialog.show(getActivity());
+    }
 }

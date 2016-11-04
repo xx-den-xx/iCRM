@@ -8,17 +8,17 @@ import java.io.Serializable;
 
 public class PriceSum extends Price implements Serializable{
 
-    private double number = 1;
+    private int number = 1;
     private double totlalCoast = 1;
 
     public PriceSum() {
     }
 
-    public double getSum() {
+    public int getSum() {
         return number;
     }
 
-    public void setSum(double sum) {
+    public void setSum(int sum) {
         this.number = sum;
     }
 

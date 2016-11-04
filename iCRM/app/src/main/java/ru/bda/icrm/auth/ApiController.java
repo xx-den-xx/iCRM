@@ -13,7 +13,9 @@ import java.util.List;
 
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.json.ResponseParser;
+import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Contragent;
+import ru.bda.icrm.model.Phone;
 import ru.bda.icrm.model.Price;
 import ru.bda.icrm.model.PriceSum;
 import ru.bda.icrm.model.Score;
@@ -46,7 +48,7 @@ public class ApiController {
 
     public String auth(String hexLogin, String hexPassword) {
         String urlString = mBaseUrl + "?action=auth&login=" + hexLogin + "&pass=" + hexPassword;
-        //Log.d("myLog", urlString);
+        Log.d("myLog", urlString);
         try{
             JSONObject jsonObj = new JSONObject();
             URL url = new URL(urlString);
@@ -82,7 +84,6 @@ public class ApiController {
             os.close();
             connection.connect();
             connection.getInputStream();
-            Log.d("myLog", "запрос выполнен успешно");
             return ResponseParser.getInstance().parseContragentList(connection.getInputStream());
         }catch(Exception e){
             return null;
@@ -94,10 +95,7 @@ public class ApiController {
         try{
             JSONObject root = new JSONObject();
             root.put("token", token);
-            //root.put("start", start);
-            //root.put("count", count);
 
-            Log.d("myLog", root.toString());
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
@@ -110,7 +108,6 @@ public class ApiController {
             os.close();
             connection.connect();
             connection.getInputStream();
-            Log.d("myLog", "запрос выполнен успешно");
             return ResponseParser.getInstance().parseContragentList(connection.getInputStream());
         }catch(Exception e){
             return null;
@@ -119,7 +116,6 @@ public class ApiController {
 
     public List<Contragent> searchContragent (String token, String string){
         String urlString = mBaseUrl + "?action=getContragentList";
-        Log.d("myLog", urlString);
         try{
             JSONObject root = new JSONObject();
             root.put("token", token);
@@ -138,7 +134,6 @@ public class ApiController {
             os.close();
             connection.connect();
             connection.getInputStream();
-            Log.d("myLog", "запрос выполнен успешно");
             return ResponseParser.getInstance().parseContragentList(connection.getInputStream());
         }catch(Exception e){
             return null;
@@ -147,7 +142,6 @@ public class ApiController {
 
     public Contragent getContragent (String token, String uid) {
         String urlString = mBaseUrl + "?action=getContragent&token=" + token + "&contragent=" + uid;
-        Log.d("myLog", mBaseUrl);
         try{
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -155,7 +149,6 @@ public class ApiController {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept","application/json");
             connection.connect();
-            Log.d("myLog", urlString);
             return ResponseParser.getInstance().parseContragent(connection.getInputStream());
         } catch (Exception e) {
             return null;
@@ -164,14 +157,15 @@ public class ApiController {
 
     public Contragent addContragent(String token, String id, Contragent contragent) {
         String urlString = mBaseUrl + "?action=updateContragent";
+
         try{
+
             JSONObject root = new JSONObject();
             JSONObject jsonObj = new JSONObject();
-            JSONArray phonesArray = new JSONArray(contragent.getPhones());
-            JSONArray contactsArray = new JSONArray(contragent.getContacts());
-
+            Log.d("myLog", "id = " + id + "; contragent = " + contragent.getNameContragent());
             root.put("token", token);
             root.put("contragent", id);
+
             jsonObj.put("code", contragent.getCode());
             jsonObj.put("inn", contragent.getInn());
             jsonObj.put("title", contragent.getNameContragent());
@@ -182,9 +176,9 @@ public class ApiController {
             jsonObj.put("email", contragent.getEmail());
             jsonObj.put("jur_address", contragent.getJurAddress());
             jsonObj.put("site", contragent.getSite());
-            jsonObj.put("phones", phonesArray);
+            //jsonObj.put("phones", phonesArray);
             root.put("data", jsonObj);
-            root.put("contacts", contactsArray);
+            //root.put("contacts", contactsArray);
             if (contragent.getLat() != 0 && contragent.getLon() != 0) {
                 root.put("lng", contragent.getLon());
                 root.put("lat", contragent.getLat());
@@ -203,10 +197,10 @@ public class ApiController {
             os.close();
             connection.connect();
             connection.getInputStream();
-            Log.d("myLog", "запрос выполнен успешно");
+            Log.d("myLog", "Контрагент сохранён успешно");
             return ResponseParser.getInstance().parseSaveContragent(connection.getInputStream(), contragent);
         }catch(Exception e){
-            Log.d("myLog", "запрос не выполнен");
+            Log.d("myLog", "Контрагент не сохранён");
             return null;
         }
     }
@@ -232,10 +226,8 @@ public class ApiController {
             os.close();
             connection.connect();
             connection.getInputStream();
-            Log.d("myLog", "запрос выполнен успешно");
             return ResponseParser.getInstance().parsePrice(connection.getInputStream());
         }catch(Exception e){
-            Log.d("myLog", "запрос не выполнен");
             return null;
         }
     }
@@ -261,10 +253,8 @@ public class ApiController {
             os.close();
             connection.connect();
             connection.getInputStream();
-            Log.d("myLog", "запрос выполнен успешно");
             return ResponseParser.getInstance().parsePriceSum(connection.getInputStream());
         }catch(Exception e){
-            Log.d("myLog", "запрос не выполнен");
             return null;
         }
     }
@@ -289,10 +279,8 @@ public class ApiController {
             os.close();
             connection.connect();
             connection.getInputStream();
-            Log.d("myLog", "запрос выполнен успешно");
             return ResponseParser.getInstance().parsePrice(connection.getInputStream());
         }catch(Exception e){
-            Log.d("myLog", "запрос не выполнен");
             return null;
         }
     }
@@ -317,17 +305,14 @@ public class ApiController {
             os.close();
             connection.connect();
             connection.getInputStream();
-            Log.d("myLog", "запрос выполнен успешно");
             return ResponseParser.getInstance().parsePriceSum(connection.getInputStream());
         }catch(Exception e){
-            Log.d("myLog", "запрос не выполнен");
             return null;
         }
     }
 
     public String saveScore (String token, String idContragent) {
         String urlString = mBaseUrl + "?action=makeInvoice";
-        Log.d("myLog", "token = " + token + "; id contragent = " + idContragent);
         try{
             JSONObject root = new JSONObject();
             root.put("token", token);
@@ -346,12 +331,254 @@ public class ApiController {
             os.close();
             connection.connect();
             connection.getInputStream();
-            Log.d("myLog", "запрос выполнен успешно");
             return ResponseParser.getInstance().parseNumberScore(connection.getInputStream());
         }catch(Exception e){
-            Log.d("myLog", "запрос не выполнен");
             return null;
         }
     }
 
+
+    /** updateInvoice
+     *  token
+     *  invoice - id счета,
+     *  delete - если добавить больше нуля, удалит счёт
+     *  prio - приоритет счёта (0,1,2)
+     *  state - изменяет статус счёта (-1, 0, 1)
+     *  products - массив товаров, "id-товара":"кол-во товара"     *
+     */
+    public boolean updateScore (String token, Score  score, int delete) {
+        String urlString = mBaseUrl + "?action=updateInvoice";
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("invoice", score.getNumberAccount());
+            root.put("delete", delete);
+            root.put("state", score.getStatus());
+            root.put("prio", score.getPriority());
+            root.put("date", score.getDateAccount());
+            JSONArray products = new JSONArray();
+            int i = 0;
+            for (PriceSum price : score.getProductList()) {
+                JSONObject product = new JSONObject();
+                product.put("id", price.getId());
+                product.put("count", price.getSum());
+                products.put(product);
+            }
+            Log.d("myLog", products.toString());
+            root.put("products", products);
+
+            Log.d("myLog", root.toString());
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            return ResponseParser.getInstance().parseUpdateScore(connection.getInputStream());
+        }catch(Exception e){
+            return false;
+        }
+    }
+
+    public List<Score> getScoreList (String token){
+        String urlString = mBaseUrl + "?action=getInvoiceList";
+
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+
+            Log.d("myLog", root.toString());
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            return ResponseParser.getInstance().parseScoreList(connection.getInputStream());
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    public Score getScore (String token, String invoice){
+        String urlString = mBaseUrl + "?action=getInvoice";
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("invoice", invoice);
+
+            Log.d("myLog", root.toString());
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseScore(connection.getInputStream());
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    public boolean updateFullScore (String token, Score  score, int delete) {
+        String urlString = mBaseUrl + "?action=updateInvoice";
+        Log.d("myLog", "token = " + token + "; id price = " + score.getNumberAccount());
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("invoice", score.getNumberAccount());
+            root.put("delete", delete);
+            root.put("state", score.getStatus());
+            root.put("prio", score.getPriority());
+            root.put("date", score.getDateAccount());
+            root.put("contactFace", score.getContactFace());
+            root.put("contract", score.getContract());
+            root.put("initialConditions", score.getInitialConditions());
+            root.put("responsible", score.getResponsible());
+            root.put("orderWorks", score.getOrderWorks());
+            root.put("annotation", score.getAnnotation());
+
+            JSONArray products = new JSONArray();
+            for (PriceSum price : score.getProductList()) {
+                JSONObject product = new JSONObject();
+                product.put("id", price.getId());
+                product.put("title", price.getTitle());
+                product.put("price", price.getPrice());
+                product.put("count", price.getSum());
+                products.put(product);
+            }
+            Log.d("myLog", products.toString());
+            root.put("products", products);
+
+            Log.d("myLog", root.toString());
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseUpdateScore(connection.getInputStream());
+        }catch(Exception e){
+            Log.d("myLog", "запрос не выполнен");
+            return false;
+        }
+    }
+
+    public boolean updateContact (String token, Contact contact, String idContragent) {
+        String urlString = mBaseUrl + "?action=updateContact";
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            if (contact.getId().equals("")) {
+                root.put("contragent", idContragent);
+            } else {
+                root.put("contact", contact.getId());
+            }
+
+            Log.d("myLog", root.toString());
+            root.put("fio", contact.getName());
+            root.put("role", contact.getRole());
+            root.put("comment", contact.getComments());
+            root.put("workPhone", contact.getWorkPhone());
+            root.put("mobPhone", contact.getMobilePhone());
+            root.put("email", contact.getWorkEmail());
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseUpdateContact(connection.getInputStream());
+        }catch(Exception e){
+            Log.d("myLog", "запрос не выполнен");
+            return false;
+        }
+    }
+
+    public Contact getContact (String token, String contact){
+        String urlString = mBaseUrl + "?action=getContact";
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("contact", contact);
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseContact(connection.getInputStream());
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    public boolean addPhone (String token, Phone phone){
+        String urlString = mBaseUrl + "?action=addPhone";
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("contragent", phone.getContactsId());
+            root.put("phone", phone.getNumber());
+            root.put("type", phone.getType());
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseAddPhone(connection.getInputStream());
+        }catch(Exception e){
+            return false;
+        }
+    }
 }

@@ -15,9 +15,12 @@ import java.util.List;
 
 import ru.bda.icrm.auth.AnswerServer;
 import ru.bda.icrm.auth.ApiController;
+import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Contragent;
+import ru.bda.icrm.model.Phone;
 import ru.bda.icrm.model.Price;
 import ru.bda.icrm.model.PriceSum;
+import ru.bda.icrm.model.Score;
 
 /**
  * Created by User on 28.06.2016.
@@ -63,7 +66,6 @@ public class ResponseParser {
     public List<Contragent> parseContragentList(InputStream stream){
         String response = convertStreamToString(stream);
         JSONObject json;
-        Log.d("myLog", response);
         try {
             json = new JSONObject(response);
             JSONArray dataJSONArray = json.getJSONArray("data");
@@ -131,27 +133,20 @@ public class ResponseParser {
                 contragent.setLon(Double.valueOf(jsonData.getString("lng")));
                 contragent.setLat(Double.valueOf(jsonData.getString("lat")));
 
-                List<String> phones = new ArrayList<String>();
-                JSONArray jPhones = jsonData.getJSONArray("phones");
-                if (jPhones != null) {
-                    for (int i = 0; i < jPhones.length(); i++) {
-                        phones.add(jPhones.get(i).toString());
-                    }
-                } else {
-                    phones = null;
+                JSONArray phones = jsonData.getJSONArray("phones");
+                List<Phone> phoneList = new ArrayList<>();
+                for (int i = 0; i < phones.length(); i++) {
+                    Phone phone = new Phone();
+                    phone.setContactsId(contragent.getId());
+                    phone.setmNumber(phones.getJSONObject(i).getString("phone"));
+                    phone.setType(Integer.parseInt(phones.getJSONObject(i).getString("type")));
+                    phoneList.add(phone);
                 }
-                contragent.setPhones(phones);
 
-                List<String> contacts = new ArrayList<String>();
-                JSONArray jContacts = jsonData.getJSONArray("phones");
-                if (jContacts != null) {
-                    for (int i = 0; i < jContacts.length(); i++) {
-                        contacts.add(jPhones.get(i).toString());
-                    }
-                } else {
-                    contacts = null;
-                }
-                contragent.setContacts(contacts);
+                contragent.setPhones(phoneList);
+                JSONArray jContacts = jsonData.getJSONArray("contacts");
+                contragent.setIdContact(jContacts.getJSONObject(0).getString("id"));
+                contragent.setContacts(jContacts.getJSONObject(0).getString("fio"));
 
             } else {
                 contragent = null;
@@ -176,7 +171,7 @@ public class ResponseParser {
             } else {
                 contragent = null;
             }
-            Log.d("myLog", state);
+            Log.d("myLog", "state save = " + state);
         } catch(JSONException e) {
             e.printStackTrace();
             contragent = null;
@@ -241,7 +236,6 @@ public class ResponseParser {
                 }
                 return list;
             } else {
-                Log.d("myLog", state);
                 return null;
             }
 
@@ -256,7 +250,6 @@ public class ResponseParser {
         String response = convertStreamToString(stream);
         JSONObject json;
         String numberScore = "";
-        Log.d("myLog", "numberScore = " + response);
         try {
             json = new JSONObject(response);
             String state = json.getString("state");
@@ -264,7 +257,6 @@ public class ResponseParser {
             if (AnswerServer.getInstance().isAnswerServer(state)) {
                 return numberScore;
             } else {
-                Log.d("myLog", state);
                 return null;
             }
 
@@ -275,4 +267,164 @@ public class ResponseParser {
         }
     }
 
+    public boolean parseUpdateScore(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            return AnswerServer.getInstance().isAnswerServer(state);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<Score> parseScoreList(InputStream stream){
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        List<Score> scoreList = new ArrayList<>();
+        try {
+            json = new JSONObject(response);
+            JSONArray array = json.getJSONArray("data");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                Contragent client = new Contragent();
+                client.setId(obj.getString("contragent"));
+                client.setNameContragent(obj.getString("contragent_name"));
+                Score score = new Score();
+                score.setNumberAccount(obj.getString("id"));
+                score.setClient(client);
+                score.setDateAccount(obj.getLong("date"));
+                score.setSumScore(obj.getDouble("sum"));
+                score.setStatus(Integer.parseInt(obj.getString("state")));
+                score.setPriority(Integer.parseInt(obj.getString("prio")));
+                scoreList.add(score);
+            }
+            return scoreList;
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Score parseScore(InputStream stream){
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        Score score = new Score();
+        Contragent contragent = new Contragent();
+        List<PriceSum> price = new ArrayList<>();
+        try {
+            json = new JSONObject(response);
+            JSONObject dataObj = json.getJSONObject("data");
+            JSONObject contrObj = dataObj.getJSONObject("contragent");
+
+            contragent.setId(contrObj.getString("id"));
+            contragent.setUid(contrObj.getString("code"));
+            contragent.setInn(contrObj.getString("inn"));
+            contragent.setNameContragent(contrObj.getString("title"));
+            contragent.setCodePoOkpo(contrObj.getString("PoOKPO"));
+            contragent.setUrFace(contrObj.getString("jur"));
+            contragent.setRelations(contrObj.getString("relations"));
+            contragent.setContactInfo(contrObj.getString("contact_info"));
+            contragent.setEmail(contrObj.getString("email"));
+            contragent.setJurAddress(contrObj.getString("jur_address"));
+            contragent.setSite(contrObj.getString("site"));
+            contragent.setLat(Double.parseDouble(contrObj.getString("lat")));
+            contragent.setLon(Double.parseDouble(contrObj.getString("lng")));
+
+            score.setNumberAccount(dataObj.getString("id"));
+            score.setClient(contragent);
+            score.setDateAccount(dataObj.getLong("date"));
+            score.setPriority(Integer.parseInt(dataObj.getString("prio")));
+            score.setStatus(Integer.parseInt(dataObj.getString("state")));
+            score.setContactFace(dataObj.getString("contactFace"));
+            score.setContract(dataObj.getString("contract"));
+            score.setInitialConditions(dataObj.getString("initialConditions"));
+            score.setResponsible(dataObj.getString("responsible"));
+            score.setOrderWorks(dataObj.getString("orderWorks"));
+            score.setAnnotation(dataObj.getString("annotation"));
+
+            JSONArray prodArray = dataObj.getJSONArray("products");
+            double totalSumScore = 0;
+            for (int i = 0; i < prodArray.length(); i++) {
+                JSONObject prodObj = prodArray.getJSONObject(i);
+                PriceSum prod = new PriceSum();
+                prod.setId(Integer.parseInt(prodObj.getString("id")));
+                prod.setTitle(prodObj.getString("title").replace("&quot;", "\""));
+                String priceString = prodObj.getString("price").replace(",", ".");
+                String convertPrice = priceString.replace(" ", "");
+                prod.setPrice(Double.parseDouble(convertPrice));
+                prod.setSum(Integer.parseInt(prodObj.getString("count")));
+                prod.setTotlalCoast(prod.getPrice()*(double)prod.getSum());
+                totalSumScore += prod.getTotalCoast();
+                price.add(prod);
+            }
+            score.setProductList(price);
+            score.setSumScore(totalSumScore);
+            score.setLinkUrl(dataObj.getString("link"));
+            return score;
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Contact parseContact(InputStream stream){
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        Log.d("myLog", "parseContact = " + response);
+        Contact contact = new Contact();
+        try {
+            json = new JSONObject(response);
+            JSONObject data = json.getJSONObject("data");
+            contact.setId(data.getString("id"));
+            contact.setContragentId(data.getString("contragent"));
+            contact.setName(data.getString("fio"));
+            contact.setComments(data.getString("comment"));
+            contact.setWorkEmail(data.getString("email"));
+            contact.setWorkPhone(data.getString("workPhone"));
+            contact.setMobilePhone(data.getString("mobPhone"));
+            contact.setRole(data.getString("role"));
+
+            return contact;
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean parseUpdateContact(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        Log.d("myLog", response);
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            return AnswerServer.getInstance().isAnswerServer(state);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean parseAddPhone(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        Log.d("myLog", response);
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            return AnswerServer.getInstance().isAnswerServer(state);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

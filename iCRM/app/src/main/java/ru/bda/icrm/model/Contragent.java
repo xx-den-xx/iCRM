@@ -20,8 +20,9 @@ public class Contragent {
     private String mJurAddress = "";//юридический адрес
     private String mFizAddress = "";//физический адрес
     private String mSite = "";//сайт
-    private List<String> mPhones = null;//список телефонов
-    private List<String> mContacts = null;//список контактных лиц
+    private List<Phone> mPhones = null;//список телефонов
+    private String mContacts = null;//список контактных лиц
+    private String mIdContact = "";
     private double lat;//latitude
     private double lon;//longitude
 
@@ -135,20 +136,28 @@ public class Contragent {
         this.mSite = mSite;
     }
 
-    public List<String> getPhones() {
+    public List<Phone> getPhones() {
         return mPhones;
     }
 
-    public void setPhones(List<String> mPhones) {
+    public void setPhones(List<Phone> mPhones) {
         this.mPhones = mPhones;
     }
 
-    public List<String> getContacts() {
+    public String getContacts() {
         return mContacts;
     }
 
-    public void setContacts(List<String> mContacts) {
+    public void setContacts(String mContacts) {
         this.mContacts = mContacts;
+    }
+
+    public String getIdContact() {
+        return mIdContact;
+    }
+
+    public void setIdContact(String mIdContact) {
+        this.mIdContact = mIdContact;
     }
 
     public double getLat() {

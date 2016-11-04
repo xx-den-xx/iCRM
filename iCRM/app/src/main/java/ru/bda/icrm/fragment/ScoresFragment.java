@@ -60,7 +60,15 @@ public class ScoresFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_scores, null);
         mFilterArray = getResources().getStringArray(R.array.score_filter_array);
         initContent(view);
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFilterSpinner.setSelection(0);
+        new GetScoreListTask().execute();
     }
 
     private void initContent(View view) {
@@ -73,7 +81,22 @@ public class ScoresFragment extends Fragment {
         mFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mFilter = position;
+                mFilter = position - 1;
+                if (mFilter > -1) {
+                    List<Score> list = new ArrayList<Score>();
+                    for (int i = 0; i < mScoreList.size(); i++) {
+                        Score score = mScoreList.get(i);
+                        int state = score.getStatus();
+                        if (state == mFilter) {
+                            list.add(score);
+                        }
+                    }
+                    mAdapter.setListScore(list);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    mAdapter.setListScore(mScoreList);
+                    mAdapter.notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -81,21 +104,6 @@ public class ScoresFragment extends Fragment {
 
             }
         });
-        /**mTvFilter = (TextView) view.findViewById(R.id.tv_filter);
-        mTvFilter.setText(mFilterArray[mFilter]);
-        mLayoutFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FilterScoreDialog dialog = new FilterScoreDialog();
-                dialog.init(mFilter, new OnFilterScoreClickListener() {
-                    @Override
-                    public void onFilterClickListener(int position) {
-                        mTvFilter.setText(mFilterArray[position]);
-                    }
-                });
-                dialog.show(getActivity());
-            }
-        });*/
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -159,7 +167,36 @@ public class ScoresFragment extends Fragment {
         }
     }
 
-    private class SendScoreTask extends AsyncTask<Void, Void, Void> {
+    private class SendScoreTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return ApiController.getInstance().updateScore(
+                    AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getActivity()), mScore, 0);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aVoid) {
+            super.onPostExecute(aVoid);
+            mProgressBar.setVisibility(View.GONE);
+            if (mScore != null) {
+                mScoreList.add(mScore);
+                for (int i = 0; i < mScoreList.size(); i++) {
+
+                }
+                mAdapter.setListScore(mScoreList);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    private class GetScoreListTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -169,11 +206,8 @@ public class ScoresFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            try {
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            mScoreList = ApiController.getInstance().getScoreList(
+                    AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getActivity()));
             return null;
         }
 
@@ -181,11 +215,7 @@ public class ScoresFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             mProgressBar.setVisibility(View.GONE);
-            if (mScore != null) {
-                mScoreList.add(mScore);
-                for (int i =0; i < mScoreList.size(); i++) {
-
-                }
+            if (mScoreList != null) {
                 mAdapter.setListScore(mScoreList);
                 mAdapter.notifyDataSetChanged();
             }

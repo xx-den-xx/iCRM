@@ -24,8 +24,8 @@ public class ScoreTabAdapter extends FragmentPagerAdapter {
     private String[] textTab = {
             "Счёт",
             "Печать",
-            "Описание",
-            "Вложение"
+            "Описание"
+            //"Вложение"
     };
 
     private Score score;
@@ -33,20 +33,38 @@ public class ScoreTabAdapter extends FragmentPagerAdapter {
     public ScoreTabAdapter(FragmentManager fm, Score score) {
         super(fm);
         this.score = score;
+        mFragmentTabScore = new TabScoreFragment(score);
+        mFragmentScreen = new TabScreenFragment();
+        mFragmentNotation = new TabNotationFragment();
+    }
+
+    public void setScore(Score score) {
+        this.score = score;
+        mFragmentTabScore.setScore(score);
+        mFragmentScreen.setUrl(score);
+        mFragmentNotation.setScore(score);
+    }
+
+    public Score getScore() {
+        score.setContactFace(mFragmentTabScore.getScore().getContactFace());
+        score.setContract(mFragmentTabScore.getScore().getContract());
+        score.setInitialConditions(mFragmentNotation.getScore().getInitialConditions());
+        score.setOrderWorks(mFragmentNotation.getScore().getOrderWorks());
+        score.setAnnotation(mFragmentNotation.getScore().getAnnotation());
+        return score;
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                mFragmentTabScore = new TabScoreFragment(score);
+                mFragmentTabScore.setScore(score);
                 return mFragmentTabScore;
             case 1:
-                mFragmentScreen = new TabScreenFragment();
                 mFragmentScreen.setUrl(score);
                 return mFragmentScreen;
             case 2:
-                mFragmentNotation = new TabNotationFragment();
+                mFragmentNotation.setScore(score);
                 return mFragmentNotation;
             case 3:
                 mFragmentInclude = new TabIncludeFragment();
@@ -59,7 +77,7 @@ public class ScoreTabAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return 3;
     }
 
     @Override
@@ -71,8 +89,8 @@ public class ScoreTabAdapter extends FragmentPagerAdapter {
                 return textTab[1];
             case 2:
                 return textTab[2];
-            case 3:
-                return textTab[3];
+            /**case 3:
+                return textTab[3];*/
 
         }
         return super.getPageTitle(position);

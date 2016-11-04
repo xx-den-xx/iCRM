@@ -199,7 +199,7 @@ public class Score implements Serializable {
     public String toString() {
         return "Score{" +
                 "numberAccount='" + numberAccount + '\'' +
-                ", client='" + client + '\'' +
+                ", client=" + client +
                 ", dateAccount=" + dateAccount +
                 ", sumScore=" + sumScore +
                 ", contactFace='" + contactFace + '\'' +
@@ -211,6 +211,11 @@ public class Score implements Serializable {
                 ", linkVideo='" + linkVideo + '\'' +
                 ", linkPhoto='" + linkPhoto + '\'' +
                 ", linkSound='" + linkSound + '\'' +
+                ", linkUrl='" + linkUrl + '\'' +
+                ", priority=" + priority +
+                ", status=" + status +
+                ", productList=" + productList +
+                ", isInWork=" + isInWork +
                 '}';
     }
 }

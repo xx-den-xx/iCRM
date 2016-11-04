@@ -76,8 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:textColor="@color/client_content"
-                    android:focusable="false"/>
+                    android:textColor="@color/client_content"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -94,6 +93,20 @@
                     android:textColor="@color/client_content"
                     android:focusable="false"
                     android:paddingBottom="10dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Юридический адрес:"
+                    android:textSize="18sp"
+                    android:textColor="@color/client_title"/>
+
+                <EditText
+                    android:id="@+id/et_jur_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/client_content"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -130,6 +143,7 @@
                         android:src="@drawable/ic_people_black_24dp"/>
 
                     <TextView
+                        android:id="@+id/tv_contact_face"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
@@ -146,11 +160,26 @@
                     android:padding="5dp"
                     android:background="@color/client_background">
 
-                    <TextView
+                    <LinearLayout
+                        android:id="@+id/layout_contact_info"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:text="@string/client_contact_info"/>
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            android:layout_weight="1"
+                            android:text="@string/client_contact_info"/>
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="6"
+                            android:src="@drawable/ic_add_black_24dp"/>
+
+                    </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
@@ -158,6 +187,53 @@
                         android:background="@color/divider_black"
                         android:paddingBottom="5dp"/>
 
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rw_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Почта(e-mail)"
+                        android:textSize="18sp"
+                        android:textColor="@color/client_title"/>
+
+                    <EditText
+                        android:id="@+id/et_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@color/client_content"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Сайт компании"
+                        android:textSize="18sp"
+                        android:textColor="@color/client_title"/>
+
+                    <EditText
+                        android:id="@+id/et_site"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@color/client_content"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -170,6 +246,16 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:layout_centerInParent="true"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_save_white_24dp"/>
 
     </RelativeLayout>
 

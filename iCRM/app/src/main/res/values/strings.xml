@@ -111,11 +111,21 @@
     <string name="score_contact">Контактное лицо</string>
     <string name="score_contract">Договор</string>
     <string name="score_responsible">Ответственный</string>
-    <string name="score_initial_conditions">Начальные условия</string>
+    <string name="score_initial_conditions">Исходные условия</string>
     <string name="score_order_works">Порядок выполнения работ</string>
     <string name="score_notation">Примечание</string>
     <string-array name="score_filter_array">
         <item>Все</item>
+        <item>На согласовании</item>
+        <item>Действует</item>
+    </string-array>
+    <string-array name="score_priority">
+        <item>Низкий</item>
+        <item>Средний</item>
+        <item>Высокий</item>
+    </string-array>
+    <string-array name="score_status">
+        <item>Отменить</item>
         <item>На согласовании</item>
         <item>Действует</item>
     </string-array>

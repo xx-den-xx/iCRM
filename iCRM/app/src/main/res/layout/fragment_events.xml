@@ -11,6 +11,7 @@
         android:minHeight="48dp"
         android:gravity="center_vertical"
         android:layout_gravity="center_vertical"
+        android:visibility="gone"
         android:background="@color/client_title">
 
         <TextView

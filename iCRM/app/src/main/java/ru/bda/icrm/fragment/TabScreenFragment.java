@@ -10,6 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import ru.bda.icrm.R;
+import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.model.Score;
 
 /**
@@ -19,6 +20,7 @@ import ru.bda.icrm.model.Score;
 public class TabScreenFragment extends Fragment {
 
     private WebView mWebView;
+    private String mLink;
 
     @Nullable
     @Override
@@ -30,15 +32,13 @@ public class TabScreenFragment extends Fragment {
 
     private void initContent(View view) {
         mWebView = (WebView) view.findViewById(R.id.web_view);
-        //if (mWebView != null) {
-            mWebView.getSettings().setJavaScriptEnabled(true);
-            mWebView.setWebViewClient(new MyWebViewClient());
-        //}
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.setWebViewClient(new MyWebViewClient());
+        mWebView.loadUrl(Constants.TEST_LINK_SCORE + mLink);
     }
 
     public void setUrl(Score score) {
-        String url = score.getLinkUrl();
-        //mWebView.loadUrl()
+        mLink = score.getLinkUrl();
     }
 
     private class MyWebViewClient extends WebViewClient {
