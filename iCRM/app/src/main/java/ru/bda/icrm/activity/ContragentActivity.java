@@ -71,11 +71,6 @@ public class ContragentActivity extends AppCompatActivity {
     private LinearLayoutManager mLayoutManager;
     private PhoneContragentAdapter mPhoneAdapter;
     private List<Phone> mPhoneList = new ArrayList<>();
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,9 +81,6 @@ public class ContragentActivity extends AppCompatActivity {
         setToolbar();
         setContent();
         initRecyclerView();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -185,6 +177,7 @@ public class ContragentActivity extends AppCompatActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mContragent.setNameContragent(mEtClientName.getText().toString());
                 mContragent.setPhones(mPhoneList);
                 mContragent.setEmail(mEtEmail.getText().toString());
                 mContragent.setSite(mEtSite.getText().toString());
@@ -209,41 +202,6 @@ public class ContragentActivity extends AppCompatActivity {
         mRwPhone.setAdapter(mPhoneAdapter);
         mRwPhone.setLayoutManager(mLayoutManager);
         mRwPhone.setHasFixedSize(true);
-    }
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("Contragent Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
     }
 
     private class ContragentTask extends AsyncTask<String, Void, Boolean> {
@@ -281,7 +239,8 @@ public class ContragentActivity extends AppCompatActivity {
                 mEtClientName.setText(mContragent.getNameContragent());
                 mEtEmail.setText(mContragent.getEmail());
                 mEtSite.setText(mContragent.getSite());
-                if (!mContragent.getContacts().equals("")) mTvContactFace.setText(mContragent.getContacts());
+                if (mContragent.getContacts() != null)
+                    if (!mContragent.getContacts().equals("")) mTvContactFace.setText(mContragent.getContacts());
                 mTvClientRelation.setText(mContragent.getRelations().equals("1") ? "Поставщик" : "Покупатель");
                 if (mContragent.getPhones() != null && mContragent.getPhones().size() > 0) {
                     mPhoneList = mContragent.getPhones();
