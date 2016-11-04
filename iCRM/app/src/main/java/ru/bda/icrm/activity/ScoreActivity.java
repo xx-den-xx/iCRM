@@ -15,8 +15,10 @@ import java.util.concurrent.TimeUnit;
 
 import ru.bda.icrm.R;
 import ru.bda.icrm.adapter.ScoreTabAdapter;
+import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.dialog.MyDialog;
 import ru.bda.icrm.enums.Constants;
+import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.model.Score;
 
 /**
@@ -25,7 +27,6 @@ import ru.bda.icrm.model.Score;
 
 public class ScoreActivity extends AppCompatActivity {
 
-    private Score score = new Score();
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
@@ -33,6 +34,7 @@ public class ScoreActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private FloatingActionButton mFab;
     private String mNumberAccount;
+    private Score mScore = new Score();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class ScoreActivity extends AppCompatActivity {
             mNumberAccount = getIntent().getStringExtra(Constants.INTENT_SCORE);
         }
         initContent();
+        new GetScoreTask().execute();
     }
 
     private void initContent() {
@@ -55,26 +58,28 @@ public class ScoreActivity extends AppCompatActivity {
             }
         });
 
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        mScoreAdapter = new ScoreTabAdapter(getSupportFragmentManager(), score);
-        mViewPager.setAdapter(mScoreAdapter);
-        mViewPager.setCurrentItem(0);
-        mViewPager.setOffscreenPageLimit(3);
-        mTabLayout.setupWithViewPager(mViewPager);
-
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SaveTask().execute();
+                new UpdateTask().execute();
             }
         });
     }
 
-    private class SaveTask extends AsyncTask<Void, Void, Boolean> {
+    private void initPager() {
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mScoreAdapter = new ScoreTabAdapter(getSupportFragmentManager(), mScore);
+        mViewPager.setAdapter(mScoreAdapter);
+        mViewPager.setCurrentItem(0);
+        mViewPager.setOffscreenPageLimit(3);
+        mTabLayout.setupWithViewPager(mViewPager);
+    }
+
+    private class UpdateTask extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -84,13 +89,9 @@ public class ScoreActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            boolean result = true;
-            try {
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return result;
+            return ApiController.getInstance().updateFullScore(
+                    AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, ScoreActivity.this), mScore, 0
+            );
         }
 
         @Override
@@ -126,6 +127,39 @@ public class ScoreActivity extends AppCompatActivity {
                     }
                 });
                 dialog.show(ScoreActivity.this);
+            }
+        }
+    }
+
+    private class GetScoreTask extends AsyncTask<Void, Void, Score> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Score doInBackground(Void... params) {
+            return ApiController.getInstance().getScore(
+                    AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getApplicationContext()), mNumberAccount
+            );
+        }
+
+        @Override
+        protected void onPostExecute(Score score) {
+            super.onPostExecute(score);
+            mProgressBar.setVisibility(View.GONE);
+            if (score != null) {
+                //Log.d("myLog", score.toString());
+                mScore = score;
+                mViewPager = (ViewPager) findViewById(R.id.view_pager);
+                mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+                mScoreAdapter = new ScoreTabAdapter(getSupportFragmentManager(), mScore);
+                mViewPager.setAdapter(mScoreAdapter);
+                mViewPager.setCurrentItem(0);
+                mViewPager.setOffscreenPageLimit(3);
+                mTabLayout.setupWithViewPager(mViewPager);
             }
         }
     }

@@ -44,7 +44,7 @@ public class RecyclerPriceAdapter extends RecyclerView.Adapter<RecyclerPriceAdap
         holder.priceLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                priceListener.addPriceListener(price);
+               priceListener.addPriceListener(price);
             }
         });
     }

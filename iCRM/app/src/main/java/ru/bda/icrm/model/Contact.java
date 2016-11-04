@@ -3,17 +3,17 @@ package ru.bda.icrm.model;
 /**
  * Created by User on 13.09.2016.
  */
-public class Clients {
-    private String mId;
-    private String mContragentId;
-    private String mName;
-    private String mRole;
-    private String mComments;
-    private Phone mWorkPhone;
-    private Phone mMobilePhone;
-    private String mWorkEmail;
+public class Contact {
+    private String mId = "";
+    private String mContragentId = "";
+    private String mName = "";
+    private String mRole = "";
+    private String mComments = "";
+    private String mWorkPhone = "";
+    private String mMobilePhone = "";
+    private String mWorkEmail = "";
 
-    public Clients() {}
+    public Contact() {}
 
     public String getId() {
         return mId;
@@ -55,19 +55,19 @@ public class Clients {
         this.mComments = mComments;
     }
 
-    public Phone getWorkPhone() {
+    public String getWorkPhone() {
         return mWorkPhone;
     }
 
-    public void setWorkPhone(Phone mWorkPhone) {
+    public void setWorkPhone(String mWorkPhone) {
         this.mWorkPhone = mWorkPhone;
     }
 
-    public Phone getMobilePhone() {
+    public String getMobilePhone() {
         return mMobilePhone;
     }
 
-    public void setMobilePhone(Phone mMobilePhone) {
+    public void setMobilePhone(String mMobilePhone) {
         this.mMobilePhone = mMobilePhone;
     }
 
@@ -79,14 +79,16 @@ public class Clients {
         this.mWorkEmail = mWorkEmail;
     }
 
-    public void addToDB(Clients clients) {
+    public void addToDB(Contact clients) {
 
     }
 
     @Override
     public String toString() {
-        return "Clients{" +
-                "mName='" + mName + '\'' +
+        return "Contact{" +
+                "mId='" + mId + '\'' +
+                ", mContragentId='" + mContragentId + '\'' +
+                ", mName='" + mName + '\'' +
                 ", mRole='" + mRole + '\'' +
                 ", mComments='" + mComments + '\'' +
                 ", mWorkPhone='" + mWorkPhone + '\'' +

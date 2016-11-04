@@ -208,6 +208,8 @@ public class AddScoreDialog extends DialogFragment {
         mScore.setDateAccount(Calendar.getInstance().getTimeInMillis());
         mScore.setProductList(mPriceList);
         mScore.setNumberAccount(numberScore);
+        mScore.setStatus(0);
+        mScore.setPriority(1);
         mScore.setSumScore(Double.parseDouble(mTvCoast.getText().toString()));
         Log.d("myLog", "Client ID = " + mContragent.getId() + "\n" + " date = " + mScore.getDateAccount()
                 + "\n" + mScore.getProductList().toString());

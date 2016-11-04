@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,7 +21,6 @@ import android.widget.TextView;
 
 import ru.bda.icrm.R;
 import ru.bda.icrm.dialog.AddEventDialog;
-import ru.bda.icrm.dialog.AddScoreDialog;
 import ru.bda.icrm.dialog.GetContragentDialog;
 import ru.bda.icrm.dialog.MyDialog;
 import ru.bda.icrm.enums.Constants;
@@ -33,15 +31,12 @@ import ru.bda.icrm.fragment.MailFragment;
 import ru.bda.icrm.fragment.MapFragment;
 import ru.bda.icrm.fragment.PriceFragment;
 import ru.bda.icrm.fragment.ScoresFragment;
-import ru.bda.icrm.fragment.TasksFragment;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.listener.AddContragentClickListener;
 import ru.bda.icrm.listener.AddEventClickListener;
-import ru.bda.icrm.listener.AddScoreClickListener;
 import ru.bda.icrm.listener.OnContragentClickListener;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Event;
-import ru.bda.icrm.model.Score;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnContragentClickListener {
@@ -229,7 +224,10 @@ public class MainActivity extends AppCompatActivity
         /**} else if (id == R.id.nav_tasks) {
             mNavMode = NavMode.TASKS;*/
         } else if (id == R.id.nav_mails) {
-            mNavMode = NavMode.MAILS;
+            /**mNavMode = NavMode.MAILS;*/
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            startActivity(intent);
         }  else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_exit) {
@@ -266,7 +264,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onContragentClick(String uid) {
         Intent intent = new Intent(MainActivity.this, ContragentActivity.class);
-        intent.putExtra(Constants.INTENT_UID_CONTRAGENT, uid);
+        intent.putExtra(Constants.INTENT_ID_CONTRAGENT, uid);
         startActivity(intent);
     }
 }

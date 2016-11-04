@@ -25,6 +25,7 @@ import ru.bda.icrm.dialog.MyDialog;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.model.Contragent;
+import ru.bda.icrm.model.Phone;
 
 /**
  * Created by User on 02.09.2016.
@@ -164,10 +165,8 @@ public class AddContragentActivity extends AppCompatActivity implements AdapterV
         @Override
         protected Contragent doInBackground(Void... params) {
             Log.d("myLog", "start_update.....");
-            List<String> phones = new ArrayList<String>();
+            List<Phone> phones = new ArrayList<>();
             mContragent.setPhones(phones);
-            List<String> contacts = new ArrayList<String>();
-            mContragent.setContacts(contacts);
             return ApiController.getInstance().addContragent(
                     AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, mContext),
                     "new", mContragent);
@@ -180,7 +179,7 @@ public class AddContragentActivity extends AppCompatActivity implements AdapterV
 
             } else {
                 Intent intent = new Intent(AddContragentActivity.this, ContragentActivity.class);
-                intent.putExtra(Constants.INTENT_UID_CONTRAGENT, result.getId());
+                intent.putExtra(Constants.INTENT_ID_CONTRAGENT, result.getId());
                 startActivity(intent);
                 finish();
             }

@@ -55,7 +55,7 @@ public class AddScoreAdapter extends RecyclerView.Adapter<AddScoreAdapter.ViewHo
                 try {
                     PriceSum priceSum = price;
                     double sum = Integer.parseInt(s.toString()) * coast;
-                    priceSum.setSum(coast);
+                    priceSum.setSum(Integer.parseInt(s.toString()));
                     priceSum.setTotlalCoast(new BigDecimal(sum).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     listener.onChangeCoast(priceSum);
                     holder.tvSumm.setText(sum + " RUB");
