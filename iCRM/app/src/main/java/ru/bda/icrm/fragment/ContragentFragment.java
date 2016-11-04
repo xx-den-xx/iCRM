@@ -127,13 +127,19 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
         });
 
         mDBController = new DBController(getActivity());
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         if (AppControl.getInstance().isOnline(getActivity())) {
             new ContragentRequestTask().execute();
         } else {
             Toast.makeText(getActivity(), "Нет подключения к интернету", Toast.LENGTH_LONG).show();
             //new AgentFromBDTask().execute();
         }
-        return view;
     }
 
     private void setSearch(String text) {

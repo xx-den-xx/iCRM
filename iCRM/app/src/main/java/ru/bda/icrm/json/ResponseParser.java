@@ -145,8 +145,10 @@ public class ResponseParser {
 
                 contragent.setPhones(phoneList);
                 JSONArray jContacts = jsonData.getJSONArray("contacts");
-                contragent.setIdContact(jContacts.getJSONObject(0).getString("id"));
-                contragent.setContacts(jContacts.getJSONObject(0).getString("fio"));
+                if (jContacts.length() > 0) {
+                    contragent.setIdContact(jContacts.getJSONObject(0).getString("id"));
+                    contragent.setContacts(jContacts.getJSONObject(0).getString("fio"));
+                }
 
             } else {
                 contragent = null;
