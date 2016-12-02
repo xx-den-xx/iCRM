@@ -15,6 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_TELEPHONES = "table_telephones";
     public static final String TABLE_CONTACTS = "table_contacts";
     public static final String TABLE_EVENTS = "table_events";
+    public static final String TABLE_CALL = "table_call";
 
     public static final String ID = "_id";
     public static final String UID = "uid";//uid контрагента
@@ -48,6 +49,12 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String EVENT_DATE = "date";
     public static final String EVENT_MESSAGE = "message";
 
+    //поля для тфблицы вызовов
+    public static final String CALL_PHONE = "phone";
+    public static final String CALL_LOGIN = "login";
+    public static final String CALL_TYPE = "type";
+    public static final String CALL_TIME = "time";
+    public static final String CALL_SEND = "send";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, 1);
@@ -92,6 +99,14 @@ public class DBHelper extends SQLiteOpenHelper {
                 + EVENT_TIME_END + " real, "
                 + EVENT_DATE + " text, "
                 + EVENT_MESSAGE + " text);");
+
+        db.execSQL("create table " + TABLE_CALL
+                + "(" + ID + " integer primary key, " +
+                CALL_PHONE + " text, " +
+                CALL_LOGIN + " text, " +
+                CALL_TIME + " real, " +
+                CALL_TYPE + " integer, " +
+                CALL_SEND + " integer);");
     }
 
     @Override

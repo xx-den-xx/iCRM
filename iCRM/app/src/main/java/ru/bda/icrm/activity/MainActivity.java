@@ -25,6 +25,7 @@ import ru.bda.icrm.dialog.GetContragentDialog;
 import ru.bda.icrm.dialog.MyDialog;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.enums.NavMode;
+import ru.bda.icrm.fragment.CallFragment;
 import ru.bda.icrm.fragment.ContragentFragment;
 import ru.bda.icrm.fragment.EventsFragment;
 import ru.bda.icrm.fragment.MailFragment;
@@ -117,10 +118,10 @@ public class MainActivity extends AppCompatActivity
             toolbar.setTitle(R.string.nav_price);
             fragment = new PriceFragment();
             mMenuAdd.setVisible(false);
-        /**} else if (mode == NavMode.TASKS) {
-            toolbar.setTitle(R.string.nav_tasks);
-            fragment = new TasksFragment();
-            mMenuAdd.setVisible(false);*/
+        } else if (mode == NavMode.CALL) {
+            toolbar.setTitle(R.string.nav_call);
+            fragment = new CallFragment();
+            mMenuAdd.setVisible(false);
         } else if (mode == NavMode.MAILS) {
             toolbar.setTitle(R.string.nav_mails);
             fragment = new MailFragment();
@@ -221,8 +222,8 @@ public class MainActivity extends AppCompatActivity
             mNavMode = NavMode.EVENTS;
         } else if (id == R.id.nav_price) {
             mNavMode = NavMode.PRICE;
-        /**} else if (id == R.id.nav_tasks) {
-            mNavMode = NavMode.TASKS;*/
+        } else if (id == R.id.nav_call) {
+            mNavMode = NavMode.CALL;
         } else if (id == R.id.nav_mails) {
             /**mNavMode = NavMode.MAILS;*/
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -254,7 +255,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void logoutProfile() {
-        AppPref.getInstance().setHexAuth("", "", this);
+        AppPref.getInstance().setHexAuth("", "", "", this);
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         intent.putExtra(Constants.INTENT_EXIT, "exit");
         startActivity(intent);

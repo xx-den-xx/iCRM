@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.bda.icrm.model.Call;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Event;
 
@@ -167,5 +168,48 @@ public class DBController {
             } while (cursor.moveToNext());
         }
         return events;
+    }
+
+    public void addCall(Call call) {
+        mDb = dbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(DBHelper.CALL_PHONE, call.getPhone());
+        cv.put(DBHelper.CALL_LOGIN, call.getLogin());
+        cv.put(DBHelper.CALL_TIME, call.getTime());
+        cv.put(DBHelper.CALL_TYPE, call.getType());
+        cv.put(DBHelper.CALL_SEND, call.isSend() ? 1 : 0);
+        mDb.insert(DBHelper.TABLE_CALL, null, cv);
+        mDb.close();
+    }
+
+    public void updateCall(Call call) {
+        mDb = dbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(DBHelper.CALL_PHONE, call.getPhone());
+        cv.put(DBHelper.CALL_LOGIN, call.getLogin());
+        cv.put(DBHelper.CALL_TIME, call.getTime());
+        cv.put(DBHelper.CALL_TYPE, call.getType());
+        cv.put(DBHelper.CALL_SEND, 1);
+        String time = String.valueOf(call.getTime());
+        mDb.update(DBHelper.TABLE_CALL, cv, DBHelper.CALL_TIME + " = ?", new String[] {time});
+        mDb.close();
+    }
+
+    public List<Call> getCallList() {
+        List<Call> calls = new ArrayList<>();
+        mDb = dbHelper.getWritableDatabase();
+        Cursor cursor = mDb.query(DBHelper.TABLE_CALL, null, null, null, null, null, DBHelper.CALL_TIME + " DESC");
+        if (cursor.moveToFirst()) {
+            do {
+                Call call = new Call();
+                call.setPhone(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_PHONE)));
+                call.setLogin(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_LOGIN)));
+                call.setTime(cursor.getLong(cursor.getColumnIndex(DBHelper.CALL_TIME)));
+                call.setType(cursor.getInt(cursor.getColumnIndex(DBHelper.CALL_TYPE)));
+                call.setSend(cursor.getInt(cursor.getColumnIndex(DBHelper.CALL_SEND)) == 0 ? false : true);
+                calls.add(call);
+            } while (cursor.moveToNext());
+        }
+        return calls;
     }
 }
