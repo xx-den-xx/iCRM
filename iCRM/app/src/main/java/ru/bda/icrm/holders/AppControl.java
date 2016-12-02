@@ -3,6 +3,7 @@ package ru.bda.icrm.holders;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 
 /**
  * Created by User on 06.09.2016.
@@ -41,5 +42,9 @@ public class AppControl {
                 "/" + (String.valueOf(monthOfYear).length() < 2 ? "0" + monthOfYear : "" + monthOfYear) +
                 "/" + (String.valueOf(year).length() < 2 ? "0" + year : "" + year);
         return date;
+    }
+
+    public boolean isMarshmallowDevice() {
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 }

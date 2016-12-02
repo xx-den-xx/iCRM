@@ -16,4 +16,9 @@ public class Constants {
     public static final String PRIORITY_TITLE = "Приоритет";
     public static final String STATUS_TITLE = "Статус";
 
+    public static final String INTENT_CALL_PHONE = "intent_call";
+    public static final String INTENT_CALL_TYPE = "type";
+
+    public  static final int CALL_TYPE_OUTCOMING = 0;//исходящий вызов
+    public  static final int CALL_TYPE_IMCOMING = 1;//входящий вызов
 }

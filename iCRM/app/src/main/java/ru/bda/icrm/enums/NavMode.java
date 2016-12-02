@@ -11,6 +11,6 @@ public enum NavMode {
     PRICE,
     TASKS,
     MAILS,
-    SWAP,
+    CALL,
     SETTINGS
 }

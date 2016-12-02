@@ -13,6 +13,7 @@ import java.util.List;
 
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.json.ResponseParser;
+import ru.bda.icrm.model.Call;
 import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Phone;
@@ -25,7 +26,7 @@ import ru.bda.icrm.model.Score;
  */
 public class ApiController {
 
-    private final String mBaseUrl = Constants.TEST_API_LINK;
+    private final String mBaseUrl = Constants.API_LINK;
     private static volatile ApiController instance;
     private Context context;
 
@@ -357,7 +358,6 @@ public class ApiController {
             root.put("prio", score.getPriority());
             root.put("date", score.getDateAccount());
             JSONArray products = new JSONArray();
-            int i = 0;
             for (PriceSum price : score.getProductList()) {
                 JSONObject product = new JSONObject();
                 product.put("id", price.getId());
@@ -562,6 +562,42 @@ public class ApiController {
             root.put("contragent", phone.getContactsId());
             root.put("phone", phone.getNumber());
             root.put("type", phone.getType());
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseAddPhone(connection.getInputStream());
+        }catch(Exception e){
+            return false;
+        }
+    }
+
+    public boolean addCall (String token, List<Call> callList){
+        String urlString = mBaseUrl + "?action=phoneLog";
+        Log.d("phone_log", urlString);
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            JSONArray array = new JSONArray();
+            for (Call call : callList) {
+                JSONObject callObj = new JSONObject();
+                callObj.put("login", call.getLogin());
+                callObj.put("phone", call.getPhone());
+                callObj.put("type", call.getType());
+                callObj.put("time", call.getTime());
+                array.put(callObj);
+            }
+            root.put("call", array);
 
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

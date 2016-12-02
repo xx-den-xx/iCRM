@@ -13,6 +13,7 @@ public class AppPref {
 
     private static final String PREF_NAME = "app_pref";
     public static final String PREF_HEX_LOGIN = "hex_login";
+    public static final String PREF_LOGIN = "hex_login";
     public static final String PREF_HEX_PASSWORD = "hex_pass";
     public static final String PREF_TOKEN = "token";
 
@@ -29,9 +30,10 @@ public class AppPref {
         return instance;
     }
 
-    public void setHexAuth(String hexLogin, String hexPassword, Context context) {
+    public void setHexAuth(String login, String hexLogin, String hexPassword, Context context) {
         sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
+        ed.putString(PREF_LOGIN, login);
         ed.putString(PREF_HEX_LOGIN, hexLogin);
         ed.putString(PREF_HEX_PASSWORD, hexPassword);
         ed.commit();
