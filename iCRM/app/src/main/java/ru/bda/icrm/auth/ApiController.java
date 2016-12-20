@@ -26,7 +26,7 @@ import ru.bda.icrm.model.Score;
  */
 public class ApiController {
 
-    private final String mBaseUrl = Constants.API_LINK;
+    private final String mBaseUrl = Constants.TEST_API_LINK;//API_LINK;
     private static volatile ApiController instance;
     private Context context;
 
@@ -260,6 +260,34 @@ public class ApiController {
         }
     }
 
+    public List<PriceSum> getNomenclatureTree(String token, String parent, int start, int count) {
+        String urlString = mBaseUrl + "?action=getNomenclature";
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("start", start);
+            root.put("count", count);
+            root.put("parent", parent);
+
+            Log.d("myLog", root.toString());
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            return ResponseParser.getInstance().parsePriceSum(connection.getInputStream());
+        }catch(Exception e){
+            return null;
+        }
+    }
+
     public List<Price> searchNomenclature(String token, String search) {
         String urlString = mBaseUrl + "?action=searchNomenclature";
         try{
@@ -362,6 +390,7 @@ public class ApiController {
                 JSONObject product = new JSONObject();
                 product.put("id", price.getId());
                 product.put("count", price.getSum());
+                product.put("price", price.getPrice());
                 products.put(product);
             }
             Log.d("myLog", products.toString());
@@ -530,6 +559,7 @@ public class ApiController {
 
     public Contact getContact (String token, String contact){
         String urlString = mBaseUrl + "?action=getContact";
+        Log.d("myLog", urlString);
         try{
             JSONObject root = new JSONObject();
             root.put("token", token);

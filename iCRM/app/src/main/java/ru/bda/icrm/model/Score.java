@@ -21,9 +21,9 @@ public class Score implements Serializable {
     private String initialConditions = "";//исходные условия
     private String orderWorks = "";//порядок выполнения работ
     private String annotation = "";//примечание
-    private String linkVideo = "";//линка видео
-    private String linkPhoto = "";//линка фото
-    private String linkSound = "";//линка звука
+    private String linkVideo = "";//линк видео
+    private String linkPhoto = "";//линк фото
+    private String linkSound = "";//линк звука
     private String linkUrl = "";//линк на страницу счёта
     private int priority = 1;//приоритет
     private int status = 1;//статус

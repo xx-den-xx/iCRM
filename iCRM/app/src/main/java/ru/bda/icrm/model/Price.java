@@ -10,6 +10,8 @@ public class Price {
     private String code = "";
     private String parent = "";
     private String title = "";
+    private String unit = "";
+    private boolean isGroup = false;
     private double price = 0;
 
     public Price() {}
@@ -54,6 +56,22 @@ public class Price {
         this.price = price;
     }
 
+    public boolean isGroup() {
+        return isGroup;
+    }
+
+    public void setGroup(boolean group) {
+        isGroup = group;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
     @Override
     public String toString() {
         return "Price{" +
@@ -61,7 +79,9 @@ public class Price {
                 ", code='" + code + '\'' +
                 ", parent='" + parent + '\'' +
                 ", title='" + title + '\'' +
-                ", price='" + price + '\'' +
+                ", unit='" + unit + '\'' +
+                ", isGroup=" + isGroup +
+                ", price=" + price +
                 '}';
     }
 }

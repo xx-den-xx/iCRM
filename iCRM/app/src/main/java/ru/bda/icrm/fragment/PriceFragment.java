@@ -1,5 +1,6 @@
 package ru.bda.icrm.fragment;
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -27,10 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.bda.icrm.R;
+import ru.bda.icrm.activity.ChildPriceActivity;
 import ru.bda.icrm.adapter.RecyclerPriceAdapter;
 import ru.bda.icrm.auth.ApiController;
+import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.enums.SearchMode;
 import ru.bda.icrm.holders.AppPref;
+import ru.bda.icrm.listener.AddPriceClickListener;
 import ru.bda.icrm.listener.EndlessScrollListener;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Price;
@@ -47,6 +51,7 @@ public class PriceFragment extends Fragment {
     private ImageView mIvSearch;
     private EditText mEtSearch;
     private ImageView mIvCancel;
+    private String mParentCode = "root";
     private ProgressBar mProgressBar;
     private List<PriceSum> mPriceList = new ArrayList<>();
     private int startProgressInt = 0;
@@ -66,6 +71,16 @@ public class PriceFragment extends Fragment {
     private void initContent(View view) {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mAdapter = new RecyclerPriceAdapter(mPriceList);
+        mAdapter.addPriceClickListener(new AddPriceClickListener() {
+            @Override
+            public void addPriceListener(PriceSum price) {
+                if (price.isGroup()) {
+                    Intent intent = new Intent(getActivity(), ChildPriceActivity.class);
+                    intent.putExtra(Constants.INTENT_PARENT_CODE, price.getCode());
+                    startActivity(intent);
+                }
+            }
+        });
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
@@ -126,6 +141,11 @@ public class PriceFragment extends Fragment {
         });
     }
 
+    public void setParentCode(String mParentCode) {
+        this.mParentCode = mParentCode;
+
+    }
+
     private void setSearch(String text) {
         if (text.equals("")) {
             searchMode = SearchMode.LOAD;
@@ -170,8 +190,9 @@ public class PriceFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            List<PriceSum> list = (ApiController.getInstance().getNomenclatureSum(
-                    AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getActivity()), startProgressInt, countProgressInt));
+            List<PriceSum> list = (ApiController.getInstance().getNomenclatureTree(
+                    AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getActivity()), mParentCode, startProgressInt, countProgressInt));
+
             if (list != null) {
                 if (startProgressInt == 0) {
                     mPriceList = list;
@@ -195,7 +216,6 @@ public class PriceFragment extends Fragment {
     }
 
     private class SearchTask extends AsyncTask<String, Void, Void> {
-
 
         @Override
         protected void onPreExecute() {

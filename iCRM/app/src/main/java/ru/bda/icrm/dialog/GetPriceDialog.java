@@ -124,7 +124,7 @@ public class GetPriceDialog extends DialogFragment {
         mIvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NomenclatureTask().execute();
+                new SearchTask().execute("");
                 mEtSearch.setText("");
                 mEtSearch.setVisibility(View.GONE);
                 mIvCancel.setVisibility(View.GONE);
@@ -164,7 +164,7 @@ public class GetPriceDialog extends DialogFragment {
     private void setSearch(String text) {
         if (text.equals("")) {
             searchMode = SearchMode.LOAD;
-            new NomenclatureTask().execute();
+            new SearchTask().execute("");
         } else {
             searchMode = SearchMode.SEARCH;
             new SearchTask().execute(text);
