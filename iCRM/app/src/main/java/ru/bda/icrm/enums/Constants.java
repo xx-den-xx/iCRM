@@ -21,4 +21,6 @@ public class Constants {
 
     public  static final int CALL_TYPE_OUTCOMING = 0;//исходящий вызов
     public  static final int CALL_TYPE_IMCOMING = 1;//входящий вызов
+
+    public static final String INTENT_PARENT_CODE = "parent_code";
 }

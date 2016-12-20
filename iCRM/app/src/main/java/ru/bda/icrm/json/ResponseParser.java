@@ -219,9 +219,11 @@ public class ResponseParser {
         String response = convertStreamToString(stream);
         JSONObject json;
         List<PriceSum> list = new ArrayList<>();
+        Log.d("Log-Price", response);
         try {
             json = new JSONObject(response);
             String state = json.getString("state");
+            Log.d("Log-Price", response);
             if (AnswerServer.getInstance().isAnswerServer(state)) {
                 JSONArray nomenclature = json.getJSONArray("nomenclature");
                 for (int i = 0; i < nomenclature.length(); i++) {
@@ -230,20 +232,23 @@ public class ResponseParser {
                     price.setId(item.getInt("id"));
                     price.setCode(item.getString("code"));
                     price.setParent(item.getString("parent"));
-                    price.setTitle(item.getString("title").replace("&quot;", "\""));
+                    price.setTitle(item.getString("nomenclature").replace("&quot;", "\""));
+                    price.setGroup(item.getInt("isgroup") == 1 ? true : false);
+                    price.setUnit(item.getString("unit"));
                     String priceString = item.getString("price").replace(",", ".");
                     String convertPrice = priceString.replace(" ", "");
-                    price.setPrice(Double.parseDouble(convertPrice));
+                    if (!convertPrice.equals("")) price.setPrice(Double.parseDouble(convertPrice));
+                    Log.d("Log-Price", price.toString());
                     list.add(price);
                 }
                 return list;
             } else {
+                Log.d("Log-Price", "ERROR ANSWER SERVER");
                 return null;
             }
-
-
         } catch(JSONException e) {
             e.printStackTrace();
+            Log.d("Log-Price", "ERROR PARSE");
             return null;
         }
     }

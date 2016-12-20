@@ -1,9 +1,11 @@
 package ru.bda.icrm.adapter;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -39,14 +41,23 @@ public class RecyclerPriceAdapter extends RecyclerView.Adapter<RecyclerPriceAdap
         final PriceSum price = mPriceList.get(position);
         String title = price.getTitle();
         double coast = price.getPrice();
+        holder.arrow.setColorFilter(Color.parseColor("#000000"));
+        holder.arrowLayout.setVisibility(View.GONE);
+        if (price.isGroup()) {
+            holder.arrowLayout.setVisibility(View.VISIBLE);
+            holder.price.setVisibility(View.GONE);
+
+        } else {
+            holder.price.setText(coast + " RUB");
+        }
         holder.title.setText(title);
-        holder.price.setText(coast + " RUB");
         holder.priceLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               priceListener.addPriceListener(price);
+                priceListener.addPriceListener(price);
             }
         });
+
     }
 
     @Override
@@ -66,11 +77,15 @@ public class RecyclerPriceAdapter extends RecyclerView.Adapter<RecyclerPriceAdap
         public LinearLayout priceLayout;
         public TextView title;
         public TextView price;
+        public LinearLayout arrowLayout;
+        public ImageView arrow;
         public ViewHolder(View itemView) {
             super(itemView);
             priceLayout = (LinearLayout) itemView.findViewById(R.id.price_layout);
             title = (TextView) itemView.findViewById(R.id.title);
             price = (TextView) itemView.findViewById(R.id.price);
+            arrowLayout = (LinearLayout) itemView.findViewById(R.id.arrow_layout);
+            arrow = (ImageView) itemView.findViewById(R.id.arrow);
         }
     }
 }

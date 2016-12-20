@@ -1,0 +1,13 @@
+JvmtiExport can_access_local_variables 0
+JvmtiExport can_hotswap_or_post_breakpoint 0
+JvmtiExport can_post_on_exceptions 0
+# 172 ciObject found
+ciMethod java/lang/Object <init> ()V 4097 1 6379319 0 0
+ciMethod java/lang/Object getClass ()Ljava/lang/Class; 2049 1 256 0 -1
+instanceKlass com/android/dx/util/ListIntSet$1
+instanceKlass com/android/dx/util/ListIntSet
+instanceKlass com/android/dx/cf/iface/ParseObserver
+instanceKlass com/android/dx/rop/code/RegisterSpec$1
+instanceKlass com/android/dx/command/dexer/Main$NotFilter
+instanceKlass com/android/dx/ssa/Dominators$1
+instanceKlass com/android/dx/rop/code/RegOps
