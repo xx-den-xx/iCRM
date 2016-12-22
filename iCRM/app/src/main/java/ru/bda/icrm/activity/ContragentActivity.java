@@ -271,11 +271,6 @@ public class ContragentActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
             mProgressBar.setVisibility(View.GONE);
-            if (aBoolean) {
-                Toast.makeText(ContragentActivity.this, "Контакт успешно сохранён", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(ContragentActivity.this, "Контакт не сохранён", Toast.LENGTH_LONG).show();
-            }
         }
     }
 

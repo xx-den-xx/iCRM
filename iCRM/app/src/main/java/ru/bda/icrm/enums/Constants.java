@@ -5,6 +5,7 @@ package ru.bda.icrm.enums;
  */
 public class Constants {
     public static final String API_LINK = "http://91.211.19.250/api.php";
+    public static final String API_LINK_2 = "http://91.193.253.201/api.php";
     public static final String TEST_API_LINK = "http://api.4talks.ru/api.php";
 
     public static final String TEST_LINK_SCORE = "http://";
