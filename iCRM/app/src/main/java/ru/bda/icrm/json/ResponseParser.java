@@ -207,8 +207,6 @@ public class ResponseParser {
                 Log.d("myLog", state);
                 return null;
             }
-
-
         } catch(JSONException e) {
             e.printStackTrace();
             return null;
@@ -257,6 +255,7 @@ public class ResponseParser {
         String response = convertStreamToString(stream);
         JSONObject json;
         String numberScore = "";
+        Log.d("parse-log", response);
         try {
             json = new JSONObject(response);
             String state = json.getString("state");
@@ -277,6 +276,7 @@ public class ResponseParser {
     public boolean parseUpdateScore(InputStream stream) {
         String response = convertStreamToString(stream);
         JSONObject json;
+        Log.d("log-parse", response);
         try {
             json = new JSONObject(response);
             String state = json.getString("state");

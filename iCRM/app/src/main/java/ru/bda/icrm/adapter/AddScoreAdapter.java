@@ -88,7 +88,7 @@ public class AddScoreAdapter extends RecyclerView.Adapter<AddScoreAdapter.ViewHo
                 try {
                     PriceSum priceSum = price;
                     int number = !s.toString().equals("") ? Integer.parseInt(s.toString()) : 0;
-                    double sum = Integer.parseInt(s.toString()) * Double.parseDouble(holder.etNumberProducts.getText().toString());
+                    double sum = Double.parseDouble(s.toString()) * Double.parseDouble(holder.etNumberProducts.getText().toString());
                     priceSum.setSum(number);
                     priceSum.setTotlalCoast(new BigDecimal(sum).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     if (!s.toString().equals("")) priceSum.setPrice(Double.parseDouble(s.toString()));

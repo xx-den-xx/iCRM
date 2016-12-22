@@ -26,7 +26,7 @@ import ru.bda.icrm.model.Score;
  */
 public class ApiController {
 
-    private final String mBaseUrl = Constants.TEST_API_LINK;//API_LINK;
+    private final String mBaseUrl = Constants.API_LINK_2;//API_LINK;
     private static volatile ApiController instance;
     private Context context;
 
