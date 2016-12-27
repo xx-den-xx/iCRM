@@ -13,6 +13,7 @@ public class Constants {
     public static final String INTENT_ID_CONTRAGENT = "intent_id_contragent";
     public static final String INTENT_EXIT = "intent_exit";
     public static final String INTENT_SCORE = "intent_score";
+    public static final String INTENT_MAP_TYPE = "map_type";
 
     public static final String PRIORITY_TITLE = "Приоритет";
     public static final String STATUS_TITLE = "Статус";
@@ -24,4 +25,10 @@ public class Constants {
     public  static final int CALL_TYPE_IMCOMING = 1;//входящий вызов
 
     public static final String INTENT_PARENT_CODE = "parent_code";
+
+    public static final String INTENT_OBJECT_ID = "object";
+
+    public static final String MAP_TYPE_CLIENT = "client";
+    public static final String MAP_TYPE_OBJECT = "object";
+    public static final int CAMERA_REQUEST = 100;
 }

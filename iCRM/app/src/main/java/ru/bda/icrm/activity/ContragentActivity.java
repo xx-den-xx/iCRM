@@ -18,26 +18,25 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.bda.icrm.R;
+import ru.bda.icrm.adapter.ObjectContragentAdapter;
 import ru.bda.icrm.adapter.PhoneContragentAdapter;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.dialog.AddClientDialog;
 import ru.bda.icrm.dialog.AddContactInfoDialog;
+import ru.bda.icrm.dialog.AddObjectDialog;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.listener.AddClientClickListener;
+import ru.bda.icrm.listener.AddObjectClickListener;
 import ru.bda.icrm.listener.AddPhoneClickListener;
 import ru.bda.icrm.listener.OnCallClickListener;
+import ru.bda.icrm.listener.OnObjectClickListener;
+import ru.bda.icrm.model.ClientObject;
 import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Phone;
@@ -66,11 +65,17 @@ public class ContragentActivity extends AppCompatActivity {
     private EditText mEtSite;
     private FloatingActionButton mFab;
     private LinearLayout mLayoutContactInfo;
+    private LinearLayout mLayoutObject;
 
     private RecyclerView mRwPhone;
     private LinearLayoutManager mLayoutManager;
     private PhoneContragentAdapter mPhoneAdapter;
     private List<Phone> mPhoneList = new ArrayList<>();
+
+    private RecyclerView mRwObject;
+    private LinearLayoutManager mLayoutObjectManager;
+    private ObjectContragentAdapter mObjectAdapter;
+    private List<ClientObject> mObjectList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,6 +111,7 @@ public class ContragentActivity extends AppCompatActivity {
                 if (mMapItem.getItemId() == R.id.action_maps) {
                     Intent intent = new Intent(ContragentActivity.this, MapActivity.class);
                     intent.putExtra(Constants.INTENT_ID_CONTRAGENT, mContragent.getId());
+                    intent.putExtra(Constants.INTENT_MAP_TYPE, Constants.MAP_TYPE_CLIENT);
                     startActivity(intent);
                 }
                 return false;
@@ -156,6 +162,21 @@ public class ContragentActivity extends AppCompatActivity {
             }
         });
 
+        mLayoutObject = (LinearLayout) findViewById(R.id.layout_object);
+        mLayoutObject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddObjectDialog dialog = new AddObjectDialog();
+                dialog.init(new AddObjectClickListener() {
+                    @Override
+                    public void addClickListener(ClientObject object) {
+                        new AddObjectTask().execute(object);
+                    }
+                });
+                dialog.show(ContragentActivity.this);
+            }
+        });
+
         mLayoutContactInfo = (LinearLayout) findViewById(R.id.layout_contact_info);
         mLayoutContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,6 +223,21 @@ public class ContragentActivity extends AppCompatActivity {
         mRwPhone.setAdapter(mPhoneAdapter);
         mRwPhone.setLayoutManager(mLayoutManager);
         mRwPhone.setHasFixedSize(true);
+
+        mRwObject = (RecyclerView) findViewById(R.id.rw_object);
+        mLayoutObjectManager = new LinearLayoutManager(this);
+        mObjectAdapter = new ObjectContragentAdapter(mObjectList);
+        mObjectAdapter.setOnObjectClickListener(new OnObjectClickListener() {
+            @Override
+            public void objectClickListener(ClientObject object) {
+                Intent intent = new Intent(ContragentActivity.this, ClientObjectActivity.class);
+                intent.putExtra(Constants.INTENT_OBJECT_ID, object.getId());
+                startActivity(intent);
+            }
+        });
+        mRwObject.setAdapter(mObjectAdapter);
+        mRwObject.setLayoutManager(mLayoutObjectManager);
+        mRwObject.setHasFixedSize(true);
     }
 
     private class ContragentTask extends AsyncTask<String, Void, Boolean> {
@@ -246,6 +282,11 @@ public class ContragentActivity extends AppCompatActivity {
                     mPhoneList = mContragent.getPhones();
                     mPhoneAdapter.setPhoneList(mPhoneList);
                     mPhoneAdapter.notifyDataSetChanged();
+                }
+                if (mContragent.getObjects() != null && mContragent.getObjects().size() > 0) {
+                    mObjectList = mContragent.getObjects();
+                    mObjectAdapter.setListObject(mObjectList);
+                    mObjectAdapter.notifyDataSetChanged();
                 }
             } else {
                 Log.d("myLog", "ошибка получения контрагента");
@@ -317,6 +358,31 @@ public class ContragentActivity extends AppCompatActivity {
                 mPhoneAdapter.setPhoneList(mPhoneList);
                 mPhoneAdapter.notifyDataSetChanged();
             //}
+        }
+    }
+
+    private class AddObjectTask extends AsyncTask<ClientObject, Void, Void> {
+
+        private ClientObject object;
+
+        @Override
+        protected Void doInBackground(ClientObject... params) {
+            object = params[0];
+            ClientObject objectTake = ApiController.getInstance().makeObject(
+                    AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, ContragentActivity.this),
+                    mContragent.getId(), params[0].getName());
+            if (objectTake != null) {
+                object.setId(objectTake.getId());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mObjectList.add(object);
+            mObjectAdapter.setListObject(mObjectList);
+            mObjectAdapter.notifyDataSetChanged();
         }
     }
 }

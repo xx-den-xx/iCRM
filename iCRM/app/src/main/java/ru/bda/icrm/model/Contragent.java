@@ -21,6 +21,7 @@ public class Contragent {
     private String mFizAddress = "";//физический адрес
     private String mSite = "";//сайт
     private List<Phone> mPhones = null;//список телефонов
+    private List<ClientObject> mObjects = null;//список объектов
     private String mContacts = null;//список контактных лиц
     private String mIdContact = "";
     private double lat;//latitude
@@ -142,6 +143,14 @@ public class Contragent {
 
     public void setPhones(List<Phone> mPhones) {
         this.mPhones = mPhones;
+    }
+
+    public List<ClientObject> getObjects() {
+        return mObjects;
+    }
+
+    public void setObjects(List<ClientObject> mObjects) {
+        this.mObjects = mObjects;
     }
 
     public String getContacts() {

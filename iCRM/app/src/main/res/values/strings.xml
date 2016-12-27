@@ -35,6 +35,7 @@
     <string name="client_contact_face">Контактные лица</string>
     <string name="client_add_contact_face">Добавить контактное лицо</string>
     <string name="client_contact_info">Контактная информация</string>
+    <string name="client_object">Объекты</string>
     <string name="client_phone">Телефон</string>
     <string name="client_mail">Почта</string>
     <string name="client_site">Сайт компании</string>
@@ -135,4 +136,13 @@
     <string name="add_score_event">Добавить новый счет</string>
     <string name="add_score_client">Добавить клиента</string>
     <string name="add_score_product">Добавить товар</string>
+
+    <string name="add_object_name">Добавить название объекта</string>
+    <string name="object_name">Название</string>
+    <string name="object_contact">Контактное лицо</string>
+    <string name="object_comments">Комментарии</string>
+    <string name="object_adress">Адрес</string>
+    <string name="object_work_phone">Рабочий телефон</string>
+    <string name="object_photo">Добавить фотографию</string>
+
 </resources>

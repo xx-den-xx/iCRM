@@ -1,22 +1,32 @@
 package ru.bda.icrm.auth;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.UUID;
 
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.json.ResponseParser;
 import ru.bda.icrm.model.Call;
+import ru.bda.icrm.model.ClientObject;
 import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Phone;
+import ru.bda.icrm.model.Photo;
 import ru.bda.icrm.model.Price;
 import ru.bda.icrm.model.PriceSum;
 import ru.bda.icrm.model.Score;
@@ -646,5 +656,167 @@ public class ApiController {
         }catch(Exception e){
             return false;
         }
+    }
+
+    public ClientObject makeObject (String token, String contragentId, String title){
+        String urlString = mBaseUrl + "?action=makeObject";
+        Log.d("log-obj", urlString);
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("contragent", contragentId);
+            root.put("title", title);
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseMakeObject(connection.getInputStream());
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    /**
+     * внутри token, object, title, contact, comment, address, phone, images
+     * @param token
+     * @param object
+     * @return
+     */
+    public Boolean updateObject (String token, ClientObject object){
+        String urlString = mBaseUrl + "?action=updateObject";
+        Log.d("log-upd-obj", urlString);
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("object", object.getId());
+            root.put("title", object.getName());
+            root.put("contact", object.getContact());
+            root.put("comment", object.getComments());
+            root.put("address", object.getAddress());
+            root.put("phone", object.getPhone());
+            root.put("lat", object.getLat());
+            root.put("lng", object.getLon());
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseUpdateObject(connection.getInputStream());
+        }catch(Exception e){
+            return false;
+        }
+    }
+
+    public ClientObject getObject (String token, int object){
+        String urlString = mBaseUrl + "?action=getObject";
+        Log.d("log-obj", urlString);
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("object", object);
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            String s = root.toString();
+            byte[] outputInBytes = s.getBytes("UTF-8");
+            OutputStream os = connection.getOutputStream();
+            os.write( outputInBytes );
+            os.close();
+            connection.connect();
+            connection.getInputStream();
+            Log.d("myLog", "запрос выполнен успешно");
+            return ResponseParser.getInstance().parseGetObject(connection.getInputStream());
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    public Photo postUploadPicture(String token, int objectId, Bitmap bitmap) {
+
+        String url = mBaseUrl + "?action=addImage&token=" + token + "&object=" + objectId;
+        Log.d("log-picture", url);
+        String attachmentName = "image";
+        String attachmentFileName = UUID.randomUUID() + ".png";
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary =  "0xKhTmLbOuNdArY";
+
+        try{
+            JSONObject root = new JSONObject();
+            root.put("token", token);
+            root.put("object", objectId);
+
+            HttpURLConnection connection = null;
+            URL urlServer = new URL(url);
+            connection = (HttpURLConnection) urlServer.openConnection();
+            connection.setUseCaches(false);
+            connection.setDoOutput(true);
+
+            connection.setRequestMethod("POST");
+            //connection.setRequestProperty("Content-Type","application/json");
+            connection.setRequestProperty("Connection", "Keep-Alive");
+            connection.setRequestProperty("Cache-Control", "no-cache");
+            connection.setRequestProperty(
+                    "Content-Type", "multipart/form-data;boundary=" + boundary);
+
+            DataOutputStream outputStream = new DataOutputStream(
+                    connection.getOutputStream());
+
+            outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+            outputStream.writeBytes("Content-Disposition: form-data; name=\"" +
+                    attachmentName + "\";filename=\"" + attachmentFileName +"\"" + lineEnd);
+            outputStream.writeBytes("Content-Type: image/png" + lineEnd + lineEnd);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            outputStream.write(byteArray);
+            outputStream.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
+
+            outputStream.flush();
+            outputStream.close();
+
+            InputStream responseStream = new
+                    BufferedInputStream(connection.getInputStream());
+
+            BufferedReader responseStreamReader =
+                    new BufferedReader(new InputStreamReader(responseStream));
+
+            String line = "";
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ((line = responseStreamReader.readLine()) != null) {
+                stringBuilder.append(line).append("\n");
+            }
+            responseStreamReader.close();
+            String response = stringBuilder.toString();
+            responseStream.close();
+            connection.disconnect();
+            return ResponseParser.getInstance().parsePicture(response);
+        } catch (Exception e){
+        }
+
+        return null;
     }
 }

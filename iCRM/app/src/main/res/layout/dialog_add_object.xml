@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="46dp"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Название объекта"
+            android:textSize="18dp"
+            android:id="@+id/tv_title"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="#ffffffff"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="11dp"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffffff"
+        android:orientation="vertical">
+
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/et_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:hint="@string/add_object_name"
+                />
+
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:background="#ffd9dbdc"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/no"
+            android:id="@+id/btn_left"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_btn_selector"
+            android:textColor="#ff535353"
+            android:textSize="16sp"/>
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/divider3"
+            android:background="#ffbcbcbc"
+            android:layout_marginTop="9dp"
+            android:layout_marginBottom="9dp"/>
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/divider4"
+            android:background="#ffeeeeee"
+            android:layout_marginTop="9dp"
+            android:layout_marginBottom="9dp"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/ok"
+            android:id="@+id/btn_right"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_btn_selector"
+            android:textColor="#ff535353"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+</LinearLayout>
