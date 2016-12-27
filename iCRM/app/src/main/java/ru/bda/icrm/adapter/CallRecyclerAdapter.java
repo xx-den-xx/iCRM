@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import ru.bda.icrm.R;
@@ -33,8 +35,17 @@ public class CallRecyclerAdapter extends RecyclerView.Adapter<CallRecyclerAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Call call = mListCall.get(position);
-        holder.tvPhone.setText(call.getPhone());
-        holder.tvDate.setText(call.getType() == 0 ? "Исходящий" : "Входящий");
+        holder.tvPhone.setText(call.getPhone() + " (" + (call.getType() == 0 ? "Исходящий" : "Входящий") +")");
+        String date = getDate(call.getTime(), "dd.MM.yyyy hh:mm:ss");
+        holder.tvDate.setText(date);
+    }
+
+    private String getDate(long milliSeconds, String dateFormat) {
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+        //formatter.setTimeZone(TimeZone.getTimeZone("GMS"));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
     }
 
     @Override

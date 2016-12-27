@@ -15,9 +15,11 @@ import java.util.List;
 
 import ru.bda.icrm.auth.AnswerServer;
 import ru.bda.icrm.auth.ApiController;
+import ru.bda.icrm.model.ClientObject;
 import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Phone;
+import ru.bda.icrm.model.Photo;
 import ru.bda.icrm.model.Price;
 import ru.bda.icrm.model.PriceSum;
 import ru.bda.icrm.model.Score;
@@ -113,7 +115,7 @@ public class ResponseParser {
         String response = convertStreamToString(stream);
         JSONObject json;
         Contragent contragent = new Contragent();
-        Log.d("myLog", response);
+        Log.d("log-contragent", response);
         try {
             json = new JSONObject(response);
             JSONObject jsonData = json.getJSONObject("data");
@@ -142,8 +144,18 @@ public class ResponseParser {
                     phone.setType(Integer.parseInt(phones.getJSONObject(i).getString("type")));
                     phoneList.add(phone);
                 }
-
                 contragent.setPhones(phoneList);
+
+                JSONArray objects = jsonData.getJSONArray("objects");
+                List<ClientObject> objectList = new ArrayList<>();
+                for (int i = 0; i < objects.length(); i++) {
+                    ClientObject object = new ClientObject();
+                    object.setId(objects.getJSONObject(i).getInt("id"));
+                    object.setName(objects.getJSONObject(i).getString("title"));
+                    objectList.add(object);
+                }
+                contragent.setObjects(objectList);
+
                 JSONArray jContacts = jsonData.getJSONArray("contacts");
                 if (jContacts.length() > 0) {
                     contragent.setIdContact(jContacts.getJSONObject(0).getString("id"));
@@ -423,7 +435,6 @@ public class ResponseParser {
     public boolean parseAddPhone(InputStream stream) {
         String response = convertStreamToString(stream);
         JSONObject json;
-        Log.d("myLog", response);
         try {
             json = new JSONObject(response);
             String state = json.getString("state");
@@ -432,6 +443,119 @@ public class ResponseParser {
         } catch(JSONException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public ClientObject parseMakeObject(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        ClientObject object = new ClientObject();
+        Log.d("log-object", response);
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            if (AnswerServer.getInstance().isAnswerServer(state)) {
+                object.setId(json.getInt("objectId"));
+                return object;
+            } else {
+                return null;
+            }
+
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public ClientObject parseGetObject(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        ClientObject object = new ClientObject();
+        Log.d("log-object", response);
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            if (AnswerServer.getInstance().isAnswerServer(state)){
+                JSONObject data = json.getJSONObject("data");
+                int id = data.getInt("id");
+                String name = data.getString("title");
+                String contact = data.getString("contact");
+                String comment = data.getString("comment");
+                String address = data.getString("address");
+                String phone = data.getString("phone");
+                double lat = data.getDouble("lat");
+                double lon = data.getDouble("lng");
+                object.setId(id);
+                object.setName(name);
+                object.setContact(contact.equals("null") ? "" : contact);
+                object.setComments(comment.equals("null") ? "" : comment);
+                object.setAddress(address.equals("null") ? "" : address);
+                object.setPhone(phone.equals("null") ? "" : phone);
+                object.setLat(lat);
+                object.setLon(lon);
+                String path = "http://" + (data.getString("images_path").replace("\\", ""));
+                JSONArray photos = data.getJSONArray("images");
+                List<Photo> photoList = new ArrayList<>();
+                for (int i = 0; i < photos.length(); i++) {
+                    Photo photo = new Photo();
+                    photo.setId(photos.getJSONObject(i).getInt("id"));
+                    photo.setLink(path + photos.getJSONObject(i).getString("fname"));
+                    photoList.add(photo);
+                }
+                if (photoList != null && photoList.size() > 0) {
+                    object.setPhotoUrl(photoList);
+                }
+
+                return object;
+            } else return null;
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean parseUpdateObject(InputStream stream) {
+        String response = convertStreamToString(stream);
+        JSONObject json;
+        Log.d("log-object", response);
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            if (AnswerServer.getInstance().isAnswerServer(state)) {
+                return true;
+            } else {
+                return false;
+            }
+
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Photo parsePicture(String response) {
+        JSONObject json;
+
+        try {
+            json = new JSONObject(response);
+            String state = json.getString("state");
+            if (AnswerServer.getInstance().isAnswerServer(state)) {
+                Photo photo = new Photo();
+                photo.setId(json.getInt("id"));
+                photo.setLink("http:" + (json.getString("link").replace("\\", "")));
+                Log.d("log-picture", photo.toString());
+                return photo;
+            } else {
+                return null;
+            }
+
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

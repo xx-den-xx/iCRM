@@ -14,9 +14,11 @@ import android.widget.ProgressBar;
 import ru.bda.icrm.R;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.enums.Constants;
+import ru.bda.icrm.enums.MapMode;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.listener.OnMapClickListener;
 import ru.bda.icrm.map.OverlayGeoCode;
+import ru.bda.icrm.model.ClientObject;
 import ru.bda.icrm.model.Contragent;
 import ru.yandex.yandexmapkit.MapController;
 import ru.yandex.yandexmapkit.MapView;
@@ -35,7 +37,8 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
 
     private MapView mMapView;
     private OverlayGeoCode overlay;
-    private Contragent mContragent;
+    private Contragent mContragent = new Contragent();
+    private ClientObject mObject = new ClientObject();
     private Toolbar mToolbar;
     private Context mContext;
     private ProgressBar mProgressBar;
@@ -43,6 +46,7 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
     private String token;
     private MapController mMapController;
     private OverlayItem item;
+    private MapMode mode;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,9 +59,14 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
         token = AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, mContext);
         if (getIntent() != null) {
             id = getIntent().getStringExtra(Constants.INTENT_ID_CONTRAGENT);
+            String type = getIntent().getStringExtra(Constants.INTENT_MAP_TYPE);
+            mode = type.equals(Constants.MAP_TYPE_CLIENT) ? MapMode.CLIENT: MapMode.OBJECT;
         }
 
-        new ContragentTask().execute();
+        if (mode == MapMode.CLIENT)
+            new ContragentTask().execute();
+        else
+            new GetObjectTask().execute();
     }
 
     private void setMapPosition(double lat, double lon) {
@@ -76,9 +85,15 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
         overlay.setOnMapClickListener(new OnMapClickListener() {
             @Override
             public void onMapClick(double lat, double lon) {
-                mContragent.setLat(lat);
-                mContragent.setLon(lon);
-                new UpdateContragentTask().execute();
+                if (mode == MapMode.CLIENT) {
+                    mContragent.setLat(lat);
+                    mContragent.setLon(lon);
+                    new UpdateContragentTask().execute();
+                } else if(mode == MapMode.OBJECT) {
+                    mObject.setLat(lat);
+                    mObject.setLon(lon);
+                    new UpdateMapTask().execute();
+                }
             }
         });
         mMapController.getOverlayManager().addOverlay(overlay);
@@ -97,9 +112,15 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
         overlay.setOnMapClickListener(new OnMapClickListener() {
             @Override
             public void onMapClick(double lat, double lon) {
-                mContragent.setLat(lat);
-                mContragent.setLon(lon);
-                new UpdateContragentTask().execute();
+                if (mode == MapMode.CLIENT) {
+                    mContragent.setLat(lat);
+                    mContragent.setLon(lon);
+                    new UpdateContragentTask().execute();
+                } else if(mode == MapMode.OBJECT) {
+                    mObject.setLat(lat);
+                    mObject.setLon(lon);
+                    new UpdateMapTask().execute();
+                }
             }
         });
         mMapController.getOverlayManager().addOverlay(overlay);
@@ -205,6 +226,40 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
         }
     }
 
+    private class GetObjectTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            mObject = ApiController.getInstance().getObject(token, Integer.parseInt(id));
+            boolean answer = mObject != null ? true : false;
+            return answer;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if (aBoolean) {
+                Log.d("myLog", mObject.toString());
+                mToolbar.setTitle(mObject.getName());
+                mProgressBar.setVisibility(View.GONE);
+                if (mObject.getLat() > 0 && mObject.getLon() > 0) {
+                    setMapPosition(mObject.getLat(), mObject.getLon());
+                    showObject(mObject.getLat(), mObject.getLon());
+                } else {
+                    setMyPosition();
+                }
+            } else {
+                Log.d("myLog", "ошибка получения контрагента");
+            }
+        }
+    }
+
     private class UpdateContragentTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -216,6 +271,7 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
         @Override
         protected Void doInBackground(Void... params) {
             ApiController.getInstance().addContragent(token, mContragent.getId(), mContragent);
+            showObject(mContragent.getLat(), mContragent.getLon());
             return null;
         }
 
@@ -223,7 +279,30 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             mProgressBar.setVisibility(View.GONE);
-            showObject(mContragent.getLat(), mContragent.getLon());
+            //showObject(mContragent.getLat(), mContragent.getLon());
+        }
+    }
+
+    private class UpdateMapTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            ApiController.getInstance().updateObject(token, mObject);
+            showObject(mObject.getLat(), mObject.getLon());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mProgressBar.setVisibility(View.GONE);
+            //showObject(mObject.getLat(), mObject.getLon());
         }
     }
 }
