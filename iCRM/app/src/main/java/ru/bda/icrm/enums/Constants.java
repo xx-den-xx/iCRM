@@ -30,5 +30,7 @@ public class Constants {
 
     public static final String MAP_TYPE_CLIENT = "client";
     public static final String MAP_TYPE_OBJECT = "object";
+
     public static final int CAMERA_REQUEST = 100;
+    public static final int GALLERY_REQUEST = 101;
 }

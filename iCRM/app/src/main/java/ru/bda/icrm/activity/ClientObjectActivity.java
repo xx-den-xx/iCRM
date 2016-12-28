@@ -1,12 +1,17 @@
 package ru.bda.icrm.activity;
 
+import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -23,6 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.io.FileDescriptor;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +69,7 @@ public class ClientObjectActivity extends AppCompatActivity {
     private List<Photo> mPhotoList = new ArrayList<>();
     private ClientObject mObject = new ClientObject();
     private Bitmap mBitmap = null;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -125,8 +133,8 @@ public class ClientObjectActivity extends AppCompatActivity {
         mLlPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, Constants.CAMERA_REQUEST);
+                //
+                selectImageBackground();
             }
         });
 
@@ -164,6 +172,26 @@ public class ClientObjectActivity extends AppCompatActivity {
         mRvPhoto.setHasFixedSize(true);
     }
 
+    private void selectImageBackground() {
+        final CharSequence[] options = { "Камера", "Галерея", "Отменить" };
+        AlertDialog.Builder builder = new AlertDialog.Builder(ClientObjectActivity.this);
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (item == 0) {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, Constants.CAMERA_REQUEST);
+                } else if (item == 1) {
+                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(galleryIntent, Constants.GALLERY_REQUEST);
+                } else if (item == 2) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -176,10 +204,37 @@ public class ClientObjectActivity extends AppCompatActivity {
                     tmpBitmap = (Bitmap) data.getExtras().get("data");
                     this.mBitmap = getResizedBitmap(tmpBitmap);
                     new SendPhotoTask().execute(this.mBitmap);
+                    break;
+                case Constants.GALLERY_REQUEST:
+                    try {
+                        Uri selectedBackground = data.getData();
+                        String[] filePathBackgroundColumn = {MediaStore.Images.Media.DATA};
+                        Cursor cursorBackground = getContentResolver().query(selectedBackground,
+                                filePathBackgroundColumn, null, null, null);
+                        cursorBackground.moveToFirst();
+                        cursorBackground.close();
+                        tmpBitmap = getBitmapFromUri(selectedBackground);
+                        this.mBitmap = getResizedBitmap(tmpBitmap);
+                        new SendPhotoTask().execute(this.mBitmap);
+                        break;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+
             }
         } else {
             Log.d("mylog", "Canceled");
         }
+    }
+
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
     }
 
     public static Bitmap getResizedBitmap(Bitmap bm) {
