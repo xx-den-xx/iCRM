@@ -12,6 +12,8 @@ public class Event {
     private long timeEnd;
     private String date;
     private String message;
+    private boolean isFirstDay = false;
+    private boolean isNowDay = false;
 
     public Event() {}
 
@@ -53,6 +55,22 @@ public class Event {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public boolean isFirstDay() {
+        return isFirstDay;
+    }
+
+    public void setFirstDay(boolean firstDay) {
+        isFirstDay = firstDay;
+    }
+
+    public boolean isNowDay() {
+        return isNowDay;
+    }
+
+    public void setNowDay(boolean nowDay) {
+        isNowDay = nowDay;
     }
 
     @Override

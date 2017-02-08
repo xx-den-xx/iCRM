@@ -29,7 +29,7 @@ public class SendCallService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        mCallList = dbController.getCallList();
+        mCallList = dbController.getCallList(true);
         List<Call> list = new ArrayList<>();
         if (mCallList != null) {
             for (int i = 0; i < mCallList.size(); i++) {
@@ -48,5 +48,6 @@ public class SendCallService extends IntentService {
                     list
             );
         }
+        dbController.closeDb();
     }
 }

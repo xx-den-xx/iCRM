@@ -8,8 +8,9 @@ public class Call {
 
     private String phone = "";
     private String login = "";
-    private int type = 0;
+    private String type = "";
     private long time = 0;
+    private String duration = "";
     private boolean send = false;
 
     public Call() {
@@ -31,11 +32,11 @@ public class Call {
         this.login = login;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -55,15 +56,22 @@ public class Call {
         this.send = send;
     }
 
+    public String getDuration() {
+        return duration;
+    }
 
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
 
     @Override
     public String toString() {
         return "Call{" +
                 "phone='" + phone + '\'' +
                 ", login='" + login + '\'' +
-                ", type=" + type +
+                ", type='" + type + '\'' +
                 ", time=" + time +
+                ", duration='" + duration + '\'' +
                 ", send=" + send +
                 '}';
     }

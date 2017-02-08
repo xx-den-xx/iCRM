@@ -93,6 +93,7 @@ public class ResponseParser {
         String response = convertStreamToString(stream);
         JSONObject json;
         String request = "";
+        Log.d("log_parse_token", response);
 
         try {
             json = new JSONObject(response);

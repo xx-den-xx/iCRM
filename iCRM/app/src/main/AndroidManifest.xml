@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
 
     <application
         android:allowBackup="true"
@@ -99,10 +101,29 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            android:enabled="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.REBOOT"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </receiver>
+
         <service
             android:name=".services.CallService"/>
         <service
             android:name=".services.SendCallService"/>
+        <service
+            android:name=".services.NotificationService"
+            android:enabled="true"
+            android:exported="true"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

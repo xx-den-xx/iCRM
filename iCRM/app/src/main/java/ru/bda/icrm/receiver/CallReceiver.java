@@ -15,14 +15,14 @@ import ru.bda.icrm.services.CallService;
 public class CallReceiver extends BroadcastReceiver {
 
     String phoneNumber = "";
-    int type = 0;
+    String type = "";
 
     public void onReceive(Context context, Intent intent) {
         Intent callIntent = new Intent(context, CallService.class);
         if (intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")) {
             //получаем исходящий номер
             phoneNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
-            type = 0;
+            type = "Исходящий";
             callIntent.putExtra(Constants.INTENT_CALL_PHONE, phoneNumber);
             callIntent.putExtra(Constants.INTENT_CALL_TYPE, type);
             context.startService(callIntent);
@@ -31,7 +31,7 @@ public class CallReceiver extends BroadcastReceiver {
             if (phone_state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
                 //телефон звонит, получаем входящий номер
                 phoneNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
-                type = 1;
+                type = "Входящий";
                 callIntent.putExtra(Constants.INTENT_CALL_PHONE, phoneNumber);
                 callIntent.putExtra(Constants.INTENT_CALL_TYPE, type);
                 context.startService(callIntent);
