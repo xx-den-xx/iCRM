@@ -23,6 +23,7 @@ public class DBController {
     private DBHelper dbHelper;
     private ContentValues mContentValues;
     private SQLiteDatabase mDb;
+    private Cursor cursor;
 
     public DBController(Context context) {
         this.context = context;
@@ -31,8 +32,10 @@ public class DBController {
     }
 
     public void insertContragentDB (List<Contragent> contragentList) {
+        mDb = null;
         mDb = dbHelper.getWritableDatabase();
-        Cursor cursor = mDb.query(DBHelper.TABLE_CONTRAGENT, null, null, null, null, null, null);
+        cursor = null;
+        cursor = mDb.query(DBHelper.TABLE_CONTRAGENT, null, null, null, null, null, null);
         boolean isHaveUID = false;
         for (Contragent contragent : contragentList) {
             if (cursor.moveToFirst()) {
@@ -52,13 +55,14 @@ public class DBController {
                 if (mDb != null) mDb.insert(DBHelper.TABLE_CONTRAGENT, null, mContentValues);
             }
         }
-        dbHelper.close();
     }
 
     public List<Contragent> getContragentList() {
+        mDb = null;
         mDb = dbHelper.getWritableDatabase();
         List<Contragent> contragentList = new ArrayList<>();
-        Cursor cursor = mDb.query(DBHelper.TABLE_CONTRAGENT, null, null, null, null, null, null);
+        cursor = null;
+        cursor = mDb.query(DBHelper.TABLE_CONTRAGENT, null, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             int idColIndex = cursor.getColumnIndex(DBHelper.ID);
             int uidColIndex = cursor.getColumnIndex(DBHelper.UID);
@@ -98,15 +102,17 @@ public class DBController {
 
     public Contragent getContragent(String id) {
         Contragent contragent = new Contragent();
+        mDb = null;
         mDb = dbHelper.getWritableDatabase();
-        Cursor cursor = mDb.query(DBHelper.TABLE_CONTRAGENT, null, DBHelper.ID + " = i?",
+        cursor = null;
+        cursor = mDb.query(DBHelper.TABLE_CONTRAGENT, null, DBHelper.ID + " = i?",
                 new String[] {id}, null, null, null);
         if (cursor.moveToFirst()) {
             int idColIndex = cursor.getColumnIndex(DBHelper.ID);
             int uidColIndex = cursor.getColumnIndex(DBHelper.UID);
             int nameColIndex = cursor.getColumnIndex(DBHelper.NAME_CONTRAGENT);
             int innColIndex = cursor.getColumnIndex(DBHelper.INN);
-            int codeColIndex = cursor.getColumnIndex(DBHelper.CODE);
+            int codeColIndex = cursor.getColumnIndex(DBHelper.CODE);;
             int jurFaceColIndex = cursor.getColumnIndex(DBHelper.UR_FACE);
             int relationsColIndex = cursor.getColumnIndex(DBHelper.RELATIONS);
             int contactInfoColIndex = cursor.getColumnIndex(DBHelper.CONTACT_INFO);
@@ -128,11 +134,11 @@ public class DBController {
         } else {
             contragent = null;
         }
-        mDb.close();
         return contragent;
     }
 
     public void updateContragent(Contragent contragent) {
+        mDb = null;
         mDb = dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(DBHelper.UID, contragent.getUid());
@@ -140,6 +146,7 @@ public class DBController {
     }
 
     public void addEventToDB(Event event) {
+        mDb = null;
         mDb = dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(DBHelper.EVENT_USER, event.getUser());
@@ -148,13 +155,14 @@ public class DBController {
         cv.put(DBHelper.EVENT_DATE, event.getDate());
         cv.put(DBHelper.EVENT_MESSAGE, event.getMessage());
         mDb.insert(DBHelper.TABLE_EVENTS, null, cv);
-        mDb.close();
     }
 
     public List<Event> getEvent() {
         List<Event> events = new ArrayList<>();
+        mDb = null;
         mDb = dbHelper.getWritableDatabase();
-        Cursor cursor = mDb.query(DBHelper.TABLE_EVENTS, null, null, null, null, null, DBHelper.EVENT_TIME_BEGIN + " DESC");
+        cursor = null;
+        cursor = mDb.query(DBHelper.TABLE_EVENTS, null, null, null, null, null, DBHelper.EVENT_TIME_BEGIN + " DESC");
         if (cursor.moveToFirst()) {
             do {
                 Event event = new Event();
@@ -171,18 +179,36 @@ public class DBController {
     }
 
     public void addCall(Call call) {
+        mDb = null;
         mDb = dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(DBHelper.CALL_PHONE, call.getPhone());
         cv.put(DBHelper.CALL_LOGIN, call.getLogin());
         cv.put(DBHelper.CALL_TIME, call.getTime());
         cv.put(DBHelper.CALL_TYPE, call.getType());
+        cv.put(DBHelper.CALL_DURATION, call.getDuration());
         cv.put(DBHelper.CALL_SEND, call.isSend() ? 1 : 0);
-        mDb.insert(DBHelper.TABLE_CALL, null, cv);
-        mDb.close();
+        List<Call> list = getCallList(false);
+        if (list != null && list.size() > 0) {
+            boolean isHaveTime = false;
+            for (Call mCall : list) {
+                if (mCall.getTime() == call.getTime()) {
+                    isHaveTime = true;
+                    break;
+                } else {
+                    isHaveTime = false;
+                }
+            }
+            if (!isHaveTime) {
+                mDb.insert(DBHelper.TABLE_CALL, null, cv);
+            }
+        } else {
+            mDb.insert(DBHelper.TABLE_CALL, null, cv);
+        }
     }
 
     public void updateCall(Call call) {
+        mDb = null;
         mDb = dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(DBHelper.CALL_PHONE, call.getPhone());
@@ -192,24 +218,31 @@ public class DBController {
         cv.put(DBHelper.CALL_SEND, 1);
         String time = String.valueOf(call.getTime());
         mDb.update(DBHelper.TABLE_CALL, cv, DBHelper.CALL_TIME + " = ?", new String[] {time});
-        mDb.close();
     }
 
-    public List<Call> getCallList() {
+    public List<Call> getCallList(boolean isClose) {
         List<Call> calls = new ArrayList<>();
+        mDb = null;
         mDb = dbHelper.getWritableDatabase();
-        Cursor cursor = mDb.query(DBHelper.TABLE_CALL, null, null, null, null, null, DBHelper.CALL_TIME + " DESC");
+        cursor = null;
+        cursor = mDb.query(DBHelper.TABLE_CALL, null, null, null, null, null, DBHelper.CALL_TIME + " DESC");
         if (cursor.moveToFirst()) {
             do {
                 Call call = new Call();
                 call.setPhone(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_PHONE)));
                 call.setLogin(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_LOGIN)));
                 call.setTime(cursor.getLong(cursor.getColumnIndex(DBHelper.CALL_TIME)));
-                call.setType(cursor.getInt(cursor.getColumnIndex(DBHelper.CALL_TYPE)));
+                call.setType(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_TYPE)));
                 call.setSend(cursor.getInt(cursor.getColumnIndex(DBHelper.CALL_SEND)) == 0 ? false : true);
+                call.setDuration(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_DURATION)));
                 calls.add(call);
             } while (cursor.moveToNext());
         }
         return calls;
+    }
+
+    public void closeDb () {
+        if(cursor != null) cursor.close();
+        if(mDb != null) mDb.close();
     }
 }

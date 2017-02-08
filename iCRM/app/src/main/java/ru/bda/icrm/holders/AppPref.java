@@ -13,9 +13,10 @@ public class AppPref {
 
     private static final String PREF_NAME = "app_pref";
     public static final String PREF_HEX_LOGIN = "hex_login";
-    public static final String PREF_LOGIN = "hex_login";
+    public static final String PREF_LOGIN = "login";
     public static final String PREF_HEX_PASSWORD = "hex_pass";
     public static final String PREF_TOKEN = "token";
+    public static final String PREF_NOTIF_COUNT = "notif_count";
 
     private AppPref() {}
 
@@ -46,8 +47,20 @@ public class AppPref {
         ed.commit();
     }
 
+    public void setNotifCount (int count, Context context) {
+        sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putInt(PREF_NOTIF_COUNT, count);
+        ed.commit();
+    }
+
     public String getStringPref(String key, Context context) {
         sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         return sPref.getString(key, "");
+    }
+
+    public int getNotifCount(Context context) {
+        sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return sPref.getInt(PREF_NOTIF_COUNT, 0);
     }
 }

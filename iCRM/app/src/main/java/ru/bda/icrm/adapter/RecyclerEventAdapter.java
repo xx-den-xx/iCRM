@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -30,11 +31,13 @@ import ru.bda.icrm.model.Event;
 public class RecyclerEventAdapter extends RecyclerView.Adapter<RecyclerEventAdapter.ViewHolder>{
 
     private List<Event> mEventList;
+    private List<Integer> positions = new ArrayList<>();
     private Context mContext;
     private Date mBeginDate;
     private Date mEndDate;
     private Calendar mDate;
     private boolean isNewDay = true;
+    private boolean isFirstStart = true;
     private int countEvent = 0;
     private int dayPrevious = 0;
     private int monthPrevious = 0;
@@ -76,17 +79,7 @@ public class RecyclerEventAdapter extends RecyclerView.Adapter<RecyclerEventAdap
         int dayEvent = Integer.parseInt(sbDay.toString());
         int monthEvent = Integer.parseInt(sbMonth.toString());
         int yearEvent = Integer.parseInt(sbYear.toString());
-        if ((dayNow != dayEvent) || (monthNow != monthEvent) || (yearNow != yearEvent)) {
-            if (dayPrevious == 0 || monthPrevious == 0 || yearPrevious == 0) {
-                isNewDay = true;
-            }
-        }
-        if (dayPrevious != dayEvent || monthPrevious != monthEvent || yearPrevious != yearEvent) {
-            if (dayPrevious != 0 || monthPrevious != 0 || yearPrevious != 0) {
-                isNewDay = true;
-            }
-        }
-        if (!event.getDate().equals("null") && countEvent == 0 && event.getDate().equals(dateEvent)) {
+        if (event.isFirstDay() && event.isNowDay()) {
             holder.layoutDate.setVisibility(View.VISIBLE);
             holder.layoutDate.setBackgroundColor(mContext.getResources().getColor(R.color.color_event_date_now_background));
             String timeFormat = getDate(event.getTimeBegin(), "EEEE, dd MMMM");
@@ -94,20 +87,23 @@ public class RecyclerEventAdapter extends RecyclerView.Adapter<RecyclerEventAdap
             holder.tvDate.setText(dateTitle);
             isNewDay = false;
             countEvent++;
-        } else if (isNewDay && !event.getDate().equals(dateEvent)) {
+        } else if (!event.isNowDay() && event.isFirstDay()) {
             holder.layoutDate.setVisibility(View.VISIBLE);
             holder.layoutDate.setBackgroundColor(mContext.getResources().getColor(R.color.color_event_date_background));
             String monthFormat = firstUpperCase(getDate(event.getTimeBegin(), "EEEE, "));
-            String timeFormat = getDate(event.getTimeBegin(), "dd MMMM");
+            String timeFormat = getDate(event.getTimeBegin(), "dd MMMM yyyy");
             holder.tvDate.setTextColor(mContext.getResources().getColor(R.color.divider_black));
             holder.tvDate.setText(monthFormat + timeFormat);
             isNewDay = false;
+        } else if (!event.isFirstDay()) {
+            holder.layoutDate.setVisibility(View.GONE);
         }
         holder.tvEvent.setText(getDate(event.getTimeBegin(), "HH:mm") + " - " + getDate(event.getTimeEnd(), "HH:mm, ")
                 + event.getMessage());
         dayPrevious = dayEvent;
         monthPrevious = monthEvent;
         yearPrevious = yearEvent;
+        positions.add(position);
     }
 
     private String firstUpperCase (String word) {
@@ -117,7 +113,6 @@ public class RecyclerEventAdapter extends RecyclerView.Adapter<RecyclerEventAdap
 
     private String getDate(long milliSeconds, String dateFormat) {
         SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
-        //formatter.setTimeZone(TimeZone.getTimeZone("GMS"));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
@@ -134,6 +129,7 @@ public class RecyclerEventAdapter extends RecyclerView.Adapter<RecyclerEventAdap
         monthPrevious = 0;
         yearPrevious = 0;
         countEvent = 0;
+        positions = new ArrayList<>();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

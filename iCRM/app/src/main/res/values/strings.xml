@@ -83,6 +83,7 @@
 
     <!--Строки для событий-->
     <string name="events_now">Сегодня</string>
+    <string name="events_all">Все</string>
     <string name="events_more">Ещё</string>
     <string-array name="events_week">
         <item>Понедельник</item>

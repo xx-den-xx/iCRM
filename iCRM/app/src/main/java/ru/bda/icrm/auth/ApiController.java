@@ -635,6 +635,7 @@ public class ApiController {
                 callObj.put("phone", call.getPhone());
                 callObj.put("type", call.getType());
                 callObj.put("time", call.getTime());
+                callObj.put("duration", call.getDuration());
                 array.put(callObj);
             }
             root.put("call", array);

@@ -35,9 +35,11 @@ public class CallRecyclerAdapter extends RecyclerView.Adapter<CallRecyclerAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Call call = mListCall.get(position);
-        holder.tvPhone.setText(call.getPhone() + " (" + (call.getType() == 0 ? "Исходящий" : "Входящий") +")");
+        holder.tvPhone.setText(call.getPhone() + " (" + call.getType() +")");
         String date = getDate(call.getTime(), "dd.MM.yyyy hh:mm:ss");
         holder.tvDate.setText(date);
+
+        holder.tvDuration.setText("Длительность:" + call.getDuration() + " сек.");
     }
 
     private String getDate(long milliSeconds, String dateFormat) {
@@ -61,11 +63,13 @@ public class CallRecyclerAdapter extends RecyclerView.Adapter<CallRecyclerAdapte
 
         TextView tvPhone;
         TextView tvDate;
+        TextView tvDuration;
 
         public ViewHolder(View itemView) {
             super(itemView);
             tvPhone = (TextView) itemView.findViewById(R.id.tv_phone);
             tvDate = (TextView) itemView.findViewById(R.id.tv_date);
+            tvDuration = (TextView) itemView.findViewById(R.id.tv_duration);
         }
     }
 }

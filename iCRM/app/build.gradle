@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "23.0.3"
 
     defaultConfig {
@@ -41,5 +41,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'com.android.support:multidex:1.0.1'
     compile 'ru.yandex:yandexmapkit:2.5.1@aar'
+    compile 'com.wdullaer:materialdatetimepicker:3.1.0'
     testCompile 'junit:junit:4.12'
 }

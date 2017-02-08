@@ -1,17 +1,22 @@
 package ru.bda.icrm.fragment;
 
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import ru.bda.icrm.R;
@@ -39,6 +44,7 @@ public class CallFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_call, null);
         mDBController = new DBController(getActivity());
         initContent(view);
+        //getCallDetails();
         return view;
     }
 
@@ -53,10 +59,60 @@ public class CallFragment extends Fragment {
         mProgressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
     }
 
+    private void getCallDetails() {
+        StringBuffer sb = new StringBuffer();
+        Cursor managedCursor = getActivity().managedQuery(CallLog.Calls.CONTENT_URI,null, null,null, null);
+        int number = managedCursor.getColumnIndex( CallLog.Calls.NUMBER );
+        int type = managedCursor.getColumnIndex( CallLog.Calls.TYPE );
+        int date = managedCursor.getColumnIndex( CallLog.Calls.DATE);
+        int duration = managedCursor.getColumnIndex( CallLog.Calls.DURATION);
+        sb.append( "Call Details :");
+        while ( managedCursor.moveToNext() ) {
+            Call call = new Call();
+            String phNumber = managedCursor.getString( number );
+            String callType = managedCursor.getString( type );
+            String callDate = managedCursor.getString( date );
+            String callDuration = managedCursor.getString( duration );
+            String dir = null;
+            int dircode = Integer.parseInt( callType );
+            switch( dircode ) {
+                case CallLog.Calls.OUTGOING_TYPE:
+                    dir = "Исходящий";
+                    break;
+
+                case CallLog.Calls.INCOMING_TYPE:
+                    dir = "Входящий";
+                    break;
+
+                case CallLog.Calls.MISSED_TYPE:
+                    dir = "Пропущенный";
+                    break;
+            }
+            call.setPhone(phNumber);
+            call.setSend(false);
+            call.setTime(Long.valueOf(callDate));
+            call.setType(dir);
+            call.setDuration(callDuration);
+            mListCall.add(call);
+        }
+        mAdapter.setListCall(mListCall);
+        mAdapter.notifyDataSetChanged();
+        managedCursor.close();
+        Log.d("Log_Call", sb.toString());
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         new GetDbCallTask().execute();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        synchronized (DBController.class) {
+            mDBController.closeDb();
+        }
     }
 
     private class GetDbCallTask extends AsyncTask<Void, Void, Void> {
@@ -69,7 +125,9 @@ public class CallFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            mListCall = mDBController.getCallList();
+            synchronized (DBController.class) {
+                mListCall = mDBController.getCallList(true);
+            }
             return null;
         }
 
@@ -80,6 +138,8 @@ public class CallFragment extends Fragment {
             if (mListCall != null) {
                 mAdapter.setListCall(mListCall);
                 mAdapter.notifyDataSetChanged();
+            } else {
+                getCallDetails();
             }
         }
     }

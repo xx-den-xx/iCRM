@@ -1,6 +1,7 @@
 package ru.bda.icrm.activity;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -27,6 +29,7 @@ import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.holders.AppControl;
 import ru.bda.icrm.holders.AppPref;
+import ru.bda.icrm.services.NotificationService;
 import ru.yandex.yandexmapkit.utils.Utils;
 
 /**
@@ -52,6 +55,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        AppPref.getInstance().setNotifCount(0, this);
+        if (!isMyServiceRunning(NotificationService.class)) {
+            startService(new Intent(this, NotificationService.class));
+        }
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mContext = this;
         initContent();
@@ -61,6 +69,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mLoginLayout.setVisibility(View.VISIBLE);
             mIvLogo.setVisibility(View.GONE);
         }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void initContent() {
@@ -99,6 +118,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public String getMD5(String s) {
         try {
             MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+            //digest.update(s.getBytes(Charset.forName("utf-8")),0,s.length());
             digest.update(s.getBytes());
             byte messageDigest[] = digest.digest();
 
@@ -107,6 +127,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             for (int i=0; i < messageDigest.length; i++) {
                 String h = Integer.toHexString(0xFF & messageDigest[i]);
                 while (h.length() < 2)
+
                     h = "0" + h;
                 hexString.append(h);
             }
@@ -169,7 +190,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     || ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.PROCESS_OUTGOING_CALLS) != PackageManager.PERMISSION_GRANTED)
                     || ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                     || ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                    || ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    || ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.WRITE_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 ActivityCompat.requestPermissions(LoginActivity.this,
                         new String[] {Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE, Manifest.permission.PROCESS_OUTGOING_CALLS}, requestCode);

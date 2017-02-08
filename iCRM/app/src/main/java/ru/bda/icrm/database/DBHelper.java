@@ -54,6 +54,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String CALL_LOGIN = "login";
     public static final String CALL_TYPE = "type";
     public static final String CALL_TIME = "time";
+    public static final String CALL_DURATION = "duration";
     public static final String CALL_SEND = "send";
 
     public DBHelper(Context context) {
@@ -105,7 +106,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 CALL_PHONE + " text, " +
                 CALL_LOGIN + " text, " +
                 CALL_TIME + " real, " +
-                CALL_TYPE + " integer, " +
+                CALL_TYPE + " text, " +
+                CALL_DURATION + " text, " +
                 CALL_SEND + " integer);");
     }
 
