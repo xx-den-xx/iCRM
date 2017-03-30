@@ -76,7 +76,7 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<PhotoRecyclerAdap
     class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivPhoto;
-        public LinearLayout llPhoto;
+        LinearLayout llPhoto;
         public ViewHolder(View itemView) {
             super(itemView);
             ivPhoto = (ImageView) itemView.findViewById(R.id.iv_photo);

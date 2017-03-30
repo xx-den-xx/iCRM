@@ -82,7 +82,7 @@ public class ScoresFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mFilter = position - 1;
-                if (mFilter > -1) {
+                if (mFilter > -1 && mScoreList != null && mScoreList.size() > 0) {
                     List<Score> list = new ArrayList<Score>();
                     for (int i = 0; i < mScoreList.size(); i++) {
                         Score score = mScoreList.get(i);
