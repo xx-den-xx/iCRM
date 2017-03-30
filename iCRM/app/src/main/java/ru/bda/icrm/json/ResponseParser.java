@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ru.bda.icrm.auth.AnswerServer;
@@ -68,6 +69,7 @@ public class ResponseParser {
     public List<Contragent> parseContragentList(InputStream stream){
         String response = convertStreamToString(stream);
         JSONObject json;
+        Log.d("contr_log", response);
         try {
             json = new JSONObject(response);
             JSONArray dataJSONArray = json.getJSONArray("data");
@@ -305,6 +307,7 @@ public class ResponseParser {
         String response = convertStreamToString(stream);
         JSONObject json;
         List<Score> scoreList = new ArrayList<>();
+        Log.d("score_log", response);
         try {
             json = new JSONObject(response);
             JSONArray array = json.getJSONArray("data");
