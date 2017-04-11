@@ -43,9 +43,6 @@ import ru.bda.icrm.database.DBController;
 import ru.bda.icrm.model.Event;
 import ru.yandex.m;
 
-/**
- * Created by User on 31.08.2016.
- */
 public class EventsFragment extends Fragment implements View.OnClickListener{
 
     private TextView mTvNow;

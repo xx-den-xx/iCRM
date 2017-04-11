@@ -652,7 +652,7 @@ public class ApiController {
             os.close();
             connection.connect();
             connection.getInputStream();
-            Log.d("myLog", "запрос выполнен успешно");
+            Log.d("log_call", callList.toString());
             return ResponseParser.getInstance().parseAddPhone(connection.getInputStream());
         }catch(Exception e){
             return false;
@@ -817,7 +817,6 @@ public class ApiController {
             return ResponseParser.getInstance().parsePicture(response);
         } catch (Exception e){
         }
-
         return null;
     }
 }

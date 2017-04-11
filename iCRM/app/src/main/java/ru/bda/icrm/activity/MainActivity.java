@@ -2,6 +2,7 @@ package ru.bda.icrm.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,7 +20,12 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.bda.icrm.R;
+import ru.bda.icrm.auth.ApiController;
+import ru.bda.icrm.database.DBController;
 import ru.bda.icrm.dialog.AddEventDialog;
 import ru.bda.icrm.dialog.GetContragentDialog;
 import ru.bda.icrm.dialog.MyDialog;
@@ -36,8 +42,11 @@ import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.listener.AddContragentClickListener;
 import ru.bda.icrm.listener.AddEventClickListener;
 import ru.bda.icrm.listener.OnContragentClickListener;
+import ru.bda.icrm.map.MyLocationManager;
+import ru.bda.icrm.model.Call;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Event;
+import ru.bda.icrm.services.SendCallService;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnContragentClickListener {
@@ -53,7 +62,9 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mMenuAdd;
     private Context mContext;
     private TextView mTvNameManager;
+    private FloatingActionButton fab;
     private boolean isFirstStart = true;
+    private MyLocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,24 +74,18 @@ public class MainActivity extends AppCompatActivity
         mNavMode = NavMode.CLIENTS;
         mContext = this;
         setMenuToolbar();
-        setFragment(mNavMode);
-
 
         mTvNameManager = (TextView) findViewById(R.id.tv_name_manager);
 //        mTvNameManager.setText(AppPref.getInstance().getStringPref(AppPref.PREF_HEX_LOGIN, mContext));
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(v -> checkLocation());
+
+        setFragment(mNavMode);
+
         fragmentContent = (FrameLayout) findViewById(R.id.fragment_content);
         contragentFragment = new ContragentFragment();
         contragentFragment.setOnContragentClickListener(this);
         addFragment(contragentFragment);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -90,6 +95,13 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        sendLogCall();
+    }
+
+    private void checkLocation() {
+        locationManager = new MyLocationManager(MainActivity.this);
+        locationManager.startLocating();
     }
 
     private void setFragment(NavMode mode) {
@@ -99,29 +111,35 @@ public class MainActivity extends AppCompatActivity
             contragentFragment = new ContragentFragment();
             contragentFragment.setOnContragentClickListener(this);
             mMenuAdd.setVisible(true);
+            fab.setVisibility(View.VISIBLE);
             fragment = contragentFragment;
         } else if (mode == NavMode.MAP) {
             toolbar.setTitle(R.string.nav_map);
             fragment = new MapFragment();
             mMenuAdd.setVisible(false);
+            fab.setVisibility(View.GONE);
         } else if (mode == NavMode.SCORES) {
             toolbar.setTitle(R.string.nav_scores);
             scoresFragment = new ScoresFragment();
             fragment = scoresFragment;
             mMenuAdd.setVisible(true);
+            fab.setVisibility(View.VISIBLE);
         } else if (mode == NavMode.EVENTS) {
             toolbar.setTitle(R.string.nav_events);
             eventsFragment = new EventsFragment();
             fragment = eventsFragment;
             mMenuAdd.setVisible(true);
+            fab.setVisibility(View.VISIBLE);
         } else if (mode == NavMode.PRICE) {
             toolbar.setTitle(R.string.nav_price);
             fragment = new PriceFragment();
             mMenuAdd.setVisible(false);
+            fab.setVisibility(View.VISIBLE);
         } else if (mode == NavMode.CALL) {
             toolbar.setTitle(R.string.nav_call);
             fragment = new CallFragment();
             mMenuAdd.setVisible(false);
+            fab.setVisibility(View.VISIBLE);
         } else if (mode == NavMode.MAILS) {
             toolbar.setTitle(R.string.nav_mails);
             fragment = new MailFragment();
@@ -133,38 +151,30 @@ public class MainActivity extends AppCompatActivity
     private void setMenuToolbar() {
         toolbar.inflateMenu(R.menu.menu_contragent);
         mMenuAdd = toolbar.getMenu().findItem(R.id.action_add);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == mMenuAdd.getItemId()) {
-                    if (mNavMode == NavMode.CLIENTS) {
-                        Intent intent = new Intent(MainActivity.this, AddContragentActivity.class);
-                        startActivity(intent);
-                    } else if (mNavMode == NavMode.EVENTS) {
-                        AddEventDialog dialog = new AddEventDialog();
-                        dialog.init(new AddEventClickListener() {
-                            @Override
-                            public void onLeftBtnClick() {
-                            }
-                            @Override
-                            public void onRightBtnClick(Event event) {
-                                eventsFragment.setEvent(event);
-                            }
-                        });
-                        dialog.show(MainActivity.this);
-                    } else if (mNavMode == NavMode.SCORES) {
-                        GetContragentDialog contragentDialog  = new GetContragentDialog();
-                        contragentDialog.init(new AddContragentClickListener() {
-                            @Override
-                            public void addContragentListener(final Contragent contragent) {
-                                scoresFragment.setContragentId(contragent.getId());
-                            }
-                        });
-                        contragentDialog.show(MainActivity.this);
-                    }
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == mMenuAdd.getItemId()) {
+                if (mNavMode == NavMode.CLIENTS) {
+                    Intent intent = new Intent(MainActivity.this, AddContragentActivity.class);
+                    startActivity(intent);
+                } else if (mNavMode == NavMode.EVENTS) {
+                    AddEventDialog dialog = new AddEventDialog();
+                    dialog.init(new AddEventClickListener() {
+                        @Override
+                        public void onLeftBtnClick() {
+                        }
+                        @Override
+                        public void onRightBtnClick(Event event) {
+                            eventsFragment.setEvent(event);
+                        }
+                    });
+                    dialog.show(MainActivity.this);
+                } else if (mNavMode == NavMode.SCORES) {
+                    GetContragentDialog contragentDialog  = new GetContragentDialog();
+                    contragentDialog.init(c -> scoresFragment.setContragentId(c.getId()));
+                    contragentDialog.show(MainActivity.this);
                 }
-                return false;
             }
+            return false;
         });
     }
 
@@ -254,6 +264,39 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void sendLogCall() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                synchronized (DBController.class) {
+                    DBController dbController = new DBController(MainActivity.this);
+                    List<Call> mCallList = dbController.getCallList(true);
+                    List<Call> list = new ArrayList<>();
+                    if (mCallList != null) {
+                        for (int i = 0; i < mCallList.size(); i++) {
+                            Call call = mCallList.get(i);
+                            if (!call.isSend()) {
+                                list.add(call);
+                            }
+                        }
+                    }
+                    if (list != null && list.size() > 0) {
+                        for (Call call : list) {
+                            dbController.updateCall(call);
+                        }
+                        ApiController.getInstance().addCall(
+                                AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, MainActivity.this),
+                                list
+                        );
+                    }
+
+                    dbController.closeDb();
+                }
+                return null;
+            }
+        }.execute();
+    }
+
     private void logoutProfile() {
         AppPref.getInstance().setHexAuth("", "", "", this);
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -267,5 +310,13 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(MainActivity.this, ContragentActivity.class);
         intent.putExtra(Constants.INTENT_ID_CONTRAGENT, uid);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (locationManager != null) {
+            locationManager.stopLocating();
+        }
     }
 }
