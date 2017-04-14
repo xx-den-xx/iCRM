@@ -25,18 +25,16 @@ import ru.bda.icrm.model.Call;
 import ru.bda.icrm.model.ClientObject;
 import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Contragent;
+import ru.bda.icrm.model.dto.ContragentItemDTO;
 import ru.bda.icrm.model.Phone;
 import ru.bda.icrm.model.Photo;
 import ru.bda.icrm.model.Price;
 import ru.bda.icrm.model.PriceSum;
 import ru.bda.icrm.model.Score;
 
-/**
- * Created by User on 28.06.2016.
- */
 public class ApiController {
 
-    private final String mBaseUrl = Constants.API_LINK_2;//API_LINK;
+    private final String mBaseUrl = Constants.API_LINK_2;
     private static volatile ApiController instance;
     private Context context;
 

@@ -30,10 +30,6 @@ import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.model.Event;
 import ru.bda.icrm.receiver.TimeReceiver;
 
-/**
- * Created by User on 26.01.2017.
- */
-
 public class NotificationService extends Service {
 
     int count = 0;
@@ -73,6 +69,8 @@ public class NotificationService extends Service {
         }
         dbController.closeDb();
     }
+
+
 
     private void startNotification(Event event, Context context) {
         Log.d("alarm_log", "start_notif = " + event.getTimeBegin());

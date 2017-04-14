@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,47 +19,55 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import ru.bda.icrm.R;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.holders.AppControl;
 import ru.bda.icrm.holders.AppPref;
+import ru.bda.icrm.presenter.LoginPresenter;
+import ru.bda.icrm.model.Token;
 import ru.bda.icrm.services.NotificationService;
-import ru.yandex.yandexmapkit.utils.Utils;
+import ru.bda.icrm.view.LoginActivityView;
 
-/**
- * Created by User on 28.07.2016.
- */
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, LoginActivityView{
 
-    private EditText mEtLogin;
-    private EditText mEtPassword;
-    private Button mBtnOk;
-    private Toolbar mToolbar;
-    private ImageView mIvLogo;
-    private LinearLayout mLoginLayout;
-    private ProgressBar mProgressBar;
+    @Bind(R.id.et_login)
+    EditText mEtLogin;
+    @Bind(R.id.et_password)
+    EditText mEtPassword;
+    @Bind(R.id.btn_ok)
+    Button mBtnOk;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.im_logo)
+    ImageView mIvLogo;
+    @Bind(R.id.login_layout)
+    LinearLayout mLoginLayout;
+    @Bind(R.id.progress_bar)
+    ProgressBar mProgressBar;
     private String sLogin = "";
     private String sPassword = "";
     private String hexLogin = "";
     private String hexPassword = "";
     private Context mContext;
     private int requestCode = 333;
+    private LoginPresenter presenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
         AppPref.getInstance().setNotifCount(0, this);
         if (!isMyServiceRunning(NotificationService.class)) {
             startService(new Intent(this, NotificationService.class));
         }
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mContext = this;
         initContent();
         if (getIntent().getStringExtra(Constants.INTENT_EXIT) == null) {
@@ -84,17 +91,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void initContent() {
         mToolbar.setTitle(R.string.app_name);
-        mEtLogin = (EditText) findViewById(R.id.et_login);
-        mEtPassword = (EditText) findViewById(R.id.et_password);
-        mBtnOk = (Button) findViewById(R.id.btn_ok);
-        mBtnOk.setOnClickListener(this);
-        mIvLogo = (ImageView) findViewById(R.id.im_logo);
-        mLoginLayout = (LinearLayout) findViewById(R.id.login_layout);
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mBtnOk.setOnClickListener(v -> onClick(v));
         mProgressBar.setVisibility(View.GONE);
     }
 
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_ok:
@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!sLogin.equals("") && !sPassword.equals("")) {
                     hexPassword = getMD5(sPassword);
                     hexLogin = getMD5(sLogin);
-                    new AuthTask().execute();
+                    loadPresenter(hexLogin, hexPassword);
                 } else {
                     Toast.makeText(LoginActivity.this,
                             LoginActivity.this.getResources().getString(R.string.empty_field),
@@ -150,16 +150,40 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void startApp() {
+    public void startApp() {
         if (!AppPref.getInstance().getStringPref(AppPref.PREF_HEX_LOGIN, mContext).equals("")
                 && !AppPref.getInstance().getStringPref(AppPref.PREF_HEX_PASSWORD, mContext).equals("")) {
             hexLogin = AppPref.getInstance().getStringPref(AppPref.PREF_HEX_LOGIN, mContext);
             hexPassword = AppPref.getInstance().getStringPref(AppPref.PREF_HEX_PASSWORD, mContext);
-            new AuthTask().execute();
+            loadPresenter(hexLogin, hexPassword);
         } else {
             mLoginLayout.setVisibility(View.VISIBLE);
             mToolbar.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void loadPresenter(String login, String pass) {
+        presenter = new LoginPresenter(this, login, pass);
+        presenter.loadData();
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void saveToken(Token token) {
+        AppPref.getInstance().setHexAuth(sLogin, hexLogin, hexPassword, mContext);
+        AppPref.getInstance().setToken(token.getToken(), mContext);
+        if (presenter != null) presenter.onStop();
+        mProgressBar.setVisibility(View.GONE);
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void showError(String error) {
+        Toast.makeText(mContext, "Неверный логин или пароль", Toast.LENGTH_LONG).show();
+        mLoginLayout.setVisibility(View.VISIBLE);
+        mToolbar.setVisibility(View.VISIBLE);
     }
 
     private class LogoLayout extends AsyncTask<Void, Void, Void> {
@@ -197,47 +221,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     || ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 ActivityCompat.requestPermissions(LoginActivity.this,
-                        new String[] {Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE, Manifest.permission.PROCESS_OUTGOING_CALLS}, requestCode);
+                        new String[] {
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.READ_PHONE_STATE,
+                                Manifest.permission.PROCESS_OUTGOING_CALLS,
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_NETWORK_STATE
+                }, requestCode);
             } else {
                 startApp();
-            }
-        }
-    }
-
-    private class AuthTask extends AsyncTask<Void, Void, Boolean> {
-
-        String token = "";
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
-        }
-
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            token = ApiController.getInstance().auth(hexLogin, hexPassword);
-            if (!token.equals("error")) {
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-            mProgressBar.setVisibility(View.GONE);
-            if (result) {
-                AppPref.getInstance().setHexAuth(sLogin, hexLogin, hexPassword, mContext);
-                AppPref.getInstance().setToken(token, mContext);
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(mContext, "Неверный логин или пароль", Toast.LENGTH_LONG).show();
-                mLoginLayout.setVisibility(View.VISIBLE);
-                mToolbar.setVisibility(View.VISIBLE);
             }
         }
     }
