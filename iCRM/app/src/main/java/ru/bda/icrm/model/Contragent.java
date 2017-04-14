@@ -2,6 +2,8 @@ package ru.bda.icrm.model;
 
 import java.util.List;
 
+import ru.bda.icrm.model.dto.ContragentItemDTO;
+
 /**
  * Created by User on 27.06.2016.
  */
@@ -39,6 +41,13 @@ public class Contragent {
     }
 
     public Contragent() {
+    }
+
+    public Contragent(ContragentItemDTO contragentItemDTO) {
+        this.mNameContragent = contragentItemDTO.getTitle();
+        this.mId = contragentItemDTO.getId();
+        this.lat = Double.parseDouble(contragentItemDTO.getLat());
+        this.lon = Double.parseDouble(contragentItemDTO.getLng());
     }
 
     public String getUid() {

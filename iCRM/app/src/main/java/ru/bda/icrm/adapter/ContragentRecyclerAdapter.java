@@ -1,13 +1,11 @@
 package ru.bda.icrm.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -17,9 +15,6 @@ import ru.bda.icrm.listener.AddContragentClickListener;
 import ru.bda.icrm.listener.OnContragentClickListener;
 import ru.bda.icrm.model.Contragent;
 
-/**
- * Created by User on 29.06.2016.
- */
 public class ContragentRecyclerAdapter extends RecyclerView.Adapter<ContragentRecyclerAdapter.ViewHolder> {
 
     private List<Contragent> agentList;
@@ -41,16 +36,13 @@ public class ContragentRecyclerAdapter extends RecyclerView.Adapter<ContragentRe
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Contragent contragent = agentList.get(position);
         holder.nameTv.setText(contragent.getNameContragent());
-        holder.llItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onContragentClick(contragent.getId());
+        holder.llItem.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onContragentClick(contragent.getId());
 
-                }
-                if (addListener != null) {
-                    addListener.addContragentListener(contragent);
-                }
+            }
+            if (addListener != null) {
+                addListener.addContragentListener(contragent);
             }
         });
         if (contragent.getLon() != 0 && contragent.getLat() != 0) {

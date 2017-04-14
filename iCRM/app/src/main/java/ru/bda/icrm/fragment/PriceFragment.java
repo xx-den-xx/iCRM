@@ -27,6 +27,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import ru.bda.icrm.R;
 import ru.bda.icrm.activity.ChildPriceActivity;
 import ru.bda.icrm.adapter.RecyclerPriceAdapter;
@@ -40,19 +42,26 @@ import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Price;
 import ru.bda.icrm.model.PriceSum;
 
-/**
- * Created by User on 31.08.2016.
- */
 public class PriceFragment extends Fragment {
 
-    private RecyclerView mRecyclerView;
+    @Bind(R.id.recycler_view)
+    RecyclerView mRecyclerView;
+
+    @Bind(R.id.iv_search)
+    ImageView mIvSearch;
+
+    @Bind(R.id.et_search)
+    EditText mEtSearch;
+
+    @Bind(R.id.iv_cancel)
+    ImageView mIvCancel;
+
+    @Bind(R.id.progress_bar)
+    ProgressBar mProgressBar;
+
     private RecyclerPriceAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
-    private ImageView mIvSearch;
-    private EditText mEtSearch;
-    private ImageView mIvCancel;
     private String mParentCode = "root";
-    private ProgressBar mProgressBar;
     private List<PriceSum> mPriceList = new ArrayList<>();
     private int startProgressInt = 0;
     private int countProgressInt = 50;
@@ -63,22 +72,19 @@ public class PriceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_price, null);
         //getSHA1();
-        initContent(view);
+        ButterKnife.bind(this, view);
+        initContent();
         new NomenclatureTask().execute();
         return view;
     }
 
-    private void initContent(View view) {
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+    private void initContent() {
         mAdapter = new RecyclerPriceAdapter(mPriceList);
-        mAdapter.addPriceClickListener(new AddPriceClickListener() {
-            @Override
-            public void addPriceListener(PriceSum price) {
-                if (price.isGroup()) {
-                    Intent intent = new Intent(getActivity(), ChildPriceActivity.class);
-                    intent.putExtra(Constants.INTENT_PARENT_CODE, price.getCode());
-                    startActivity(intent);
-                }
+        mAdapter.addPriceClickListener(price -> {
+            if (price.isGroup()) {
+                Intent intent = new Intent(getActivity(), ChildPriceActivity.class);
+                intent.putExtra(Constants.INTENT_PARENT_CODE, price.getCode());
+                startActivity(intent);
             }
         });
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -93,33 +99,22 @@ public class PriceFragment extends Fragment {
                 }
             }
         });
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
-        mIvSearch = (ImageView) view.findViewById(R.id.iv_search);
-        mEtSearch = (EditText) view.findViewById(R.id.et_search);
-        mIvCancel = (ImageView) view.findViewById(R.id.iv_cancel);
-
-        mIvSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mEtSearch.getVisibility() == View.GONE && mIvCancel.getVisibility() == View.GONE) {
-                    mEtSearch.setVisibility(View.VISIBLE);
-                    mIvCancel.setVisibility(View.VISIBLE);
-                } else {
-                    mEtSearch.setVisibility(View.GONE);
-                    mIvCancel.setVisibility(View.GONE);
-                }
-            }
-        });
-        mIvCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new NomenclatureTask().execute();
-                mEtSearch.setText("");
+        mIvSearch.setOnClickListener(v -> {
+            if (mEtSearch.getVisibility() == View.GONE && mIvCancel.getVisibility() == View.GONE) {
+                mEtSearch.setVisibility(View.VISIBLE);
+                mIvCancel.setVisibility(View.VISIBLE);
+            } else {
                 mEtSearch.setVisibility(View.GONE);
                 mIvCancel.setVisibility(View.GONE);
-                searchMode = SearchMode.LOAD;
             }
+        });
+        mIvCancel.setOnClickListener(v -> {
+            new NomenclatureTask().execute();
+            mEtSearch.setText("");
+            mEtSearch.setVisibility(View.GONE);
+            mIvCancel.setVisibility(View.GONE);
+            searchMode = SearchMode.LOAD;
         });
         mEtSearch.addTextChangedListener(new TextWatcher() {
             @Override

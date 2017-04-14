@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import ru.bda.icrm.auth.AnswerServer;
@@ -19,6 +18,7 @@ import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.model.ClientObject;
 import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Contragent;
+import ru.bda.icrm.model.dto.ContragentItemDTO;
 import ru.bda.icrm.model.Phone;
 import ru.bda.icrm.model.Photo;
 import ru.bda.icrm.model.Price;
