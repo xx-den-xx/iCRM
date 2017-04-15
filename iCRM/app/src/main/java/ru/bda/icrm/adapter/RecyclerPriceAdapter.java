@@ -51,12 +51,7 @@ public class RecyclerPriceAdapter extends RecyclerView.Adapter<RecyclerPriceAdap
             holder.price.setText(coast + " RUB");
         }
         holder.title.setText(title);
-        holder.priceLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                priceListener.addPriceListener(price);
-            }
-        });
+        holder.priceLayout.setOnClickListener(v -> priceListener.addPriceListener(price));
 
     }
 

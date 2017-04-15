@@ -14,10 +14,6 @@ import ru.yandex.yandexmapkit.overlay.Overlay;
 import ru.yandex.yandexmapkit.map.GeoCodeListener;
 import ru.yandex.yandexmapkit.utils.ScreenPoint;
 
-/**
- * Created by User on 28.10.2016.
- */
-
 public class OverlayGeoCode extends Overlay implements GeoCodeListener {
 
     private OnMapClickListener mapListener;

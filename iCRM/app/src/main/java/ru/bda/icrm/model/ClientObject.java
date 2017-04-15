@@ -3,10 +3,6 @@ package ru.bda.icrm.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by User on 22.12.2016.
- */
-
 public class ClientObject {
 
     private int id = 0;

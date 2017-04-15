@@ -3,17 +3,15 @@ package ru.bda.icrm.model.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import retrofit2.http.Field;
-
-/**
- * Created by User on 13.04.2017.
- */
-
-public class TakeContragentDTO {
+public class TakeNomenclatureDTO {
 
     @SerializedName("token")
     @Expose
     private String token;
+
+    @SerializedName("parent")
+    @Expose
+    private String parent;
 
     @SerializedName("start")
     @Expose
@@ -23,8 +21,10 @@ public class TakeContragentDTO {
     @Expose
     private int count;
 
-    public TakeContragentDTO (String token, int start, int count) {
+
+    public TakeNomenclatureDTO(String token, String parent, int start, int count) {
         this.token = token;
+        this.parent = parent;
         this.start = start;
         this.count = count;
     }
@@ -35,6 +35,14 @@ public class TakeContragentDTO {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 
     public int getStart() {
