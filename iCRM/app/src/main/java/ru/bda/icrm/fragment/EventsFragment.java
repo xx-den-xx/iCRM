@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,26 +35,47 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import ru.bda.icrm.R;
 import ru.bda.icrm.activity.LoginActivity;
 import ru.bda.icrm.adapter.ContragentRecyclerAdapter;
 import ru.bda.icrm.adapter.RecyclerEventAdapter;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.database.DBController;
+import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.model.Event;
+import ru.bda.icrm.model.dto.EventDTO;
+import ru.bda.icrm.presenter.EventFragmentPresenter;
+import ru.bda.icrm.view.EventFragmentView;
 import ru.yandex.m;
 
-public class EventsFragment extends Fragment implements View.OnClickListener{
+public class EventsFragment extends Fragment implements View.OnClickListener, EventFragmentView{
 
-    private TextView mTvNow;
-    private TextView mTvAll;
-    private ImageView mIvBack;
-    private ImageView mIvNext;
-    private ImageView mIvCalendar;
-    private LinearLayout mLlMore;
-    private ProgressBar mProgressBar;
+    @Bind(R.id.tv_now)
+    TextView mTvNow;
 
-    private RecyclerView mRVEvent;
+    @Bind(R.id.tv_all)
+    TextView mTvAll;
+
+    @Bind(R.id.iv_back)
+    ImageView mIvBack;
+
+    @Bind(R.id.iv_next)
+    ImageView mIvNext;
+
+    @Bind(R.id.iv_calendar)
+    ImageView mIvCalendar;
+
+    @Bind(R.id.ll_more)
+    LinearLayout mLlMore;
+
+    @Bind(R.id.progress_bar)
+    ProgressBar mProgressBar;
+
+    @Bind(R.id.recycler_view_event)
+    RecyclerView mRVEvent;
+
     private RecyclerEventAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private Event mEvent;
@@ -61,37 +83,34 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
     private DBController mDbController;
     private boolean isAddToDb = false;
     private Calendar mChangeDate;
+    private EventFragmentPresenter presenter;
+    private String token;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events, null);
+        ButterKnife.bind(this, view);
+        presenter = new EventFragmentPresenter(this, getContext());
+        token = AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getContext());
         mDbController = new DBController(getActivity());
         mChangeDate = Calendar.getInstance();
-        initContent(view);
-        initRecyclerContent(view);
+        initContent();
+        initRecyclerContent();
         new EventSendTask().execute();
         return view;
     }
 
-    private void initContent(View view) {
-        mTvNow = (TextView) view.findViewById(R.id.tv_now);
+    private void initContent() {
         mTvNow.setOnClickListener(this);
-        mTvAll = (TextView) view.findViewById(R.id.tv_all);
         mTvAll.setOnClickListener(this);
-        mIvBack = (ImageView) view.findViewById(R.id.iv_back);
         mIvBack.setOnClickListener(this);
-        mIvNext = (ImageView) view.findViewById(R.id.iv_next);
         mIvNext.setOnClickListener(this);
-        mIvCalendar = (ImageView) view.findViewById(R.id.iv_calendar);
         mIvCalendar.setOnClickListener(this);
-        mLlMore = (LinearLayout) view.findViewById(R.id.ll_more);
         mLlMore.setOnClickListener(this);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
     }
 
-    private void initRecyclerContent(View view) {
-        mRVEvent = (RecyclerView) view.findViewById(R.id.recycler_view_event);
+    private void initRecyclerContent() {
         mAdapter = new RecyclerEventAdapter(getActivity(), mEventList, Calendar.getInstance());
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRVEvent.setLayoutManager(mLayoutManager);
@@ -103,7 +122,8 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
         mEvent = event;
         isAddToDb = true;
         if (mEvent != null) {
-            new EventSendTask().execute();
+            presenter.makeEvent(new EventDTO(mEvent, token));
+            //new EventSendTask().execute();
         }
     }
 
@@ -125,15 +145,12 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.iv_calendar:
                 DatePickerDialog dateDialog = new DatePickerDialog();
-                dateDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(year, monthOfYear, dayOfMonth);
-                        mChangeDate = calendar;
-                        String dayCalendar = getDate(calendar.getTimeInMillis(), "dd.MM.yyyy");
-                        setDateCalendar(dayCalendar);
-                    }
+                dateDialog.setOnDateSetListener((view, year, monthOfYear, dayOfMonth) -> {
+                    Calendar calendar1 = Calendar.getInstance();
+                    calendar1.set(year, monthOfYear, dayOfMonth);
+                    mChangeDate = calendar1;
+                    String dayCalendar = getDate(calendar1.getTimeInMillis(), "dd.MM.yyyy");
+                    setDateCalendar(dayCalendar);
                 });
                 dateDialog.show(getActivity().getFragmentManager().beginTransaction(), "");
                 break;
@@ -222,6 +239,41 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
         mDbController.closeDb();
     }
 
+    @Override
+    public void showError(String error) {
+        Snackbar.make(mProgressBar, error, Snackbar.LENGTH_LONG).show();
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void startProgress() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void makeEvent(List<Event> events) {
+        mProgressBar.setVisibility(View.GONE);
+        if (mEventList != null && mEventList.size() > 0) {
+            mEventList = events;
+            mEventList = refreshEventList(mEventList);
+        } else {
+            mEventList = events;
+            mEventList = refreshEventList(mEventList);
+        }
+        mAdapter.setEventList(mEventList);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void updateEvent(Event event) {
+
+    }
+
+    @Override
+    public void deleteEvent(Event event) {
+
+    }
+
     private class EventSendTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -235,6 +287,7 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
             if (isAddToDb) {
                 synchronized (DBController.class) {
                     mDbController.addEventToDB(mEvent);
+                    mDbController.closeDb();
                 }
             }
             mEventList = new ArrayList<>();

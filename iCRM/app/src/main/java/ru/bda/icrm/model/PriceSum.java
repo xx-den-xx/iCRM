@@ -12,6 +12,18 @@ public class PriceSum extends Price implements Serializable{
     private double totlalCoast = 1;
 
     public PriceSum() {
+
+    }
+
+    public PriceSum(int number, double totlalCoast) {
+        this.number = number;
+        this.totlalCoast = totlalCoast;
+    }
+
+    public PriceSum(int id, String code, String parent, String title, String unit, boolean isGroup, double price, int number, double totlalCoast) {
+        super(id, code, parent, title, unit, isGroup, price);
+        this.number = number;
+        this.totlalCoast = totlalCoast;
     }
 
     public int getSum() {

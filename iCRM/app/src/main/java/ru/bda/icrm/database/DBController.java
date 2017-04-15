@@ -12,10 +12,8 @@ import java.util.List;
 import ru.bda.icrm.model.Call;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Event;
+import rx.Observable;
 
-/**
- * Created by User on 28.06.2016.
- */
 public class DBController {
 
     private static volatile DBController instance;
@@ -146,32 +144,55 @@ public class DBController {
     }
 
     public void addEventToDB(Event event) {
-        mDb = null;
-        mDb = dbHelper.getWritableDatabase();
+        if (mDb == null) mDb = dbHelper.getWritableDatabase();
+        cursor = null;
         ContentValues cv = new ContentValues();
+        cv.put(DBHelper.EVENT_ID_SERVER, event.getId());
         cv.put(DBHelper.EVENT_USER, event.getUser());
         cv.put(DBHelper.EVENT_TIME_BEGIN, event.getTimeBegin());
         cv.put(DBHelper.EVENT_TIME_END, event.getTimeEnd());
         cv.put(DBHelper.EVENT_DATE, event.getDate());
         cv.put(DBHelper.EVENT_MESSAGE, event.getMessage());
-        mDb.insert(DBHelper.TABLE_EVENTS, null, cv);
+        List<Event> events = getEvent();
+        if (events != null && events.size() > 0) {
+            boolean isHaveTime = false;
+            for (Event item : events) {
+                if (item.getId() == event.getId()) {
+                    isHaveTime = true;
+                    break;
+                } else {
+                    isHaveTime = false;
+                }
+            }
+            if (!isHaveTime) {
+                mDb.insert(DBHelper.TABLE_EVENTS, null, cv);
+            }
+        } else {
+            mDb.insert(DBHelper.TABLE_EVENTS, null, cv);
+        }
+    }
+
+    public void setEventList(List<Event> items) {
+        for (Event event : items) {
+            addEventToDB(event);
+        }
+        closeDb();
     }
 
     public List<Event> getEvent() {
         List<Event> events = new ArrayList<>();
-        mDb = null;
-        mDb = dbHelper.getWritableDatabase();
+        if (mDb == null) mDb = dbHelper.getWritableDatabase();
         cursor = null;
         cursor = mDb.query(DBHelper.TABLE_EVENTS, null, null, null, null, null, DBHelper.EVENT_TIME_BEGIN + " DESC");
         if (cursor.moveToFirst()) {
             do {
                 Event event = new Event();
+                event.setId(cursor.getInt(cursor.getColumnIndex(DBHelper.EVENT_ID_SERVER)));
                 event.setUser(cursor.getString(cursor.getColumnIndex(DBHelper.EVENT_USER)));
                 event.setTimeBegin(cursor.getLong(cursor.getColumnIndex(DBHelper.EVENT_TIME_BEGIN)));
                 event.setTimeEnd(cursor.getLong(cursor.getColumnIndex(DBHelper.EVENT_TIME_END)));
                 event.setDate(cursor.getString(cursor.getColumnIndex(DBHelper.EVENT_DATE)));
                 event.setMessage(cursor.getString(cursor.getColumnIndex(DBHelper.EVENT_MESSAGE)));
-                Log.d("myLog", event.toString());
                 events.add(event);
             } while (cursor.moveToNext());
         }

@@ -31,7 +31,7 @@ import ru.bda.icrm.listener.EndlessScrollListener;
 import ru.bda.icrm.listener.OnContragentClickListener;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.dto.SearchContragentDTO;
-import ru.bda.icrm.model.dto.TakeContragentDTO;
+import ru.bda.icrm.model.dto.TakeContragentListDTO;
 import ru.bda.icrm.presenter.ContragentFragmentPresenter;
 import ru.bda.icrm.view.ContragentFragmentView;
 
@@ -84,7 +84,7 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 if (searchMode == SearchMode.LOAD) {
-                    presenter.loadData(new TakeContragentDTO(token, startProgressInt, countProgressInt));
+                    presenter.loadData(new TakeContragentListDTO(token, startProgressInt, countProgressInt));
                 }
             }
         });
@@ -132,7 +132,7 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
     public void onResume() {
         super.onResume();
         if (AppControl.getInstance().isOnline(getActivity())) {
-            presenter.loadData(new TakeContragentDTO(token, startProgressInt, countProgressInt));
+            presenter.loadData(new TakeContragentListDTO(token, startProgressInt, countProgressInt));
         } else {
             Toast.makeText(getActivity(), "Нет подключения к интернету", Toast.LENGTH_LONG).show();
         }
@@ -141,7 +141,7 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
     private void setSearch(String text) {
         if (text.equals("")) {
             searchMode = SearchMode.LOAD;
-            presenter.loadData(new TakeContragentDTO(token, startProgressInt, countProgressInt));
+            presenter.loadData(new TakeContragentListDTO(token, startProgressInt, countProgressInt));
         } else {
             searchMode = SearchMode.SEARCH;
             presenter.searchData(new SearchContragentDTO(token, text));

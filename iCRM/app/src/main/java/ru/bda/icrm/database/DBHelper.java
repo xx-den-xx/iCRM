@@ -43,6 +43,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String PHONE_NUMBER = "phone_number";
 
     //поля для таблицы TABLE_EVENTS
+    public static final String EVENT_ID_SERVER = "id_server";
     public static final String EVENT_USER = "user";
     public static final String EVENT_TIME_BEGIN = "time_begin";
     public static final String EVENT_TIME_END = "time_end";
@@ -95,6 +96,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("create table " + TABLE_EVENTS
                 + "(" + ID + " integer primary key, "
+                + EVENT_ID_SERVER + " integer, "
                 + EVENT_USER + " text, "
                 + EVENT_TIME_BEGIN + " real, "
                 + EVENT_TIME_END + " real, "

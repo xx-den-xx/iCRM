@@ -1,9 +1,5 @@
 package ru.bda.icrm.model;
 
-/**
- * Created by User on 12.10.2016.
- */
-
 public class Price {
 
     private int id = 0;
@@ -15,6 +11,16 @@ public class Price {
     private double price = 0;
 
     public Price() {}
+
+    public Price(int id, String code, String parent, String title, String unit, boolean isGroup, double price) {
+        this.id = id;
+        this.code = code;
+        this.parent = parent;
+        this.title = title;
+        this.unit = unit;
+        this.isGroup = isGroup;
+        this.price = price;
+    }
 
     public int getId() {
         return id;

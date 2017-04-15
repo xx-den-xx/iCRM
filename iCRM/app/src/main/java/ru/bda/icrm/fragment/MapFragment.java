@@ -28,6 +28,9 @@ import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.listener.OnMapClickListener;
 import ru.bda.icrm.map.OverlayGeoCode;
 import ru.bda.icrm.model.Contragent;
+import ru.bda.icrm.model.Token;
+import ru.bda.icrm.presenter.MapFragmentPresenter;
+import ru.bda.icrm.view.MapFragmentView;
 import ru.yandex.yandexmapkit.MapController;
 import ru.yandex.yandexmapkit.MapView;
 import ru.yandex.yandexmapkit.map.MapEvent;
@@ -39,15 +42,13 @@ import ru.yandex.yandexmapkit.overlay.balloon.OnBalloonListener;
 import ru.yandex.yandexmapkit.overlay.location.MyLocationOverlay;
 import ru.yandex.yandexmapkit.utils.GeoPoint;
 
-/**
- * Created by User on 31.08.2016.
- */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements MapFragmentView{
 
     private MapView mMapView;
     private Overlay overlay;
     private List<Contragent> mListContragent = new ArrayList<>();
     private MapController mMapController;
+    private MapFragmentPresenter presenter;
 
     @Nullable
     @Override
@@ -55,8 +56,10 @@ public class MapFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_map, null);
         initContent(view);
 
+        presenter = new MapFragmentPresenter(this);
         mMapView.showBuiltInScreenButtons(true);
-        new ContragentRequestTask().execute();
+        presenter.loadData(new Token(AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getContext())));
+        //new ContragentRequestTask().execute();
         return view;
     }
 
@@ -136,29 +139,16 @@ public class MapFragment extends Fragment {
         mMapController.getOverlayManager().addOverlay(overlay);
     }
 
-    private class ContragentRequestTask extends AsyncTask<Void, Void, Void> {
+    @Override
+    public void showError(String error) {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            List<Contragent> list = ApiController.getInstance()
-                    .getContragentList(AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getActivity()));
-            if (list != null) {
-                mListContragent.addAll(list);
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(Void aBoolean) {
-            super.onPostExecute(aBoolean);
-            showObject(mListContragent);
-        }
     }
 
+    @Override
+    public void loadContragents(List<Contragent> contragents) {
+        if (contragents != null) {
+            mListContragent.addAll(contragents);
+        }
+        showObject(mListContragent);
+    }
 }

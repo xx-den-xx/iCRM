@@ -35,9 +35,6 @@ import ru.bda.icrm.listener.OnClickScoreListener;
 import ru.bda.icrm.listener.OnFilterScoreClickListener;
 import ru.bda.icrm.model.Score;
 
-/**
- * Created by User on 31.08.2016.
- */
 public class ScoresFragment extends Fragment {
 
     private RecyclerView mRecyclerView;

@@ -109,70 +109,65 @@ public class AddEventDialog extends DialogFragment  implements View.OnClickListe
     private void initContent(View rootView) {
         mEtMessage = (EditText) rootView.findViewById(R.id.et_message);
         mBtnLeft = (Button) rootView.findViewById(R.id.btn_left);
-        mBtnLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onLeftBtnClick();
-                }
-                dismiss();
+        mBtnLeft.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onLeftBtnClick();
             }
+            dismiss();
         });
 
         mBtnRight = (Button) rootView.findViewById(R.id.btn_right);
-        mBtnRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Event event = new Event();
-                if (listener != null) {
-                    message = mEtMessage.getText().toString();
-                    long timeBegin = timeMilliseconds(hourBegin, minuteBegin, dayBegin, monthBegin + 1, yearBegin);
-                    long timeEnd = timeMilliseconds(hourEnd, minuteEnd, dayEnd, monthEnd + 1, yearEnd);
-                    Log.d("myLog", "time begin = " + timeBegin + "; time end = " + timeEnd);
-                    if (timeEnd > timeBegin && !message.equals("")) {
-                        event.setUser(AppPref.getInstance().getStringPref(AppPref.PREF_HEX_LOGIN, getActivity()));
-                        event.setTimeBegin(timeBegin);
-                        event.setTimeEnd(timeEnd);
-                        event.setDate(dateEvent);
-                        event.setMessage(message);
-                        listener.onRightBtnClick(event);
-                        dismiss();
-                    } else {
-                        Context ctx = getActivity();
-                        String errorTime = ctx.getResources().getString(R.string.add_event_error_time);
-                        String errorMessage = ctx.getResources().getString(R.string.add_event_error_message);
-                        String errorTitle = ctx.getResources().getString(R.string.dialog_error_title);
+        mBtnRight.setOnClickListener(v -> {
+            Event event = new Event();
+            if (listener != null) {
+                message = mEtMessage.getText().toString();
+                long timeBegin = timeMilliseconds(hourBegin, minuteBegin, dayBegin, monthBegin + 1, yearBegin);
+                long timeEnd = timeMilliseconds(hourEnd, minuteEnd, dayEnd, monthEnd + 1, yearEnd);
+                Log.d("myLog", "time begin = " + timeBegin + "; time end = " + timeEnd);
+                if (timeEnd > timeBegin && !message.equals("")) {
+                    event.setUser(AppPref.getInstance().getStringPref(AppPref.PREF_HEX_LOGIN, getActivity()));
+                    event.setTimeBegin(timeBegin);
+                    event.setTimeEnd(timeEnd);
+                    event.setDate(dateEvent);
+                    event.setMessage(message);
+                    event.setId(0);
+                    listener.onRightBtnClick(event);
+                    dismiss();
+                } else {
+                    Context ctx = getActivity();
+                    String errorTime = ctx.getResources().getString(R.string.add_event_error_time);
+                    String errorMessage = ctx.getResources().getString(R.string.add_event_error_message);
+                    String errorTitle = ctx.getResources().getString(R.string.dialog_error_title);
 
-                        if (timeEnd <= timeBegin) {
-                            MyDialog dialog = new MyDialog();
-                            dialog.init(errorTitle, errorTime, null, "Ok", new MyDialog.OnClickListener() {
-                                @Override
-                                public void onLeftBtnClick() {
+                    if (timeEnd <= timeBegin) {
+                        MyDialog dialog = new MyDialog();
+                        dialog.init(errorTitle, errorTime, null, "Ok", new MyDialog.OnClickListener() {
+                            @Override
+                            public void onLeftBtnClick() {
 
-                                }
+                            }
 
-                                @Override
-                                public void onRightBtnClick() {
+                            @Override
+                            public void onRightBtnClick() {
 
-                                }
-                            });
-                            dialog.show(getActivity());
+                            }
+                        });
+                        dialog.show(getActivity());
 
-                        }  else if (message.equals("")){
-                            MyDialog dialog = new MyDialog();
-                            dialog.init(errorTitle, errorMessage, null, "Ok", new MyDialog.OnClickListener() {
-                                @Override
-                                public void onLeftBtnClick() {
+                    }  else if (message.equals("")){
+                        MyDialog dialog = new MyDialog();
+                        dialog.init(errorTitle, errorMessage, null, "Ok", new MyDialog.OnClickListener() {
+                            @Override
+                            public void onLeftBtnClick() {
 
-                                }
+                            }
 
-                                @Override
-                                public void onRightBtnClick() {
+                            @Override
+                            public void onRightBtnClick() {
 
-                                }
-                            });
-                            dialog.show(getActivity());
-                        }
+                            }
+                        });
+                        dialog.show(getActivity());
                     }
                 }
             }

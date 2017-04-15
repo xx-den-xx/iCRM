@@ -4,7 +4,7 @@ import java.util.List;
 
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.dto.SearchContragentDTO;
-import ru.bda.icrm.model.dto.TakeContragentDTO;
+import ru.bda.icrm.model.dto.TakeContragentListDTO;
 import ru.bda.icrm.presenter.mappers.ContragentMappers;
 import ru.bda.icrm.view.ContragentFragmentView;
 import rx.Observer;
@@ -26,7 +26,7 @@ public class ContragentFragmentPresenter extends BasePresenter {
         this.token = token;
     }
 
-    public void loadData(TakeContragentDTO dto) {
+    public void loadData(TakeContragentListDTO dto) {
         view.startProgress();
         contragentSubscription = model.getContragentList(dto)
                 .map(contragentMappers)

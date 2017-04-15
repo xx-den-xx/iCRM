@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,8 +42,11 @@ import ru.bda.icrm.listener.EndlessScrollListener;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Price;
 import ru.bda.icrm.model.PriceSum;
+import ru.bda.icrm.model.dto.TakeNomenclatureDTO;
+import ru.bda.icrm.presenter.PriceFragmentPresenter;
+import ru.bda.icrm.view.PriceFragmentView;
 
-public class PriceFragment extends Fragment {
+public class PriceFragment extends Fragment implements PriceFragmentView{
 
     @Bind(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -66,6 +70,8 @@ public class PriceFragment extends Fragment {
     private int startProgressInt = 0;
     private int countProgressInt = 50;
     private SearchMode searchMode = SearchMode.LOAD;
+    private String token;
+    private PriceFragmentPresenter presenter;
 
     @Nullable
     @Override
@@ -73,8 +79,11 @@ public class PriceFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_price, null);
         //getSHA1();
         ButterKnife.bind(this, view);
+        presenter = new PriceFragmentPresenter(this);
         initContent();
-        new NomenclatureTask().execute();
+        token = AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, getContext());
+        presenter.loadPrice(new TakeNomenclatureDTO(token, mParentCode, startProgressInt, countProgressInt));
+        //new NomenclatureTask().execute();
         return view;
     }
 
@@ -95,7 +104,9 @@ public class PriceFragment extends Fragment {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 if (searchMode == SearchMode.LOAD) {
-                    new NomenclatureTask().execute();
+                    if (totalItemsCount > countProgressInt)
+                        presenter.loadPrice(new TakeNomenclatureDTO(token, mParentCode, startProgressInt, countProgressInt));
+                    //new NomenclatureTask().execute();
                 }
             }
         });
@@ -110,7 +121,8 @@ public class PriceFragment extends Fragment {
             }
         });
         mIvCancel.setOnClickListener(v -> {
-            new NomenclatureTask().execute();
+            presenter.loadPrice(new TakeNomenclatureDTO(token, mParentCode, startProgressInt, countProgressInt));
+            //new NomenclatureTask().execute();
             mEtSearch.setText("");
             mEtSearch.setVisibility(View.GONE);
             mIvCancel.setVisibility(View.GONE);
@@ -144,7 +156,8 @@ public class PriceFragment extends Fragment {
     private void setSearch(String text) {
         if (text.equals("")) {
             searchMode = SearchMode.LOAD;
-            new NomenclatureTask().execute();
+            presenter.loadPrice(new TakeNomenclatureDTO(token, mParentCode, startProgressInt, countProgressInt));
+            //new NomenclatureTask().execute();
         } else {
             searchMode = SearchMode.SEARCH;
             new SearchTask().execute(text);
@@ -173,6 +186,35 @@ public class PriceFragment extends Fragment {
         } catch (Exception e) {
             Log.e("exception", e.toString());
         }
+    }
+
+    @Override
+    public void showError(String error) {
+        mProgressBar.setVisibility(View.GONE);
+        Snackbar.make(mProgressBar, error, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void startProgress() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void loadPriceList(List<PriceSum> list) {
+        mProgressBar.setVisibility(View.GONE);
+        if (list != null) {
+            if (startProgressInt == 0) {
+                mPriceList = list;
+            } else {
+                mPriceList.addAll(list);
+            }
+        }
+        if (mPriceList != null) {
+            startProgressInt += countProgressInt;
+            mAdapter.setPriceList(mPriceList);
+            mAdapter.notifyDataSetChanged();
+        }
+
     }
 
     private class NomenclatureTask extends AsyncTask<Void, Void, Void>{

@@ -1,34 +1,60 @@
-package ru.bda.icrm.model;
+package ru.bda.icrm.model.dto;
 
-import ru.bda.icrm.model.dto.EventDTO;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-public class Event {
+import ru.bda.icrm.model.Event;
+
+public class EventDTO {
+
+    @SerializedName("token")
+    @Expose
+    private String token;
+
+    @SerializedName("id")
+    @Expose
     private int id;
+
+    @SerializedName("user")
+    @Expose
     private String user;
+
+    @SerializedName("timeBegin")
+    @Expose
     private long timeBegin;
+
+    @SerializedName("timeEnd")
+    @Expose
     private long timeEnd;
+
+    @SerializedName("date")
+    @Expose
     private String date;
+
+    @SerializedName("message")
+    @Expose
     private String message;
-    private boolean isFirstDay = false;
-    private boolean isNowDay = false;
 
-    public Event() {}
+    public EventDTO() {}
 
-    public Event(EventDTO event) {
+    public EventDTO(String token, int id, String user, long timeBegin, long timeEnd, String date, String message) {
+        this.token = token;
+        this.id = id;
+        this.user = user;
+        this.timeBegin = timeBegin;
+        this.timeEnd = timeEnd;
+        this.date = date;
+        this.message = message;
+    }
+
+    public EventDTO(Event event, String token) {
+        this.token = token;
         this.id = event.getId();
         this.user = event.getUser();
         this.timeBegin = event.getTimeBegin();
         this.timeEnd = event.getTimeEnd();
         this.date = event.getDate();
         this.message = event.getMessage();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUser() {
@@ -71,26 +97,28 @@ public class Event {
         this.date = date;
     }
 
-    public boolean isFirstDay() {
-        return isFirstDay;
+    public String getToken() {
+        return token;
     }
 
-    public void setFirstDay(boolean firstDay) {
-        isFirstDay = firstDay;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    public boolean isNowDay() {
-        return isNowDay;
+    public int getId() {
+        return id;
     }
 
-    public void setNowDay(boolean nowDay) {
-        isNowDay = nowDay;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
-        return "Event{" +
-                "user='" + user + '\'' +
+        return "EventDTO{" +
+                "token='" + token + '\'' +
+                ", id=" + id +
+                ", user='" + user + '\'' +
                 ", timeBegin=" + timeBegin +
                 ", timeEnd=" + timeEnd +
                 ", date='" + date + '\'' +
