@@ -16,7 +16,9 @@ public class AppPref {
     public static final String PREF_LOGIN = "login";
     public static final String PREF_HEX_PASSWORD = "hex_pass";
     public static final String PREF_TOKEN = "token";
+    public static final String PREF_TIME_LOAD = "time_load";
     public static final String PREF_NOTIF_COUNT = "notif_count";
+    public static final String PREF_ID = "id_manager";
 
     private AppPref() {}
 
@@ -31,12 +33,13 @@ public class AppPref {
         return instance;
     }
 
-    public void setHexAuth(String login, String hexLogin, String hexPassword, Context context) {
+    public void setHexAuth(String login, String hexLogin, String hexPassword, String id, Context context) {
         sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
         ed.putString(PREF_LOGIN, login);
         ed.putString(PREF_HEX_LOGIN, hexLogin);
         ed.putString(PREF_HEX_PASSWORD, hexPassword);
+        ed.putString(PREF_ID, id);
         ed.commit();
     }
 
@@ -45,6 +48,18 @@ public class AppPref {
         SharedPreferences.Editor ed = sPref.edit();
         ed.putString(PREF_TOKEN, token);
         ed.commit();
+    }
+
+    public void setDateAuth(long time, Context context) {
+        sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putLong(PREF_TIME_LOAD, time);
+        ed.commit();
+    }
+
+    public long getDate(Context context) {
+        sPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return sPref.getLong(AppPref.PREF_TIME_LOAD, 0);
     }
 
     public void setNotifCount (int count, Context context) {

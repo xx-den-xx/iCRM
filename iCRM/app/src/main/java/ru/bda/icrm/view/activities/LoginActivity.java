@@ -1,4 +1,4 @@
-package ru.bda.icrm.activity;
+package ru.bda.icrm.view.activities;
 
 import android.Manifest;
 import android.app.ActivityManager;
@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,11 +22,11 @@ import android.widget.Toast;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import ru.bda.icrm.R;
-import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.holders.AppControl;
 import ru.bda.icrm.holders.AppPref;
@@ -170,8 +171,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void saveToken(Token token) {
-        AppPref.getInstance().setHexAuth(sLogin, hexLogin, hexPassword, mContext);
+        if (token.getToken().equals("null") || token.getManager().equals("null")) {
+            Toast.makeText(mContext, "Неверный логин или пароль", Toast.LENGTH_LONG).show();
+            return;
+        }
+        AppPref.getInstance().setHexAuth(sLogin, hexLogin, hexPassword, token.getManager(), mContext);
         AppPref.getInstance().setToken(token.getToken(), mContext);
+        long time = AppPref.getInstance().getDate(mContext);
+
+        if (time == 0) AppPref.getInstance().setDateAuth(Calendar.getInstance().getTimeInMillis(), mContext);
+
+        Log.d("log_login", "Time = " + time + ";");
         if (presenter != null) presenter.onStop();
         mProgressBar.setVisibility(View.GONE);
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.provider.CallLog;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -16,33 +17,30 @@ import ru.bda.icrm.database.DBController;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.model.Call;
+import ru.bda.icrm.model.Token;
+import ru.bda.icrm.model.dto.AnswerServerDTO;
+import ru.bda.icrm.presenter.MainActivityPresenter;
+import ru.bda.icrm.view.MainActivityView;
 
 /**
  * Created by User on 17.11.2016.
  */
 
-public class CallService extends IntentService {
+public class CallService extends IntentService implements MainActivityView{
 
     private DBController dbController;
+    private MainActivityPresenter presenter;
 
     public CallService() {
         super("call service");
         dbController = new DBController(CallService.this);
+        presenter = new MainActivityPresenter(this, dbController);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         String phone = intent.getStringExtra(Constants.INTENT_CALL_PHONE);
         String type = intent.getStringExtra(Constants.INTENT_CALL_TYPE);
-        /**Call call = new Call();
-        call.setPhone(phone);
-        call.setLogin(AppPref.getInstance().getStringPref(AppPref.PREF_LOGIN, getApplicationContext()));
-        long time = Calendar.getInstance().getTimeInMillis();
-        call.setTime(time);
-        call.setType(type);
-        call.setSend(false);
-        Log.d("CallLog", call.toString());
-        dbController.addCall(call);*/
         synchronized (DBController.class) {
             getCallDetails();
             dbController.closeDb();
@@ -61,6 +59,7 @@ public class CallService extends IntentService {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        long time = AppPref.getInstance().getDate(this);
         Cursor managedCursor = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
         int number = managedCursor.getColumnIndex( CallLog.Calls.NUMBER );
         int type = managedCursor.getColumnIndex( CallLog.Calls.TYPE );
@@ -93,8 +92,28 @@ public class CallService extends IntentService {
             call.setTime(Long.valueOf(callDate));
             call.setType(dir);
             call.setDuration(callDuration);
-            dbController.addCall(call);
+            if (time <= call.getTime()) dbController.addCall(call);
         }
         managedCursor.close();
+        presenter.getCallLog(new Token(AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN,this)
+                , AppPref.getInstance().getStringPref(AppPref.PREF_ID, this)));
+    }
+
+    @Override
+    public void showError(String error) {
+        //Toast.makeText(this, "Ошибка " + error, Toast.LENGTH_LONG).show();
+        Log.e("log_call", error);
+    }
+
+    @Override
+    public void sendCallLog(AnswerServerDTO answerServer) {
+        String answer;
+        if (answerServer.getState().equals("200")) {
+            answer = "Звонки успешно отправлены на сервер!!!";
+        } else {
+            answer = "Звонки не отправлены на сервер!!!";
+        }
+        //Toast.makeText(this, answer, Toast.LENGTH_LONG).show();
+        Log.d("log_call", answer);
     }
 }

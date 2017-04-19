@@ -1,4 +1,4 @@
-package ru.bda.icrm.adapter;
+package ru.bda.icrm.view.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

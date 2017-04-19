@@ -25,7 +25,7 @@ public class CallReceiver extends BroadcastReceiver {
             type = "Исходящий";
             callIntent.putExtra(Constants.INTENT_CALL_PHONE, phoneNumber);
             callIntent.putExtra(Constants.INTENT_CALL_TYPE, type);
-            context.startService(callIntent);
+            //context.startService(callIntent);
         } else if (intent.getAction().equals("android.intent.action.PHONE_STATE")){
             String phone_state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
             if (phone_state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
@@ -34,7 +34,7 @@ public class CallReceiver extends BroadcastReceiver {
                 type = "Входящий";
                 callIntent.putExtra(Constants.INTENT_CALL_PHONE, phoneNumber);
                 callIntent.putExtra(Constants.INTENT_CALL_TYPE, type);
-                context.startService(callIntent);
+                //context.startService(callIntent);
 
             } else if (phone_state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
                 //телефон находиться в ждущем режиме. Это событие наступает по окончанию разговора,

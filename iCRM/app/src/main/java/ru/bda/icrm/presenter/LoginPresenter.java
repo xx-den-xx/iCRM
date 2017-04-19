@@ -1,9 +1,12 @@
 package ru.bda.icrm.presenter;
 
+import android.util.Log;
+
 import ru.bda.icrm.model.Token;
 import ru.bda.icrm.view.LoginActivityView;
 import rx.Observer;
 import rx.Subscription;
+import rx.functions.Action1;
 import rx.subscriptions.Subscriptions;
 
 public class LoginPresenter extends BasePresenter{
@@ -35,6 +38,7 @@ public class LoginPresenter extends BasePresenter{
 
                     @Override
                     public void onNext(Token token) {
+                        Log.d("log_login", token.toString());
                         view.saveToken(token);
                     }
                 });

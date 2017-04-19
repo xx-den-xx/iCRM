@@ -18,8 +18,8 @@ public class InternetReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (isOnline(context)) {
             Log.d("internet_log", "Internet On-Line!!!!!!!!!!!!!!!!!!");
-            Intent callIntent = new Intent(context, SendCallService.class);
-            context.startService(callIntent);
+            //Intent callIntent = new Intent(context, SendCallService.class);
+            //context.startService(callIntent);
         }
     }
 

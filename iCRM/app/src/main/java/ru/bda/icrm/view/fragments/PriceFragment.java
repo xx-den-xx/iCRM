@@ -1,4 +1,4 @@
-package ru.bda.icrm.fragment;
+package ru.bda.icrm.view.fragments;
 
 import android.content.Intent;
 import android.content.pm.PackageInfo;

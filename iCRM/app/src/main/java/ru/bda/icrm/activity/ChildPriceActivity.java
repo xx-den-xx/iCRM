@@ -10,7 +10,7 @@ import android.view.View;
 
 import ru.bda.icrm.R;
 import ru.bda.icrm.enums.Constants;
-import ru.bda.icrm.fragment.PriceFragment;
+import ru.bda.icrm.view.fragments.PriceFragment;
 
 /**
  * Created by User on 20.12.2016.

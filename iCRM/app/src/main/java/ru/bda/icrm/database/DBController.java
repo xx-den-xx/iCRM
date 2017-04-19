@@ -12,6 +12,8 @@ import java.util.List;
 import ru.bda.icrm.model.Call;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Event;
+import ru.bda.icrm.model.dto.CallDTO;
+import ru.bda.icrm.model.dto.EventDTO;
 import rx.Observable;
 
 public class DBController {
@@ -144,7 +146,8 @@ public class DBController {
     }
 
     public void addEventToDB(Event event) {
-        if (mDb == null) mDb = dbHelper.getWritableDatabase();
+        mDb = null;
+        mDb = dbHelper.getWritableDatabase();
         cursor = null;
         ContentValues cv = new ContentValues();
         cv.put(DBHelper.EVENT_ID_SERVER, event.getId());
@@ -172,16 +175,21 @@ public class DBController {
         }
     }
 
-    public void setEventList(List<Event> items) {
-        for (Event event : items) {
+    public List<Event> setEventList(List<EventDTO> items) {
+        List<Event> events = new ArrayList<>();
+        for (EventDTO eventDTO : items) {
+            Event event = new Event(eventDTO);
             addEventToDB(event);
         }
+        events = getEvent();
         closeDb();
+        return events;
     }
 
     public List<Event> getEvent() {
         List<Event> events = new ArrayList<>();
-        if (mDb == null) mDb = dbHelper.getWritableDatabase();
+        mDb = null;
+        mDb = dbHelper.getWritableDatabase();
         cursor = null;
         cursor = mDb.query(DBHelper.TABLE_EVENTS, null, null, null, null, null, DBHelper.EVENT_TIME_BEGIN + " DESC");
         if (cursor.moveToFirst()) {
@@ -257,6 +265,31 @@ public class DBController {
                 call.setSend(cursor.getInt(cursor.getColumnIndex(DBHelper.CALL_SEND)) == 0 ? false : true);
                 call.setDuration(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_DURATION)));
                 calls.add(call);
+            } while (cursor.moveToNext());
+        }
+        return calls;
+    }
+
+    public List<CallDTO> getCallForServer() {
+        List<CallDTO> calls = new ArrayList<>();
+        mDb = null;
+        mDb = dbHelper.getWritableDatabase();
+        cursor = null;
+        cursor = mDb.query(DBHelper.TABLE_CALL, null, null, null, null, null, DBHelper.CALL_TIME + " DESC");
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                Call call = new Call();
+                call.setPhone(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_PHONE)));
+                call.setLogin(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_LOGIN)));
+                call.setTime(cursor.getLong(cursor.getColumnIndex(DBHelper.CALL_TIME)));
+                call.setType(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_TYPE)));
+                call.setSend(cursor.getInt(cursor.getColumnIndex(DBHelper.CALL_SEND)) == 0 ? false : true);
+                call.setDuration(cursor.getString(cursor.getColumnIndex(DBHelper.CALL_DURATION)));
+                CallDTO callDTO = new CallDTO(call);
+                if (!call.isSend()) {
+                    calls.add(callDTO);
+                    updateCall(call);
+                }
             } while (cursor.moveToNext());
         }
         return calls;

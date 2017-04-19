@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId "ru.bda.icrm"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
         multiDexEnabled true

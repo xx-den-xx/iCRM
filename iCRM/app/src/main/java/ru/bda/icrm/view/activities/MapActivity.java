@@ -1,4 +1,4 @@
-package ru.bda.icrm.activity;
+package ru.bda.icrm.view.activities;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -28,10 +28,6 @@ import ru.yandex.yandexmapkit.overlay.balloon.OnBalloonListener;
 import ru.yandex.yandexmapkit.overlay.location.MyLocationItem;
 import ru.yandex.yandexmapkit.overlay.location.OnMyLocationListener;
 import ru.yandex.yandexmapkit.utils.GeoPoint;
-
-/**
- * Created by User on 30.10.2016.
- */
 
 public class MapActivity extends AppCompatActivity implements OnMyLocationListener{
 

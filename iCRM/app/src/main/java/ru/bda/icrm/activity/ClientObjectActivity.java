@@ -1,7 +1,6 @@
 package ru.bda.icrm.activity;
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,7 +29,6 @@ import android.widget.Toast;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +36,11 @@ import ru.bda.icrm.R;
 import ru.bda.icrm.adapter.PhotoRecyclerAdapter;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.enums.Constants;
-import ru.bda.icrm.holders.AppControl;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.listener.OnPhotoClickListener;
 import ru.bda.icrm.model.ClientObject;
 import ru.bda.icrm.model.Photo;
+import ru.bda.icrm.view.activities.MapActivity;
 
 /**
  * Created by User on 22.12.2016.

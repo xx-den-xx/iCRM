@@ -1,20 +1,10 @@
-package ru.bda.icrm.fragment;
+package ru.bda.icrm.view.fragments;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -38,17 +28,14 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import ru.bda.icrm.R;
-import ru.bda.icrm.activity.LoginActivity;
-import ru.bda.icrm.adapter.ContragentRecyclerAdapter;
 import ru.bda.icrm.adapter.RecyclerEventAdapter;
-import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.database.DBController;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.model.Event;
+import ru.bda.icrm.model.Token;
 import ru.bda.icrm.model.dto.EventDTO;
 import ru.bda.icrm.presenter.EventFragmentPresenter;
 import ru.bda.icrm.view.EventFragmentView;
-import ru.yandex.m;
 
 public class EventsFragment extends Fragment implements View.OnClickListener, EventFragmentView{
 
@@ -97,7 +84,8 @@ public class EventsFragment extends Fragment implements View.OnClickListener, Ev
         mChangeDate = Calendar.getInstance();
         initContent();
         initRecyclerContent();
-        new EventSendTask().execute();
+        presenter.getEventList(new Token(token));
+        //new EventSendTask().execute();
         return view;
     }
 
@@ -123,7 +111,6 @@ public class EventsFragment extends Fragment implements View.OnClickListener, Ev
         isAddToDb = true;
         if (mEvent != null) {
             presenter.makeEvent(new EventDTO(mEvent, token));
-            //new EventSendTask().execute();
         }
     }
 
@@ -253,13 +240,12 @@ public class EventsFragment extends Fragment implements View.OnClickListener, Ev
     @Override
     public void makeEvent(List<Event> events) {
         mProgressBar.setVisibility(View.GONE);
+        mEventList = new ArrayList<>();
+        mEventList.addAll(events);
         if (mEventList != null && mEventList.size() > 0) {
-            mEventList = events;
-            mEventList = refreshEventList(mEventList);
-        } else {
-            mEventList = events;
             mEventList = refreshEventList(mEventList);
         }
+
         mAdapter.setEventList(mEventList);
         mAdapter.notifyDataSetChanged();
     }
