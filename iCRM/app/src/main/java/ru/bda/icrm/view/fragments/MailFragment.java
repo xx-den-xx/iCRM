@@ -1,4 +1,4 @@
-package ru.bda.icrm.fragment;
+package ru.bda.icrm.view.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

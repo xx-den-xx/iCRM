@@ -1,8 +1,6 @@
-package ru.bda.icrm.activity;
+package ru.bda.icrm.view.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,33 +18,27 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.bda.icrm.R;
-import ru.bda.icrm.auth.ApiController;
-import ru.bda.icrm.database.DBController;
+import ru.bda.icrm.activity.AddContragentActivity;
+import ru.bda.icrm.activity.ContragentActivity;
 import ru.bda.icrm.dialog.AddEventDialog;
 import ru.bda.icrm.dialog.GetContragentDialog;
 import ru.bda.icrm.dialog.MyDialog;
 import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.enums.NavMode;
 import ru.bda.icrm.fragment.CallFragment;
-import ru.bda.icrm.fragment.ContragentFragment;
-import ru.bda.icrm.fragment.EventsFragment;
-import ru.bda.icrm.fragment.MailFragment;
-import ru.bda.icrm.fragment.MapFragment;
-import ru.bda.icrm.fragment.PriceFragment;
+import ru.bda.icrm.services.CallService;
+import ru.bda.icrm.view.fragments.ContragentFragment;
+import ru.bda.icrm.view.fragments.EventsFragment;
+import ru.bda.icrm.view.fragments.MailFragment;
+import ru.bda.icrm.view.fragments.PriceFragment;
 import ru.bda.icrm.fragment.ScoresFragment;
 import ru.bda.icrm.holders.AppPref;
-import ru.bda.icrm.listener.AddContragentClickListener;
 import ru.bda.icrm.listener.AddEventClickListener;
 import ru.bda.icrm.listener.OnContragentClickListener;
 import ru.bda.icrm.map.MyLocationManager;
-import ru.bda.icrm.model.Call;
-import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Event;
-import ru.bda.icrm.services.SendCallService;
+import ru.bda.icrm.view.fragments.MapFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnContragentClickListener {
@@ -57,10 +49,9 @@ public class MainActivity extends AppCompatActivity
 
     private FrameLayout fragmentContent;
     private DrawerLayout drawer;
-    private NavMode mNavMode;
+    private static NavMode mNavMode;
     private Toolbar toolbar;
     private MenuItem mMenuAdd;
-    private Context mContext;
     private TextView mTvNameManager;
     private FloatingActionButton fab;
     private boolean isFirstStart = true;
@@ -71,16 +62,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         mNavMode = NavMode.CLIENTS;
-        mContext = this;
         setMenuToolbar();
 
         mTvNameManager = (TextView) findViewById(R.id.tv_name_manager);
-//        mTvNameManager.setText(AppPref.getInstance().getStringPref(AppPref.PREF_HEX_LOGIN, mContext));
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(v -> checkLocation());
-
-        setFragment(mNavMode);
 
         fragmentContent = (FrameLayout) findViewById(R.id.fragment_content);
         contragentFragment = new ContragentFragment();
@@ -95,8 +83,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
 
-        sendLogCall();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setFragment(mNavMode);
+        Intent intent = new Intent(this, CallService.class);
+        startService(intent);
+
     }
 
     private void checkLocation() {
@@ -264,41 +259,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void sendLogCall() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                synchronized (DBController.class) {
-                    DBController dbController = new DBController(MainActivity.this);
-                    List<Call> mCallList = dbController.getCallList(true);
-                    List<Call> list = new ArrayList<>();
-                    if (mCallList != null) {
-                        for (int i = 0; i < mCallList.size(); i++) {
-                            Call call = mCallList.get(i);
-                            if (!call.isSend()) {
-                                list.add(call);
-                            }
-                        }
-                    }
-                    if (list != null && list.size() > 0) {
-                        for (Call call : list) {
-                            dbController.updateCall(call);
-                        }
-                        ApiController.getInstance().addCall(
-                                AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, MainActivity.this),
-                                list
-                        );
-                    }
-
-                    dbController.closeDb();
-                }
-                return null;
-            }
-        }.execute();
-    }
-
     private void logoutProfile() {
-        AppPref.getInstance().setHexAuth("", "", "", this);
+        AppPref.getInstance().setHexAuth("", "", "", "", this);
+        AppPref.getInstance().setDateAuth(0, this);
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         intent.putExtra(Constants.INTENT_EXIT, "exit");
         startActivity(intent);

@@ -1,4 +1,4 @@
-package ru.bda.icrm.fragment;
+package ru.bda.icrm.view.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import ru.bda.icrm.R;
-import ru.bda.icrm.adapter.ContragentRecyclerAdapter;
+import ru.bda.icrm.view.adapters.ContragentRecyclerAdapter;
 import ru.bda.icrm.database.DBController;
 import ru.bda.icrm.enums.SearchMode;
 import ru.bda.icrm.holders.AppControl;
@@ -83,6 +84,7 @@ public class ContragentFragment extends Fragment implements OnContragentClickLis
         mAgentRV.addOnScrollListener(new EndlessScrollListener(mLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
+                Log.d("log_contragent", "page = " + page + "; totalItemCount = " + totalItemsCount);
                 if (searchMode == SearchMode.LOAD) {
                     presenter.loadData(new TakeContragentListDTO(token, startProgressInt, countProgressInt));
                 }

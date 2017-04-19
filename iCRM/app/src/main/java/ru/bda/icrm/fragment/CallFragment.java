@@ -22,6 +22,7 @@ import java.util.List;
 import ru.bda.icrm.R;
 import ru.bda.icrm.adapter.CallRecyclerAdapter;
 import ru.bda.icrm.database.DBController;
+import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.model.Call;
 import ru.bda.icrm.receiver.CallReceiver;
 
@@ -66,6 +67,7 @@ public class CallFragment extends Fragment {
         int type = managedCursor.getColumnIndex( CallLog.Calls.TYPE );
         int date = managedCursor.getColumnIndex( CallLog.Calls.DATE);
         int duration = managedCursor.getColumnIndex( CallLog.Calls.DURATION);
+        long time = AppPref.getInstance().getDate(getActivity());
         sb.append( "Call Details :");
         while ( managedCursor.moveToNext() ) {
             Call call = new Call();
@@ -93,7 +95,7 @@ public class CallFragment extends Fragment {
             call.setTime(Long.valueOf(callDate));
             call.setType(dir);
             call.setDuration(callDuration);
-            mListCall.add(call);
+            if (time <= call.getTime()) mListCall.add(call);
         }
         mAdapter.setListCall(mListCall);
         mAdapter.notifyDataSetChanged();
@@ -127,6 +129,7 @@ public class CallFragment extends Fragment {
         protected Void doInBackground(Void... params) {
             synchronized (DBController.class) {
                 mListCall = mDBController.getCallList(true);
+                mDBController.closeDb();
             }
             return null;
         }
@@ -139,7 +142,10 @@ public class CallFragment extends Fragment {
                 mAdapter.setListCall(mListCall);
                 mAdapter.notifyDataSetChanged();
             } else {
-                getCallDetails();
+                synchronized (DBController.class) {
+                    getCallDetails();
+                    mDBController.closeDb();
+                }
             }
         }
     }

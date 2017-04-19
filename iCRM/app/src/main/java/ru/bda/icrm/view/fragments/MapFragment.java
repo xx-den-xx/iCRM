@@ -1,19 +1,9 @@
-package ru.bda.icrm.fragment;
+package ru.bda.icrm.view.fragments;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,24 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.bda.icrm.R;
-import ru.bda.icrm.activity.MapActivity;
-import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.holders.AppPref;
-import ru.bda.icrm.listener.OnMapClickListener;
-import ru.bda.icrm.map.OverlayGeoCode;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Token;
 import ru.bda.icrm.presenter.MapFragmentPresenter;
 import ru.bda.icrm.view.MapFragmentView;
 import ru.yandex.yandexmapkit.MapController;
 import ru.yandex.yandexmapkit.MapView;
-import ru.yandex.yandexmapkit.map.MapEvent;
-import ru.yandex.yandexmapkit.map.OnMapListener;
 import ru.yandex.yandexmapkit.overlay.Overlay;
 import ru.yandex.yandexmapkit.overlay.OverlayItem;
 import ru.yandex.yandexmapkit.overlay.balloon.BalloonItem;
 import ru.yandex.yandexmapkit.overlay.balloon.OnBalloonListener;
-import ru.yandex.yandexmapkit.overlay.location.MyLocationOverlay;
 import ru.yandex.yandexmapkit.utils.GeoPoint;
 
 public class MapFragment extends Fragment implements MapFragmentView{

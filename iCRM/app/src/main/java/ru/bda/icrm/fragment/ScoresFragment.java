@@ -18,12 +18,9 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import ru.bda.icrm.R;
-import ru.bda.icrm.activity.MainActivity;
 import ru.bda.icrm.activity.ScoreActivity;
 import ru.bda.icrm.adapter.RecyclerScoreAdapter;
 import ru.bda.icrm.auth.ApiController;
@@ -32,7 +29,6 @@ import ru.bda.icrm.enums.Constants;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.listener.AddScoreClickListener;
 import ru.bda.icrm.listener.OnClickScoreListener;
-import ru.bda.icrm.listener.OnFilterScoreClickListener;
 import ru.bda.icrm.model.Score;
 
 public class ScoresFragment extends Fragment {

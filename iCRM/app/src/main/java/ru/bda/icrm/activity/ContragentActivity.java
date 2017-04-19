@@ -40,6 +40,7 @@ import ru.bda.icrm.model.ClientObject;
 import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Phone;
+import ru.bda.icrm.view.activities.MapActivity;
 
 /**
  * Created by User on 01.09.2016.

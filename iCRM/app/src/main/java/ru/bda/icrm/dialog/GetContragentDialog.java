@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.bda.icrm.R;
-import ru.bda.icrm.adapter.ContragentRecyclerAdapter;
+import ru.bda.icrm.view.adapters.ContragentRecyclerAdapter;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.enums.SearchMode;
 import ru.bda.icrm.holders.AppPref;

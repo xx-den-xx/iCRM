@@ -1,8 +1,5 @@
 package ru.bda.icrm.services;
 
-import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,19 +13,15 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import java.util.Calendar;
 import java.util.List;
 
 import ru.bda.icrm.R;
-import ru.bda.icrm.activity.LoginActivity;
+import ru.bda.icrm.view.activities.LoginActivity;
 import ru.bda.icrm.database.DBController;
-import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.model.Event;
-import ru.bda.icrm.receiver.TimeReceiver;
 
 public class NotificationService extends Service {
 

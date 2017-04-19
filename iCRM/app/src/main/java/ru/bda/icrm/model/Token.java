@@ -6,7 +6,16 @@ import com.google.gson.annotations.SerializedName;
 public class Token {
     @SerializedName("token")
     @Expose
-    private String token;
+    String token;
+
+    @SerializedName("manager_id")
+    @Expose
+    String manager;
+
+    public Token(String token, String manager) {
+        this.token = token;
+        this.manager = manager;
+    }
 
     public Token(String token) {
         this.token = token;
@@ -20,10 +29,19 @@ public class Token {
         this.token = token;
     }
 
+    public String getManager() {
+        return manager;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
+
     @Override
     public String toString() {
         return "Token{" +
                 "token='" + token + '\'' +
+                ", manager='" + manager + '\'' +
                 '}';
     }
 }
