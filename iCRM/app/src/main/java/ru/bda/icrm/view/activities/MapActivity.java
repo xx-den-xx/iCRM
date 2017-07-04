@@ -78,18 +78,15 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
         mMapController.setZoomCurrent(20);
 
         overlay = new OverlayGeoCode(mMapController, this);
-        overlay.setOnMapClickListener(new OnMapClickListener() {
-            @Override
-            public void onMapClick(double lat, double lon) {
-                if (mode == MapMode.CLIENT) {
-                    mContragent.setLat(lat);
-                    mContragent.setLon(lon);
-                    new UpdateContragentTask().execute();
-                } else if(mode == MapMode.OBJECT) {
-                    mObject.setLat(lat);
-                    mObject.setLon(lon);
-                    new UpdateMapTask().execute();
-                }
+        overlay.setOnMapClickListener((lat1, lon1) -> {
+            if (mode == MapMode.CLIENT) {
+                mContragent.setLat(lat1);
+                mContragent.setLon(lon1);
+                new UpdateContragentTask().execute();
+            } else if(mode == MapMode.OBJECT) {
+                mObject.setLat(lat1);
+                mObject.setLon(lon1);
+                new UpdateMapTask().execute();
             }
         });
         mMapController.getOverlayManager().addOverlay(overlay);
@@ -105,18 +102,15 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
         mMapController = mMapView.getMapController();
         mMapView.showBuiltInScreenButtons(true);
         overlay = new OverlayGeoCode(mMapController, this);
-        overlay.setOnMapClickListener(new OnMapClickListener() {
-            @Override
-            public void onMapClick(double lat, double lon) {
-                if (mode == MapMode.CLIENT) {
-                    mContragent.setLat(lat);
-                    mContragent.setLon(lon);
-                    new UpdateContragentTask().execute();
-                } else if(mode == MapMode.OBJECT) {
-                    mObject.setLat(lat);
-                    mObject.setLon(lon);
-                    new UpdateMapTask().execute();
-                }
+        overlay.setOnMapClickListener((lat, lon) -> {
+            if (mode == MapMode.CLIENT) {
+                mContragent.setLat(lat);
+                mContragent.setLon(lon);
+                new UpdateContragentTask().execute();
+            } else if(mode == MapMode.OBJECT) {
+                mObject.setLat(lat);
+                mObject.setLon(lon);
+                new UpdateMapTask().execute();
             }
         });
         mMapController.getOverlayManager().addOverlay(overlay);
@@ -126,12 +120,7 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
     private void setToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        mToolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void showObject(double lat, double lon) {
@@ -177,14 +166,11 @@ public class MapActivity extends AppCompatActivity implements OnMyLocationListen
         final double lat = myLocationItem.getGeoPoint().getLat();
         final double lon = myLocationItem.getGeoPoint().getLon();
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                Log.d("myLog", myLocationItem.getGeoPoint().toString());
-                setMapPosition(lat, lon);
-                showObject(lat, lon);
-            }
+        runOnUiThread(() -> {
+            // TODO Auto-generated method stub
+            Log.d("myLog", myLocationItem.getGeoPoint().toString());
+            setMapPosition(lat, lon);
+            showObject(lat, lon);
         });
     }
 

@@ -2,6 +2,8 @@ package ru.bda.icrm.view.activities;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,6 +34,7 @@ import ru.bda.icrm.holders.AppControl;
 import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.presenter.LoginPresenter;
 import ru.bda.icrm.model.Token;
+import ru.bda.icrm.receiver.TimeReceiver;
 import ru.bda.icrm.services.NotificationService;
 import ru.bda.icrm.view.LoginActivityView;
 
@@ -65,9 +68,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         AppPref.getInstance().setNotifCount(0, this);
-        if (!isMyServiceRunning(NotificationService.class)) {
-            startService(new Intent(this, NotificationService.class));
-        }
+        //if (!isMyServiceRunning(NotificationService.class)) {
+            //startService(new Intent(this, NotificationService.class));
+        handleNotification();
+        //}
 
         mContext = this;
         initContent();
@@ -77,6 +81,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mLoginLayout.setVisibility(View.VISIBLE);
             mIvLogo.setVisibility(View.GONE);
         }
+    }
+
+    private void handleNotification() {
+        Intent alarmIntent = new Intent(this, TimeReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 5000, pendingIntent);
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -235,6 +246,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 Manifest.permission.CAMERA,
                                 Manifest.permission.READ_PHONE_STATE,
                                 Manifest.permission.PROCESS_OUTGOING_CALLS,
+                                Manifest.permission.READ_CALL_LOG,
+                                Manifest.permission.WRITE_CALL_LOG,
                                 Manifest.permission.ACCESS_FINE_LOCATION,
                                 Manifest.permission.ACCESS_NETWORK_STATE
                 }, requestCode);

@@ -114,6 +114,10 @@
 
         </receiver>
 
+        <receiver
+            android:name=".receiver.TimeReceiver"
+            android:process=":remote"/>
+
         <service
             android:name=".services.CallService"/>
         <service

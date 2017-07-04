@@ -63,8 +63,6 @@ public class NotificationService extends Service {
         dbController.closeDb();
     }
 
-
-
     private void startNotification(Event event, Context context) {
         Log.d("alarm_log", "start_notif = " + event.getTimeBegin());
         Intent notifIntent = new Intent (context, LoginActivity.class);

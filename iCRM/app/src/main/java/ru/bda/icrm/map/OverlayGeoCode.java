@@ -44,23 +44,20 @@ public class OverlayGeoCode extends Overlay implements GeoCodeListener {
     public boolean onFinishGeoCode(final GeoCode geoCode) {
         if (geoCode != null) {
             Log.d("myLog", "lat = " + geoCode.getGeoPoint().getLat() + "; lng = " + geoCode.getGeoPoint().getLon());
-            getMapController().getMapView().post(new Runnable() {
-                @Override
-                public void run() {
-                    MyDialog dialog = new MyDialog();
-                    dialog.init("Сохранить координаты", geoCode.getDisplayName(), "Отмена", "Сохранить", new MyDialog.OnClickListener() {
-                        @Override
-                        public void onLeftBtnClick() {
+            getMapController().getMapView().post(() -> {
+                MyDialog dialog = new MyDialog();
+                dialog.init("Сохранить координаты", geoCode.getDisplayName(), "Отмена", "Сохранить", new MyDialog.OnClickListener() {
+                    @Override
+                    public void onLeftBtnClick() {
 
-                        }
+                    }
 
-                        @Override
-                        public void onRightBtnClick() {
-                            mapListener.onMapClick(geoCode.getGeoPoint().getLat(), geoCode.getGeoPoint().getLon());
-                        }
-                    });
-                    dialog.show(ctx);
-                }
+                    @Override
+                    public void onRightBtnClick() {
+                        mapListener.onMapClick(geoCode.getGeoPoint().getLat(), geoCode.getGeoPoint().getLon());
+                    }
+                });
+                dialog.show(ctx);
             });
         }
         return true;

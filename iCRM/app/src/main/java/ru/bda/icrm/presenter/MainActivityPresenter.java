@@ -26,7 +26,6 @@ public class MainActivityPresenter extends BasePresenter {
                 .subscribe(new Observer<CallDataDTO>() {
                     @Override
                     public void onCompleted() {
-
                     }
 
                     @Override

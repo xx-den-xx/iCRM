@@ -91,7 +91,6 @@ public class MainActivity extends AppCompatActivity
         setFragment(mNavMode);
         Intent intent = new Intent(this, CallService.class);
         startService(intent);
-
     }
 
     private void checkLocation() {
