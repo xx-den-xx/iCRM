@@ -101,7 +101,6 @@ public class CallService extends IntentService implements MainActivityView{
 
     @Override
     public void showError(String error) {
-        //Toast.makeText(this, "Ошибка " + error, Toast.LENGTH_LONG).show();
         Log.e("log_call", error);
     }
 
