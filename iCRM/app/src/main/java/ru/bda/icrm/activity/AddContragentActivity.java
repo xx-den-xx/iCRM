@@ -19,6 +19,8 @@ import android.widget.Spinner;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import ru.bda.icrm.R;
 import ru.bda.icrm.auth.ApiController;
 import ru.bda.icrm.dialog.MyDialog;
@@ -27,32 +29,55 @@ import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Phone;
 
-/**
- * Created by User on 02.09.2016.
- */
 public class AddContragentActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     private Context mContext;
-    private Toolbar mToolbar;
+    @Nullable
+    @Bind(R.id.add_toolbar)
+    Toolbar mToolbar;
+
     private Contragent mContragent;
-    private EditText mEtName;
-    private Spinner mSpTypeOrganization;
-    private Spinner mSpTypeRecognition;
-    private EditText mEtInn;
-    private EditText mEtCode;
-    private EditText mEtCodePookpo;
-    private EditText mEtJurAddress;
-    private EditText mEtEmail;
-    private EditText mEtSite;
-    private FloatingActionButton mFabSave;
+    @Nullable
+    @Bind(R.id.et_name)
+    EditText mEtName;
+    @Nullable
+    @Bind(R.id.sp_type_organization)
+    Spinner mSpTypeOrganization;
+    @Nullable
+    @Bind(R.id.sp_type_recognition)
+    Spinner mSpTypeRecognition;
+    @Nullable
+    @Bind(R.id.et_inn)
+    EditText mEtInn;
+    @Nullable
+    @Bind(R.id.et_code)
+    EditText mEtCode;
+    @Nullable
+    @Bind(R.id.et_code_pookpo)
+    EditText mEtCodePookpo;
+    @Nullable
+    @Bind(R.id.et_jur_address)
+    EditText mEtJurAddress;
+    @Nullable
+    @Bind(R.id.et_email)
+    EditText mEtEmail;
+    @Nullable
+    @Bind(R.id.et_site)
+    EditText mEtSite;
+    @Nullable
+    @Bind(R.id.fab_save)
+    FloatingActionButton mFabSave;
     private ArrayAdapter<CharSequence> orgSpinAdapter;
     private ArrayAdapter<CharSequence>  recSpinAdapter;
-    private ProgressBar mProgressBar;
+    @Nullable
+    @Bind(R.id.progress_bar)
+    ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contragent);
+        ButterKnife.bind(this);
         mContext = this;
         initToolbar();
         initContent();
@@ -61,14 +86,12 @@ public class AddContragentActivity extends AppCompatActivity implements AdapterV
     }
 
     private void initSpinners() {
-        mSpTypeOrganization = (Spinner) findViewById(R.id.sp_type_organization);
         orgSpinAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_type_organization, android.R.layout.simple_spinner_dropdown_item);
         mSpTypeOrganization.setAdapter(orgSpinAdapter);
         mSpTypeOrganization.setOnItemSelectedListener(this);
         mSpTypeOrganization.setSelection(1);
 
-        mSpTypeRecognition = (Spinner) findViewById(R.id.sp_type_recognition);
         recSpinAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_type_relation, android.R.layout.simple_spinner_dropdown_item);
         mSpTypeRecognition.setAdapter(recSpinAdapter);
@@ -77,47 +100,36 @@ public class AddContragentActivity extends AppCompatActivity implements AdapterV
     }
 
     private void initContent() {
-        mEtName = (EditText) findViewById(R.id.et_name);
-        mEtCode = (EditText) findViewById(R.id.et_code);
-        mEtInn = (EditText) findViewById(R.id.et_inn);
-        mEtCodePookpo = (EditText) findViewById(R.id.et_code_pookpo);
-        mEtJurAddress = (EditText) findViewById(R.id.et_jur_address);
-        mEtEmail = (EditText) findViewById(R.id.et_email);
-        mEtSite = (EditText) findViewById(R.id.et_site);
-        mFabSave = (FloatingActionButton) findViewById(R.id.fab_save);
-        mFabSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MyDialog myDialog = new MyDialog();
-                if (mEtName.getText().toString().equals("")) {
-                    String message = getResources().getString(R.string.error_empty_name_contragent);
-                    myDialog.init(getString(R.string.user_empty_error), message, null, getString(R.string.ok), new MyDialog.OnClickListener() {
-                        @Override
-                        public void onLeftBtnClick() {
-                        }
+        mFabSave.setOnClickListener(v -> {
+            MyDialog myDialog = new MyDialog();
+            if (mEtName.getText().toString().equals("")) {
+                String message = getResources().getString(R.string.error_empty_name_contragent);
+                myDialog.init(getString(R.string.user_empty_error), message, null, getString(R.string.ok), new MyDialog.OnClickListener() {
+                    @Override
+                    public void onLeftBtnClick() {
+                    }
 
-                        @Override
-                        public void onRightBtnClick() {
-                        }
-                    });
-                    myDialog.show(AddContragentActivity.this);
-                } else {
-                    String message = getString(R.string.dialog_save_message);
-                    myDialog.init(getString(R.string.dialog_save_title), message, getString(R.string.no), getString(R.string.ok), new MyDialog.OnClickListener() {
+                    @Override
+                    public void onRightBtnClick() {
+                    }
+                });
+                myDialog.show(AddContragentActivity.this);
+            } else {
+                String message = getString(R.string.dialog_save_message);
+                myDialog.init(getString(R.string.dialog_save_title), message, getString(R.string.no), getString(R.string.ok), new MyDialog.OnClickListener() {
 
-                        @Override
-                        public void onLeftBtnClick() {
+                    @Override
+                    public void onLeftBtnClick() {
 
-                        }
+                    }
 
-                        @Override
-                        public void onRightBtnClick() {
-                            initContragent();
-                            new UpdateContragentTask().execute();
-                        }
-                    });
-                    myDialog.show(AddContragentActivity.this);
-                }
+                    @Override
+                    public void onRightBtnClick() {
+                        initContragent();
+                        new UpdateContragentTask().execute();
+                    }
+                });
+                myDialog.show(AddContragentActivity.this);
             }
         });
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
@@ -135,7 +147,6 @@ public class AddContragentActivity extends AppCompatActivity implements AdapterV
     }
 
     private void initToolbar() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -4,9 +4,6 @@ import java.util.List;
 
 import ru.bda.icrm.model.dto.ContragentItemDTO;
 
-/**
- * Created by User on 27.06.2016.
- */
 public class Contragent {
 
     private String mId = "";//id контрагента

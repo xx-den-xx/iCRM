@@ -54,4 +54,7 @@ public interface ApiInterface {
 
     @POST("api.php?action=phoneLog")
     Observable<AnswerServerDTO> sendPhoneLog(@Body CallDataDTO calls);
+
+    @GET("api.php?action=getContragent")
+    Observable<AnswerServerDTO> getContragent(@Query("token") String token, @Query("contragent") String id);
 }

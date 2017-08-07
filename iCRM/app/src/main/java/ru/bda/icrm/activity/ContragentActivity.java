@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,12 +41,11 @@ import ru.bda.icrm.model.ClientObject;
 import ru.bda.icrm.model.Contact;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Phone;
+import ru.bda.icrm.presenter.ContragentActivityPresenter;
+import ru.bda.icrm.view.ContragentActivityView;
 import ru.bda.icrm.view.activities.MapActivity;
 
-/**
- * Created by User on 01.09.2016.
- */
-public class ContragentActivity extends AppCompatActivity {
+public class ContragentActivity extends AppCompatActivity implements ContragentActivityView{
 
     private String mUid;
     private Contragent mContragent;
@@ -78,10 +78,13 @@ public class ContragentActivity extends AppCompatActivity {
     private ObjectContragentAdapter mObjectAdapter;
     private List<ClientObject> mObjectList = new ArrayList<>();
 
+    private ContragentActivityPresenter presenter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contragent);
+        presenter = new ContragentActivityPresenter(this);
         mUid = getIntent().getStringExtra(Constants.INTENT_ID_CONTRAGENT);
         mContext = this;
         setToolbar();
@@ -92,31 +95,24 @@ public class ContragentActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //presenter.loadContragent(AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, mContext), mUid);
         new ContragentTask().execute();
     }
 
     private void setToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        mToolbar.setNavigationOnClickListener(v -> finish());
         mToolbar.inflateMenu(R.menu.activity_contragent);
         mMapItem = (MenuItem) mToolbar.getMenu().findItem(R.id.action_maps);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (mMapItem.getItemId() == R.id.action_maps) {
-                    Intent intent = new Intent(ContragentActivity.this, MapActivity.class);
-                    intent.putExtra(Constants.INTENT_ID_CONTRAGENT, mContragent.getId());
-                    intent.putExtra(Constants.INTENT_MAP_TYPE, Constants.MAP_TYPE_CLIENT);
-                    startActivity(intent);
-                }
-                return false;
+        mToolbar.setOnMenuItemClickListener(item -> {
+            if (mMapItem.getItemId() == R.id.action_maps) {
+                Intent intent = new Intent(ContragentActivity.this, MapActivity.class);
+                intent.putExtra(Constants.INTENT_ID_CONTRAGENT, mContragent.getId());
+                intent.putExtra(Constants.INTENT_MAP_TYPE, Constants.MAP_TYPE_CLIENT);
+                startActivity(intent);
             }
+            return false;
         });
     }
 
@@ -133,79 +129,59 @@ public class ContragentActivity extends AppCompatActivity {
         mEtJurAddress = (EditText) findViewById(R.id.et_jur_address);
 
         mLlAddContactFace = (LinearLayout) findViewById(R.id.ll_add_contact_face);
-        mLlAddContactFace.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mContragent.getIdContact().equals("")) {
-                    AddClientDialog dialog = new AddClientDialog();
-                    dialog.init(new AddClientClickListener() {
-                        @Override
-                        public void onLeftBtnClick() {
+        mLlAddContactFace.setOnClickListener(v -> {
+            if (mContragent.getIdContact().equals("")) {
+                AddClientDialog dialog = new AddClientDialog();
+                dialog.init(new AddClientClickListener() {
+                    @Override
+                    public void onLeftBtnClick() {
 
-                        }
+                    }
 
-                        @Override
-                        public void onRightBtnClick(Contact clients) {
-                            if (clients != null) {
-                                mContact = clients;
-                                mContact.setId(mContragent.getIdContact());
-                                mTvContactFace.setText(clients.getName());
-                                new UpdateContactTask().execute();
-                            }
+                    @Override
+                    public void onRightBtnClick(Contact clients) {
+                        if (clients != null) {
+                            mContact = clients;
+                            mContact.setId(mContragent.getIdContact());
+                            mTvContactFace.setText(clients.getName());
+                            new UpdateContactTask().execute();
                         }
-                    });
-                    dialog.show(ContragentActivity.this);
-                } else {
-                    Intent intent = new Intent(ContragentActivity.this, ContactFaceActivity.class);
-                    intent.putExtra(Constants.INTENT_ID_CONTRAGENT, mContragent.getIdContact());
-                    startActivity(intent);
-                }
+                    }
+                });
+                dialog.show(ContragentActivity.this);
+            } else {
+                Intent intent = new Intent(ContragentActivity.this, ContactFaceActivity.class);
+                intent.putExtra(Constants.INTENT_ID_CONTRAGENT, mContragent.getIdContact());
+                startActivity(intent);
             }
         });
 
         mLayoutObject = (LinearLayout) findViewById(R.id.layout_object);
-        mLayoutObject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AddObjectDialog dialog = new AddObjectDialog();
-                dialog.init(new AddObjectClickListener() {
-                    @Override
-                    public void addClickListener(ClientObject object) {
-                        new AddObjectTask().execute(object);
-                    }
-                });
-                dialog.show(ContragentActivity.this);
-            }
+        mLayoutObject.setOnClickListener(v -> {
+            AddObjectDialog dialog = new AddObjectDialog();
+            dialog.init(object -> new AddObjectTask().execute(object));
+            dialog.show(ContragentActivity.this);
         });
 
         mLayoutContactInfo = (LinearLayout) findViewById(R.id.layout_contact_info);
-        mLayoutContactInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AddContactInfoDialog dialog = new AddContactInfoDialog();
-                dialog.init(new AddPhoneClickListener() {
-                    @Override
-                    public void addPhoneClick(Phone phone) {
-                        Phone mPhone = phone;
-                        mPhone.setContactsId(mContragent.getId());
-                        new AddPhoneTask().execute(mPhone);
-                    }
-                });
-                dialog.show(ContragentActivity.this);
-            }
+        mLayoutContactInfo.setOnClickListener(v -> {
+            AddContactInfoDialog dialog = new AddContactInfoDialog();
+            dialog.init(phone -> {
+                Phone mPhone = phone;
+                mPhone.setContactsId(mContragent.getId());
+                new AddPhoneTask().execute(mPhone);
+            });
+            dialog.show(ContragentActivity.this);
         });
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mContragent.setNameContragent(mEtClientName.getText().toString());
-                mContragent.setPhones(mPhoneList);
-                mContragent.setEmail(mEtEmail.getText().toString());
-                mContragent.setSite(mEtSite.getText().toString());
-                mContragent.setJurAddress(mEtJurAddress.getText().toString());
-                new UpdateContragentTask().execute(mContragent);
-            }
+        mFab.setOnClickListener(v -> {
+            mContragent.setNameContragent(mEtClientName.getText().toString());
+            mContragent.setPhones(mPhoneList);
+            mContragent.setEmail(mEtEmail.getText().toString());
+            mContragent.setSite(mEtSite.getText().toString());
+            mContragent.setJurAddress(mEtJurAddress.getText().toString());
+            new UpdateContragentTask().execute(mContragent);
         });
     }
 
@@ -213,13 +189,10 @@ public class ContragentActivity extends AppCompatActivity {
         mRwPhone = (RecyclerView) findViewById(R.id.rw_phone);
         mLayoutManager = new LinearLayoutManager(this);
         mPhoneAdapter = new PhoneContragentAdapter(this, mPhoneList);
-        mPhoneAdapter.setOnCallClickListener(new OnCallClickListener() {
-            @Override
-            public void onCallClick(String phone) {
-                Uri number = Uri.parse("tel:" + phone);
-                Intent intentCall = new Intent(Intent.ACTION_DIAL, number);
-                startActivity(intentCall);
-            }
+        mPhoneAdapter.setOnCallClickListener(phone -> {
+            Uri number = Uri.parse("tel:" + phone);
+            Intent intentCall = new Intent(Intent.ACTION_DIAL, number);
+            startActivity(intentCall);
         });
         mRwPhone.setAdapter(mPhoneAdapter);
         mRwPhone.setLayoutManager(mLayoutManager);
@@ -228,17 +201,53 @@ public class ContragentActivity extends AppCompatActivity {
         mRwObject = (RecyclerView) findViewById(R.id.rw_object);
         mLayoutObjectManager = new LinearLayoutManager(this);
         mObjectAdapter = new ObjectContragentAdapter(mObjectList);
-        mObjectAdapter.setOnObjectClickListener(new OnObjectClickListener() {
-            @Override
-            public void objectClickListener(ClientObject object) {
-                Intent intent = new Intent(ContragentActivity.this, ClientObjectActivity.class);
-                intent.putExtra(Constants.INTENT_OBJECT_ID, object.getId());
-                startActivity(intent);
-            }
+        mObjectAdapter.setOnObjectClickListener(object -> {
+            Intent intent = new Intent(ContragentActivity.this, ClientObjectActivity.class);
+            intent.putExtra(Constants.INTENT_OBJECT_ID, object.getId());
+            startActivity(intent);
         });
         mRwObject.setAdapter(mObjectAdapter);
         mRwObject.setLayoutManager(mLayoutObjectManager);
         mRwObject.setHasFixedSize(true);
+    }
+
+    @Override
+    public void showError(String error) {
+        Snackbar.make(mFab, error, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void dataContragent() {
+        Snackbar.make(mFab, "Contragent complete", Snackbar.LENGTH_LONG).show();
+    }
+
+    private void setContragenContent() {
+        mToolbar.setTitle(mContragent.getNameContragent());
+        mProgressBar.setVisibility(View.GONE);
+        mLlMainContent.setVisibility(View.VISIBLE);
+        if (mContragent.getUrFace().equals("1")) {
+            mTvJurFace.setTextColor(getResources().getColor(R.color.client_text_active));
+            mTvFizFace.setTextColor(getResources().getColor(R.color.client_text_inactive));
+        } else {
+            mTvJurFace.setTextColor(getResources().getColor(R.color.client_text_inactive));
+            mTvFizFace.setTextColor(getResources().getColor(R.color.client_text_active));
+        }
+        mEtClientName.setText(mContragent.getNameContragent());
+        mEtEmail.setText(mContragent.getEmail());
+        mEtSite.setText(mContragent.getSite());
+        if (mContragent.getContacts() != null)
+            if (!mContragent.getContacts().equals("")) mTvContactFace.setText(mContragent.getContacts());
+        mTvClientRelation.setText(mContragent.getRelations().equals("1") ? "Поставщик" : "Покупатель");
+        if (mContragent.getPhones() != null && mContragent.getPhones().size() > 0) {
+            mPhoneList = mContragent.getPhones();
+            mPhoneAdapter.setPhoneList(mPhoneList);
+            mPhoneAdapter.notifyDataSetChanged();
+        }
+        if (mContragent.getObjects() != null && mContragent.getObjects().size() > 0) {
+            mObjectList = mContragent.getObjects();
+            mObjectAdapter.setListObject(mObjectList);
+            mObjectAdapter.notifyDataSetChanged();
+        }
     }
 
     private class ContragentTask extends AsyncTask<String, Void, Boolean> {

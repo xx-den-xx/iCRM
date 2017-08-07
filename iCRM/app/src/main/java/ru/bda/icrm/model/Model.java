@@ -1,5 +1,6 @@
 package ru.bda.icrm.model;
 
+import retrofit2.http.Query;
 import ru.bda.icrm.database.DBController;
 import ru.bda.icrm.model.dto.AnswerServerDTO;
 import ru.bda.icrm.model.dto.CallDataDTO;
@@ -25,4 +26,5 @@ public interface Model {
     Observable<AnswerServerDTO> getNomenclatureTreeAnswer(TakeNomenclatureDTO dto);
     Observable<AnswerServerDTO> sendPhoneLog(CallDataDTO calls);
     Observable<CallDataDTO> setCallListToDB(String token, String id, DBController dbController);
+    Observable<AnswerServerDTO> getContragent(String token, String id);
 }

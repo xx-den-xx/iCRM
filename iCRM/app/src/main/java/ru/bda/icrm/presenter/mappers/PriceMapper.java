@@ -17,7 +17,7 @@ public class PriceMapper implements Func1<NomenclatureDataDTO, List<PriceSum>> {
                 .map(itemDTO -> new PriceSum(Integer.parseInt(itemDTO.getId()), itemDTO.getCode(), itemDTO.getParent(),
                         itemDTO.getNomenclature(), itemDTO.getUnit(), itemDTO.getIsgroup().equals("1") ? true : false,
                         itemDTO.getPrice().equals("") ? 0 : Double.parseDouble(itemDTO.getPrice()),
-                        Integer.parseInt(itemDTO.getOstatok()),
+                        itemDTO.getOstatok().equals("") ? 0 : Integer.parseInt(itemDTO.getOstatok()),
                         itemDTO.getPrice().equals("") ? 0 : Double.parseDouble(itemDTO.getPrice())))
                 .toList()
                 .toBlocking()

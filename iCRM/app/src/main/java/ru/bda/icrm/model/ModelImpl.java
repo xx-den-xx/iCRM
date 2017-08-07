@@ -110,4 +110,11 @@ public class ModelImpl implements Model {
                 .subscribeOn(Schedulers.io());
         return observable;
     }
+
+    @Override
+    public Observable<AnswerServerDTO> getContragent(String token, String id) {
+        return apiInterface.getContragent(token, id)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
+    }
 }
