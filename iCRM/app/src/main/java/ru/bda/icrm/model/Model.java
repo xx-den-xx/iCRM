@@ -26,5 +26,6 @@ public interface Model {
     Observable<AnswerServerDTO> getNomenclatureTreeAnswer(TakeNomenclatureDTO dto);
     Observable<AnswerServerDTO> sendPhoneLog(CallDataDTO calls);
     Observable<CallDataDTO> setCallListToDB(String token, String id, DBController dbController);
+    Observable<CallDataDTO> updateCallListDB(String token, String id, DBController dbController);
     Observable<AnswerServerDTO> getContragent(String token, String id);
 }
