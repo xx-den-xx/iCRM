@@ -112,6 +112,19 @@ public class ModelImpl implements Model {
     }
 
     @Override
+    public Observable<CallDataDTO> updateCallListDB(final String token, final String id, final DBController dbController) {
+        Observable<CallDataDTO> observable;
+        observable = Observable.create(
+                (Observable.OnSubscribe<CallDataDTO>) subscriber -> {
+                    subscriber.onNext(new CallDataDTO(token, id, dbController.updateCallList()));
+                    subscriber.onCompleted();
+                })
+                .observeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io());
+        return observable;
+    }
+
+    @Override
     public Observable<AnswerServerDTO> getContragent(String token, String id) {
         return apiInterface.getContragent(token, id)
                 .observeOn(AndroidSchedulers.mainThread())

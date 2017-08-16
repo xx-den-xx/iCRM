@@ -13,6 +13,7 @@ import ru.bda.icrm.model.Call;
 import ru.bda.icrm.model.Contragent;
 import ru.bda.icrm.model.Event;
 import ru.bda.icrm.model.dto.CallDTO;
+import ru.bda.icrm.model.dto.CallDataDTO;
 import ru.bda.icrm.model.dto.EventDTO;
 import rx.Observable;
 
@@ -236,7 +237,7 @@ public class DBController {
         }
     }
 
-    public void updateCall(Call call) {
+    public void updateCall(CallDTO call) {
         mDb = null;
         mDb = dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -247,6 +248,14 @@ public class DBController {
         cv.put(DBHelper.CALL_SEND, 1);
         String time = String.valueOf(call.getTime());
         mDb.update(DBHelper.TABLE_CALL, cv, DBHelper.CALL_TIME + " = ?", new String[] {time});
+    }
+
+    public List<CallDTO> updateCallList() {
+        List<CallDTO> callList = getCallForServer();
+        for (CallDTO call : callList) {
+            updateCall(call);
+        }
+        return callList;
     }
 
     public List<Call> getCallList(boolean isClose) {
@@ -288,7 +297,6 @@ public class DBController {
                 CallDTO callDTO = new CallDTO(call);
                 if (!call.isSend()) {
                     calls.add(callDTO);
-                    updateCall(call);
                 }
             } while (cursor.moveToNext());
         }

@@ -19,6 +19,10 @@ public class CallDataDTO {
     @Expose
     List<CallDTO> callList;
 
+    public CallDataDTO() {
+
+    }
+
     public CallDataDTO(String token, String manager_id, List<CallDTO> callList) {
         this.token = token;
         this.manager_id = manager_id;

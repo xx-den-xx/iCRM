@@ -36,7 +36,7 @@ public class SendCallService extends IntentService {
             }
             if (list != null && list.size() > 0) {
                 for (Call call : list) {
-                    dbController.updateCall(call);
+                    //dbController.updateCall(call);
                 }
                 ApiController.getInstance().addCall(
                         AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN, SendCallService.this),

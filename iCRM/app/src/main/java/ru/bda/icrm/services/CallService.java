@@ -19,6 +19,7 @@ import ru.bda.icrm.holders.AppPref;
 import ru.bda.icrm.model.Call;
 import ru.bda.icrm.model.Token;
 import ru.bda.icrm.model.dto.AnswerServerDTO;
+import ru.bda.icrm.model.dto.CallDataDTO;
 import ru.bda.icrm.presenter.MainActivityPresenter;
 import ru.bda.icrm.view.MainActivityView;
 
@@ -109,10 +110,20 @@ public class CallService extends IntentService implements MainActivityView{
         String answer;
         if (answerServer.getState().equals("200")) {
             answer = "Звонки успешно отправлены на сервер!!!";
+            presenter.updateCallList(new Token(AppPref.getInstance().getStringPref(AppPref.PREF_TOKEN,this)
+                    , AppPref.getInstance().getStringPref(AppPref.PREF_ID, this)));
         } else {
             answer = "Звонки не отправлены на сервер!!!";
         }
         //Toast.makeText(this, answer, Toast.LENGTH_LONG).show();
         Log.d("log_call", answer);
+    }
+
+    @Override
+    public void sendComplete(CallDataDTO dataDTO) {
+        if (dataDTO != null && dataDTO.getCallList().size() >= 0)
+            Log.d("log_call", "число отправленных звонков = " + dataDTO.getCallList().size());
+        else
+            Log.d("log_call", "нет звонков для отправки");
     }
 }
